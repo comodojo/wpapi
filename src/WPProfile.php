@@ -203,7 +203,6 @@ class WPProfile extends WPUser {
         	
         }
         
-        
     	try {
     		
             $rpc_client = new RpcClient($this->blog->getEndPoint());

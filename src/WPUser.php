@@ -121,13 +121,14 @@ class WPUser {
     /**
      * Class constructor
      *
-     * @param   string  $url  URL of the Wordpress installation
+     * @param   Object  $blog     Reference to the wordpress blog
+     * @param   int     $id       User ID (optional)
      *
      * @return  Object  $this
      * 
      * @throws \Comodojo\Exception\WPException
      */
-    public function __construct($blog, $id, $username, $firstname, $lastname, $bio, $email, $nickname, $nicename, $url, $displayname, $registration, $roles) {
+    public function __construct($blog, $id=-1) {
     	
         if ( is_null($blog) || is_null($blog->getWordpress()) || !$blog->getWordpress()->isLogged() ) {
         	
@@ -139,28 +140,91 @@ class WPUser {
         
         $this->id           = intval($id);
         
-        $this->username     = $username;
+        if ($id > -1) {
+        	
+        	try {
+        		
+        		$this->loadFromID($id);
+        		
+        	} catch (WPException $wpe) {
+        		
+        		throw $wpe;
+        		
+        	}
+        	
+        }
         
-        $this->firstname    = $firstname;
+    }
+	
+    /**
+     * Load user for ID
+     *
+     * @param   int     $id       User ID
+     *
+     * @return  Object  $this
+     * 
+     * @throws \Comodojo\Exception\WPException
+     */
+    
+    public function loadFromID($id) {
+    	
+    	try {
+    		
+            $rpc_client = new RpcClient($this->getBlog()->getEndPoint());
+            
+            $rpc_client->addRequest("wp.getUser", array( 
+                $this->getBlog()->getID(), 
+                $this->getBlog()->getWordpress()->getUsername(), 
+                $this->getBlog()->getWordpress()->getPassword(),
+                $id
+            ));
+            
+            $user = $rpc_client->send();
         
-        $this->lastname     = $lastname;
+        	$this->id           = intval($user['user_id']);
         
-        $this->bio          = $bio;
-        
-        $this->email        = $email;
-        
-        $this->nickname     = $nickname;
-        
-        $this->nicename     = $nicename;
-        
-        $this->url          = $url;
-        
-        $this->displayname  = $displayname;
-        
-        $this->registration = strtotime($registration);
-        
-        $this->roles        = $roles;
-        
+	        $this->username     = $user['username'];
+	        
+	        $this->firstname    = $user['first_name'];
+	        
+	        $this->lastname     = $user['last_name'];
+	        
+	        $this->bio          = $user['bio'];
+	        
+	        $this->email        = $user['email'];
+	        
+	        $this->nickname     = $user['nickname'];
+	        
+	        $this->nicename     = $user['nicename'];
+	        
+	        $this->url          = $user['url'];
+	        
+	        $this->displayname  = $user['display_name'];
+	        
+	        $this->registration = strtotime($user['registered']);
+	        
+	        $this->roles        = $user['roles'];
+            
+    	} catch (RpcException $rpc) {
+    		
+    		throw new WPException("Unable to retrive user's informations - RPC Exception (".$rpc->getMessage().")");
+    		
+    	} catch (XmlrpcException $xml) {
+    		
+    		throw new WPException("Unable to retrive user's informations - XMLRPC Exception (".$xml->getMessage().")");
+    		
+    	} catch (HttpException $http) {
+    		
+    		throw new WPException("Unable to retrive user's informations - HTTP Exception (".$http->getMessage().")");
+    		
+    	} catch (Exception $e) {
+    		
+    		throw new WPException("Unable to retrive user's informations - Generic Exception (".$e->getMessage().")");
+    		
+    	}
+    	
+    	return $this;
+    	
     }
     
     /**
