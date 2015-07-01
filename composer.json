@@ -1,0 +1,31 @@
+{
+    "name": "comodojo/wpapi",
+    "description": "Wordpress XML-RPC API wrapper",
+    "license": "MIT",
+    "keywords": [
+        "wordpress",
+        "api",
+        "xmlrpc",
+        "wrapper"
+    ],
+    "homepage": "http://comodojo.org",
+    "authors": [
+        {
+            "name": "Marco Castiello",
+            "email": "marco.castiello@gmail.com"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/comodojo/wpapi/issues"
+    },
+    "autoload": {
+        "psr-4": {
+             "Comodojo\\Exception\\": "src/Exception",
+             "Comodojo\\WP\\": "src"
+         }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.0",
+        "comodojo/rpcclient": "1.1.*"
+    }
+}
