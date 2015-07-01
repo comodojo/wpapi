@@ -11,7 +11,7 @@ Install [composer](https://getcomposer.org/), then:
 
 ## Usage example
 
-Getting recent posts from a blog:
+Getting recent posts from a blog and adding a new one:
 
 ```php
 try {
