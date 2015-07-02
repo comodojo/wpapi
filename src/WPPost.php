@@ -140,7 +140,7 @@ class WPBlog {
      *
      * @var string
      */
-	private $parent = "";
+	private $parent = null;
 	
 	/**
      * Post mime type
@@ -221,6 +221,16 @@ class WPBlog {
      */
 	private $enclosure = array();
 	
+	/**
+     * Comments
+     *
+     * @var int
+     */
+	private $comment_approved = 0;
+	private $comment_awaiting = 0;
+	private $comment_spam     = 0;
+	private $comment_total    = 0;
+	
     /**
      * Class constructor
      *
@@ -265,7 +275,7 @@ class WPBlog {
             
         $this->supportedTypes   = array_keys($this->getBlog()->getSupportedTypes());
             
-        $this->supportedStatus  = array_keys($this->getBlog()->getSupportedStatus());
+        $this->supportedStatus  = array_keys($this->getBlog()->getSupportedPostStatus());
         
     }
 	
@@ -287,8 +297,8 @@ class WPBlog {
             
             $rpc_client->setAutoclean()->addRequest("wp.getPost", array( 
                 $this->getBlog()->getID(), 
-                $this->getBlog()->getWordpress()->getUsername(), 
-                $this->getBlog()->getWordpress()->getPassword(),
+                $this->getWordpress()->getUsername(), 
+                $this->getWordpress()->getPassword(),
                 intval($id)
             ));
             
@@ -341,11 +351,22 @@ class WPBlog {
 			
 			$this->thumbnail    = null; // TO DO: As soon as the WPMediaItem class is ready
 			
-			$this->terms        = array(); // TO DO: As soon as the WPTerm class is ready
+			$this->terms        = array();
 			
 			$this->custom       = $post['custom_fields'];
 			
 			$this->enclosure    = $post['enclosure'];
+			
+			foreach ($post['terms'] as $term) {
+				
+				$taxonomy = new WPTaxonomy($this->getBlog(), $term['taxonomy']);
+				
+				array_push(
+					$this->terms,
+					new WPTerm($taxonomy, $term['term_id'])
+				);
+				
+			}
             
     	} catch (RpcException $rpc) {
     		
@@ -365,8 +386,73 @@ class WPBlog {
     		
     	}
     	
-    	return $this;
+    	return $this->loadCommentCount();
         
+    }
+    
+    /**
+     * Get comment count for current post
+     *
+     * @return  Object  $this
+     */
+    private function loadCommentCount() {
+    	
+    	if ($this->getID() > 0) {
+	    	try {
+	    		
+	            $rpc_client = new RpcClient($this->getBlog()->getEndPoint());
+	            
+	            $rpc_client->setAutoclean()->addRequest("wp.getCommentCount", array( 
+	                $this->getBlog()->getID(), 
+	                $this->getWordpress()->getUsername(), 
+	                $this->getWordpress()->getPassword(),
+	                $this->getID()
+	            ));
+	            
+	            $count = $rpc_client->send();
+	            
+	            $this->comment_approved = $count[0]['approved'];
+	            
+	            $this->comment_awaiting = $count[0]['awaiting_moderation'];
+	            
+	            $this->comment_spam     = $count[0]['spam'];
+	            
+	            $this->comment_total    = $count[0]['approved'];
+            
+	    	} catch (RpcException $rpc) {
+	    		
+	    		throw new WPException("Unable to retrive comment count - RPC Exception (".$rpc->getMessage().")");
+	    		
+	    	} catch (XmlrpcException $xml) {
+	    		
+	    		throw new WPException("Unable to retrive comment count - XMLRPC Exception (".$xml->getMessage().")");
+	    		
+	    	} catch (HttpException $http) {
+	    		
+	    		throw new WPException("Unable to retrive comment count - HTTP Exception (".$http->getMessage().")");
+	    		
+	    	} catch (Exception $e) {
+	    		
+	    		throw new WPException("Unable to retrive comment count - Generic Exception (".$e->getMessage().")");
+	    		
+	    	}
+	            
+    	}
+    	
+    	
+    	return $this;
+    	
+    }
+    
+    /**
+     * Get wordpress reference
+     *
+     * @return  Object  $wordpress
+     */
+    public function getWordpress() {
+    	
+    	return $this->getBlog()->getWordpress();
+    	
     }
     
     /**
@@ -494,7 +580,7 @@ class WPBlog {
     }
     
     /**
-     * Set ping post status
+     * Set post status
      *
      * @param   string  $value
      *
@@ -562,7 +648,7 @@ class WPBlog {
     }
     
     /**
-     * Set ping post format
+     * Set post format
      *
      * @param   string  $value
      *
@@ -726,6 +812,8 @@ class WPBlog {
      * @throws \Comodojo\Exception\WPException
      */
     public function getParent() {
+    	
+    	if (empty($this->parent) || is_null($this->parent) || $this->parent == 0) return null;
     	
     	try {
     		
@@ -1057,6 +1145,221 @@ class WPBlog {
     	return $this;
     	
     }
+    
+    /**
+     * Get terms
+     *
+     * @return  array  $this->terms
+     */
+    public function getTerms() {
+    	
+    	return $this->terms;
+    	
+    }
+    
+    /**
+     * Get categories
+     *
+     * @return  array  $categories
+     */
+    public function getCategories() {
+    	
+    	$categories = array();
+    	
+    	foreach ($this->terms as $term) {
+    		
+    		if ($term->getTaxonomy()->getName() == "category") array_push($categories, $term);
+    		
+    	}
+    	
+    	return $categories;
+    	
+    }
+    
+    /**
+     * Has category
+     *
+     * @param   string  $category Category name
+     *
+     * @return  boolean $hasCategory
+     */
+    public function hasCategory($category) {
+    	
+    	foreach ($this->getCategories() as $t) {
+    		
+    		if ($t->getName() == $category) return true;
+    		
+    	}
+    	
+    	return false;
+    	
+    }
+    
+    /**
+     * Get tags
+     *
+     * @return  array  $tags
+     */
+    public function getTags() {
+    	
+    	$tags = array();
+    	
+    	foreach ($this->terms as $term) {
+    		
+    		if ($term->getTaxonomy()->getName() == "post_tag") array_push($tags, $term);
+    		
+    	}
+    	
+    	return $tags;
+    	
+    }
+    
+    /**
+     * Has tag
+     *
+     * @param   string  $tag Tag name
+     *
+     * @return  boolean $hasTag
+     */
+    public function hasTag($tag) {
+    	
+    	foreach ($this->getTags() as $t) {
+    		
+    		if ($t->getName() == $tag) return true;
+    		
+    	}
+    	
+    	return false;
+    	
+    }
+    
+    /**
+     * Add term
+     *
+     * @param   Opject  $term WPTerm object
+     *
+     * @return  Object  $this
+     */
+    public function addTerm($term) {
+    	
+    	if (!$this->hasTerm($term)) {
+    		
+    		array_push($this->terms, $term);
+    		
+    	}
+    	
+    	return $this;
+    	
+    }
+    
+    /**
+     * Has term
+     *
+     * @param   mixed   $term Term ID or WPTerm object
+     *
+     * @return  boolean $hasTerm
+     */
+    public function hasTerm($term) {
+    	
+    	if (is_numeric($term)) {
+    		
+    		$term = intval($term);
+    		
+    	} else {
+    		
+    		$term = $term->getID();
+    		
+    	}
+    	
+    	foreach ($this->terms as $t) {
+    		
+    		if ($t->getID() == $term) return true;
+    		
+    	}
+    	
+    	return false;
+    	
+    }
+    
+    /**
+     * Get comments for current post
+     *
+     * @param   string $status Comment status (check WPBlog::getSupportedCommentStatus)
+     * @param   int    $number Number of comments to fetch
+     * @param   int    $offset Number of comments to skip
+     *
+     * @return  array  $comments List of comment objects (WPComment)
+     * 
+     * @throws \Comodojo\Exception\WPException
+     */
+    public function getComments($status = "", $number = null, $offset = 0) {
+    	
+    	if ($this->getID() > 0) {
+	    	try {
+	    		
+	    		$comments = array();
+	    		
+	    		$filter = array(
+	    			'post_id' => $this->getID(),
+	    			'offset'  => $offset,
+	    		);
+	    		
+	    		if (!empty($status)) {
+	    			$filter['status'] = $status;
+	    		}
+	    		
+	    		if (!is_null($number)) {
+	    			$filter['number'] = $number;
+	    		}
+	    		
+	            $rpc_client = new RpcClient($this->getBlog()->getEndPoint());
+	            
+	            $rpc_client->setAutoclean()->addRequest("wp.getComments", array( 
+	                $this->getBlog()->getID(), 
+	                $this->getWordpress()->getUsername(), 
+	                $this->getWordpress()->getPassword(),
+	                $filter
+	            ));
+	            
+	            $comment_list = $rpc_client->send();
+	            
+	            foreach ($comment_list as $comment) {
+	            	
+	            	array_push(
+	            		$comments,
+	            		new WPComment(
+	            			$this,
+	            			$comment['comment_id']
+	            		)
+	            	);
+	            	
+	            }
+	            
+	            return $comments;
+            
+	    	} catch (RpcException $rpc) {
+	    		
+	    		throw new WPException("Unable to retrive comment list - RPC Exception (".$rpc->getMessage().")");
+	    		
+	    	} catch (XmlrpcException $xml) {
+	    		
+	    		throw new WPException("Unable to retrive comment list - XMLRPC Exception (".$xml->getMessage().")");
+	    		
+	    	} catch (HttpException $http) {
+	    		
+	    		throw new WPException("Unable to retrive comment list - HTTP Exception (".$http->getMessage().")");
+	    		
+	    	} catch (Exception $e) {
+	    		
+	    		throw new WPException("Unable to retrive comment list - Generic Exception (".$e->getMessage().")");
+	    		
+	    	}
+	            
+    	}
+    	
+    	return null;
+    	
+    }
 	
     /**
      * Save post
@@ -1085,6 +1388,8 @@ class WPBlog {
     		throw $wpe;
     		
     	}
+    	
+    	return $this;
     		
     }
     
@@ -1101,15 +1406,15 @@ class WPBlog {
     	$content = $this->getPostData();
     	
     	try {
-            $rpc_client = new RpcClient($this->blog->getEndPoint());
+            $rpc_client = new RpcClient($this->getBlog()->getEndPoint());
             
             $rpc_client->setValueType(
             	$content['post_date'],
             	"datetime"
             )->addRequest("wp.newPost", array( 
                 $this->getBlog()->getID(), 
-                $this->getBlog()->getWordpress()->getUsername(), 
-                $this->getBlog()->getWordpress()->getPassword(),
+                $this->getWordpress()->getUsername(), 
+                $this->getWordpress()->getPassword(),
                 $content
             ));
             
@@ -1159,8 +1464,8 @@ class WPBlog {
             	"datetime"
             )->addRequest("wp.editPost", array( 
                 $this->getBlog()->getID(), 
-                $this->getBlog()->getWordpress()->getUsername(), 
-                $this->getBlog()->getWordpress()->getPassword(),
+                $this->getWordpress()->getUsername(), 
+                $this->getWordpress()->getPassword(),
                 $this->getID(),
                 $content
             ));
@@ -1193,15 +1498,12 @@ class WPBlog {
      * Load post data
      *
      * @return  array  $data
-     * 
-     * @throws \Comodojo\Exception\WPException
      */
     private function getPostData() {
     	
     	/*
     	 * TO DO:
     	 * - Add thumbnail support
-    	 * - Add terms support
     	 */   	
     	$data = array(
     		'post_type'      => $this->type,
@@ -1214,8 +1516,7 @@ class WPBlog {
     		'comment_status' => $this->comment,
     		'menu_order'     => $this->menu_order,
     		'ping_status'    => $this->ping,
-    		'sticky'         => ($this->sticky)?1:0,
-    		'post_parent'    => $this->parent
+    		'sticky'         => ($this->sticky)?1:0
     	);
     	
     	if (count($this->custom) > 0) {
@@ -1230,6 +1531,12 @@ class WPBlog {
     			));
     			
     		}
+    		
+    	}
+    	
+    	if (!is_null($this->getParent())) {
+    		
+    		$data['post_parent'] = $this->parent;
     		
     	}
     	
@@ -1251,6 +1558,23 @@ class WPBlog {
     		
     	}
     	
+    	if (count($this->terms) > 0) {
+    		
+    		$data['terms'] = array();
+    		
+    		foreach ($this->terms as $term) {
+    			
+    			$key = $term->getTaxonomy()->getName();
+    			
+    			if (!isset($data['terms'][$key])) $data['terms'][$key] = array();
+    			
+    			array_push($data['terms'][$key], $term->getID());
+    			
+    		}
+    		
+    		
+    	}
+    	
     	return $data;
     		
     }
@@ -1267,8 +1591,8 @@ class WPBlog {
             
             $rpc_client->addRequest("wp.deletePost", array( 
                 $this->getBlog()->getID(), 
-                $this->getBlog()->getWordpress()->getUsername(), 
-                $this->getBlog()->getWordpress()->getPassword(),
+                $this->getWordpress()->getUsername(), 
+                $this->getWordpress()->getPassword(),
                 $this->getID()
             ));
             
@@ -1276,19 +1600,19 @@ class WPBlog {
     		
     	} catch (RpcException $rpc) {
     		
-    		throw new WPException("Unable to create new post - RPC Exception (".$rpc->getMessage().")");
+    		throw new WPException("Unable to delete post - RPC Exception (".$rpc->getMessage().")");
     		
     	} catch (XmlrpcException $xml) {
     		
-    		throw new WPException("Unable to create new post - XMLRPC Exception (".$xml->getMessage().")");
+    		throw new WPException("Unable to delete post - XMLRPC Exception (".$xml->getMessage().")");
     		
     	} catch (HttpException $http) {
     		
-    		throw new WPException("Unable to create new post - HTTP Exception (".$http->getMessage().")");
+    		throw new WPException("Unable to delete post - HTTP Exception (".$http->getMessage().")");
     		
     	} catch (Exception $e) {
     		
-    		throw new WPException("Unable to create new post - Generic Exception (".$e->getMessage().")");
+    		throw new WPException("Unable to delete post - Generic Exception (".$e->getMessage().")");
     		
     	}
     	
@@ -1302,8 +1626,6 @@ class WPBlog {
      * Reset data of the object, it can still be used calling the loadFromID method
      *
      * @return  Object  $this
-     * 
-     * @throws \Comodojo\Exception\WPException
      */
     
     private function resetData() {
@@ -1336,7 +1658,7 @@ class WPBlog {
 		
 		$this->content      = "";
 		
-		$this->parent       = "";
+		$this->parent       = null;
 		
 		$this->mime_type    = "";
 		
@@ -1354,7 +1676,7 @@ class WPBlog {
 		
 		$this->thumbnail    = null; // TO DO: As soon as the WPMediaItem class is ready
 		
-		$this->terms        = array(); // TO DO: As soon as the WPTerm class is ready
+		$this->terms        = array();
 		
 		$this->custom       = array();
 		

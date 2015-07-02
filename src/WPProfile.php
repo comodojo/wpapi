@@ -209,8 +209,8 @@ class WPProfile extends WPUser {
             
             $rpc_client->addRequest("wp.editProfile", array( 
                 $this->getBlog()->getID(), 
-                $this->getBlog()->getWordpress()->getUsername(), 
-                $this->getBlog()->getWordpress()->getPassword(),
+                $this->getWordpress()->getUsername(), 
+                $this->getWordpress()->getPassword(),
                 array(
                 	"first_name"   => $this->getFirstname(),
                 	"last_name"    => $this->getLastname(),

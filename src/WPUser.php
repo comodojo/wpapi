@@ -174,8 +174,8 @@ class WPUser {
             
             $rpc_client->addRequest("wp.getUser", array( 
                 $this->getBlog()->getID(), 
-                $this->getBlog()->getWordpress()->getUsername(), 
-                $this->getBlog()->getWordpress()->getPassword(),
+                $this->getWordpress()->getUsername(), 
+                $this->getWordpress()->getPassword(),
                 $id
             ));
             
@@ -224,6 +224,17 @@ class WPUser {
     	}
     	
     	return $this;
+    	
+    }
+    
+    /**
+     * Get wordpress reference
+     *
+     * @return  Object  $wordpress
+     */
+    public function getWordpress() {
+    	
+    	return $this->getBlog()->getWordpress();
     	
     }
     
@@ -342,7 +353,7 @@ class WPUser {
      *
      * @return  string  $this->displayname
      */
-    public function getDisplayname() {
+    public function getDisplayName() {
     	
     	return $this->displayname;
     	

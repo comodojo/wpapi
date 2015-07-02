@@ -9,6 +9,10 @@ Install [composer](https://getcomposer.org/), then:
 
 `` composer require comodojo/wpapi dev-master ``
 
+## TO DO
+
+ - Add Media library support
+
 ## Usage example
 
 Getting recent posts from a blog and adding a new page:
@@ -32,6 +36,7 @@ try {
     $new_post->setTitle("Awesome new page")
       ->setContent("This is a really awesome test page")
       ->setType("page") // Yep, I'm creating a page
+      ->setStatus("publish") // By default, all posts are saved as "draft"
       ->save();
 
 } catch (\Exception $e) {

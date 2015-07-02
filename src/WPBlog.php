@@ -90,6 +90,20 @@ class WPBlog {
      */
 	private $supportedTypes = array();
 	
+	/**
+     * List of all supported post status
+     *
+     * @var array
+     */
+	private $supportedPostStatus = array();
+	
+	/**
+     * List of all supported comment status
+     *
+     * @var array
+     */
+	private $supportedCommentStatus = array();
+	
     /**
      * Class constructor
      *
@@ -126,7 +140,11 @@ class WPBlog {
     	
     	try {
     		
-            $this->loadBlogOptions()->loadPostFormats()->loadPostTypes()->loadPostStatus();
+            $this->loadBlogOptions()
+            	->loadPostFormats()
+            	->loadPostTypes()
+            	->loadPostStatus()
+            	->loadCommentStatus();
             
     	} catch (WPException $wpe) {
     		
@@ -218,9 +236,20 @@ class WPBlog {
      *
      * @return  array  $status
      */
-    public function getSupportedStatus() {
+    public function getSupportedPostStatus() {
     	
-    	return $this->supportedStatus;
+    	return $this->supportedPostStatus;
+    	
+    }
+    
+    /**
+     * Get supported comment status
+     *
+     * @return  array  $status
+     */
+    public function getSupportedCommentStatus() {
+    	
+    	return $this->supportedCommentStatus;
     	
     }
     
@@ -505,9 +534,9 @@ class WPBlog {
     	$users  = array();
     	
     	$filter = array(
-        	"offset" => $offset,
+        	"offset"  => $offset,
         	"orderby" => $orderby,
-        	"order" => $order
+        	"order"   => $order
         );
         
         if (!is_null($role)) {
@@ -656,9 +685,9 @@ class WPBlog {
     	$posts  = array();
     	
     	$filter = array(
-        	"offset" => $offset,
+        	"offset"  => $offset,
         	"orderby" => $orderby,
-        	"order" => $order
+        	"order"   => $order
         );
         
         if (!is_null($type)) {
@@ -701,23 +730,217 @@ class WPBlog {
             
     	} catch (RpcException $rpc) {
     		
-    		throw new WPException("Unable to retrive user's informations - RPC Exception (".$rpc->getMessage().")");
+    		throw new WPException("Unable to retrive post informations - RPC Exception (".$rpc->getMessage().")");
     		
     	} catch (XmlrpcException $xml) {
     		
-    		throw new WPException("Unable to retrive user's informations - XMLRPC Exception (".$xml->getMessage().")");
+    		throw new WPException("Unable to retrive post informations - XMLRPC Exception (".$xml->getMessage().")");
     		
     	} catch (HttpException $http) {
     		
-    		throw new WPException("Unable to retrive user's informations - HTTP Exception (".$http->getMessage().")");
+    		throw new WPException("Unable to retrive post informations - HTTP Exception (".$http->getMessage().")");
     		
     	} catch (Exception $e) {
     		
-    		throw new WPException("Unable to retrive user's informations - Generic Exception (".$e->getMessage().")");
+    		throw new WPException("Unable to retrive post informations - Generic Exception (".$e->getMessage().")");
     		
     	}
     	
     	return $posts;
+    	
+    }
+    
+    /**
+     * Get post list by category
+     *
+     * @param   string $category Category name or description
+     * @param   string $number   Number of posts (optional)
+     *
+     * @return  array  $posts
+     * 
+     * @throws \Comodojo\Exception\WPException
+     */
+    public function getPostsByCategory($category, $number = null) {
+    	
+    	try {
+    	
+    		return $this->getPostsByTerm("category", $category, $number);
+    	
+    	} catch (WPException $wpe) {
+    		
+    		throw $wpe;
+    		
+    	}
+    	
+    }
+    
+    /**
+     * Get post list by tag
+     *
+     * @param   string $tag      Tag name or description
+     * @param   string $number   Number of posts (optional)
+     *
+     * @return  array  $posts
+     * 
+     * @throws \Comodojo\Exception\WPException
+     */
+    public function getPostsByTag($tag, $number = null) {
+    	
+    	try {
+    	
+    		return $this->getPostsByTerm("post_tag", $tag, $number);
+    	
+    	} catch (WPException $wpe) {
+    		
+    		throw $wpe;
+    		
+    	}
+    	
+    }
+    
+    /**
+     * Get post list by term
+     *
+     * @param   string $taxonomy Taxonomy name
+     * @param   string $value    Term name or description
+     * @param   int    $number   Number of posts to fetch
+     *
+     * @return  array  $posts
+     * 
+     * @throws \Comodojo\Exception\WPException
+     */
+    public function getPostsByTerm($taxonomy, $value, $number = null) {
+    	
+    	$posts  = array();
+    	
+    	$filter = array(
+        	"offset"      => 0,
+        	"orderby"     => "post_date",
+        	"order"       => "DESC",
+        	"post_type"   => "post",
+        	"post_status" => "publish",
+        );
+        
+        if (!is_null($number)) {
+        	$filter["number"] = intval($number);
+        }
+    	
+    	try {
+    		
+            $rpc_client = new RpcClient($this->getEndPoint());
+            
+            $rpc_client->addRequest("wp.getPosts", array( 
+                $this->getID(), 
+                $this->getWordpress()->getUsername(), 
+                $this->getWordpress()->getPassword(),
+                $filter,
+                array('post_id', 'terms')
+            ));
+            
+            $post_list = $rpc_client->send();
+            
+            foreach ($post_list as $post) {
+            	
+            	foreach ($post['terms'] as $term) {
+	            	
+	            	if ($term['taxonomy'] == $taxonomy) {
+	            		
+	            		if ($term['name'] == $value || $term['description'] == $value) {
+	            			
+			            	array_push(
+			            		$posts,
+			            		new WPPost(
+					            	$this,
+					            	$post['post_id']
+					            )
+			            	);
+			            	
+			            	break;
+	            			
+	            		}
+	            	
+	            	}
+	            	
+            	}
+            	
+            }
+            
+    	} catch (RpcException $rpc) {
+    		
+    		throw new WPException("Unable to retrive post informations - RPC Exception (".$rpc->getMessage().")");
+    		
+    	} catch (XmlrpcException $xml) {
+    		
+    		throw new WPException("Unable to retrive post informations - XMLRPC Exception (".$xml->getMessage().")");
+    		
+    	} catch (HttpException $http) {
+    		
+    		throw new WPException("Unable to retrive post informations - HTTP Exception (".$http->getMessage().")");
+    		
+    	} catch (Exception $e) {
+    		
+    		throw new WPException("Unable to retrive post informations - Generic Exception (".$e->getMessage().")");
+    		
+    	}
+    	
+    	return $posts;
+    	
+    }
+    
+    /**
+     * Get taxonomy list
+     *
+     * @return  array  $taxonomies
+     * 
+     * @throws \Comodojo\Exception\WPException
+     */
+    public function getTaxonomies() {
+    	
+    	$taxonomies  = array();
+    	
+    	try {
+    		
+            $rpc_client = new RpcClient($this->getEndPoint());
+            
+            $rpc_client->addRequest("wp.getTaxonomies", array( 
+                $this->getID(), 
+                $this->getWordpress()->getUsername(), 
+                $this->getWordpress()->getPassword()
+            ));
+            
+            $tax_list = $rpc_client->send();
+            
+            foreach ($tax_list as $taxonomy) {
+            	
+            	array_push(
+            		$taxonomies,
+            		new WPTaxonomy(
+		            	$this,
+		            	$taxonomy['name']
+		            )
+            	);
+            	
+            }
+            
+    	} catch (RpcException $rpc) {
+    		
+    		throw new WPException("Unable to retrive taxonomy informations - RPC Exception (".$rpc->getMessage().")");
+    		
+    	} catch (XmlrpcException $xml) {
+    		
+    		throw new WPException("Unable to retrive taxonomy informations - XMLRPC Exception (".$xml->getMessage().")");
+    		
+    	} catch (HttpException $http) {
+    		
+    		throw new WPException("Unable to retrive taxonomy informations - HTTP Exception (".$http->getMessage().")");
+    		
+    	} catch (Exception $e) {
+    		
+    		throw new WPException("Unable to retrive taxonomy informations - Generic Exception (".$e->getMessage().")");
+    		
+    	}
+    	
+    	return $taxonomies;
     	
     }
 	
@@ -837,7 +1060,7 @@ class WPBlog {
                 $this->getWordpress()->getPassword()
             ));
             
-            $this->supportedStatus = $rpc_client->send();
+            $this->supportedPostStatus = $rpc_client->send();
             
     	} catch (RpcException $rpc) {
     		
@@ -854,6 +1077,56 @@ class WPBlog {
     	} catch (Exception $e) {
     		
     		throw new WPException("Unable to retrive post status - Generic Exception (".$e->getMessage().")");
+    		
+    	}
+    	
+    	return $this;
+        
+    }
+	
+    /**
+     * Load supported comment status
+     *
+     * @return  Object  $this
+     * 
+     * @throws \Comodojo\Exception\WPException
+     */
+    
+    private function loadCommentStatus() {
+    	
+    	try {
+    		
+            $rpc_client = new RpcClient($this->getEndPoint());
+    		
+            $rpc_client->addRequest("wp.getCommentStatusList", array( 
+                $this->getID(), 
+                $this->getWordpress()->getUsername(), 
+                $this->getWordpress()->getPassword()
+            ));
+            
+            $status = $rpc_client->send();
+            
+            foreach ($status as $s) {
+            
+            	$this->supportedCommentStatus[$s['key']] = $s['value'];
+            	
+            }
+            
+    	} catch (RpcException $rpc) {
+    		
+    		throw new WPException("Unable to retrive comment status - RPC Exception (".$rpc->getMessage().")");
+    		
+    	} catch (XmlrpcException $xml) {
+    		
+    		throw new WPException("Unable to retrive comment status - XMLRPC Exception (".$xml->getMessage().")");
+    		
+    	} catch (HttpException $http) {
+    		
+    		throw new WPException("Unable to retrive comment status - HTTP Exception (".$http->getMessage().")");
+    		
+    	} catch (Exception $e) {
+    		
+    		throw new WPException("Unable to retrive comment status - Generic Exception (".$e->getMessage().")");
     		
     	}
     	
