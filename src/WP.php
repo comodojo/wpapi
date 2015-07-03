@@ -27,42 +27,42 @@ use \Comodojo\RpcClient\RpcClient;
  * THE SOFTWARE.
  */
 class WP {
-	
-	/**
+  
+    /**
      * URL of the Wordpress installation
      *
      * @var string
      */
-	private $url      = "";
-	
-	/**
+    private $url      = "";
+    
+    /**
      * Username
      *
      * @var string
      */
-	private $username = "";
-	
-	/**
+    private $username = "";
+    
+    /**
      * Password
      *
      * @var string
      */
-	private $password = "";
-	
-	/**
+    private $password = "";
+    
+    /**
      * List of blogs accessible for the logged user
      *
      * @var mixed
      */
-	private $blogs    = array();
-	
-	/**
+    private $blogs    = array();
+    
+    /**
      * Login status
      *
      * @var boolean
      */
-	private $logged   = false;
-	
+    private $logged   = false;
+  
     /**
      * Class constructor
      *
@@ -73,17 +73,17 @@ class WP {
      * @throws \Comodojo\Exception\WPException
      */
     public function __construct($url) {
-    	
+      
         if ( empty($url) ) {
-        	
-        	throw new WPException("Invalid Wordpress address");
-        	
+          
+            throw new WPException("Invalid Wordpress address");
+          
         }
         
         if (!preg_match("/^http/", $url)) {
-        	
-        	$url = "http://".$url;
-        	
+          
+            $url = "http://".$url;
+          
         }
         
         $this->url = preg_replace('/\/$/', "", $url);
@@ -100,9 +100,9 @@ class WP {
      * @throws \Comodojo\Exception\WPException
      */
     public function login($username, $password) {
-    	
-    	try {
-    		
+      
+        try {
+        
             $rpc_client = new RpcClient($this->url."/xmlrpc.php");
             
             $rpc_client->addRequest("wp.getUsersBlogs", array( 
@@ -113,50 +113,50 @@ class WP {
             $blogs = $rpc_client->send();
             
             foreach ($blogs as $blog) {
-            	
-            	array_push(
-            		$this->blogs,
-            		new WPBlog(
-            			$this,
-            			$blog['blogid'],
-            			$blog['blogName'],
-            			$blog['url'],
-            			$blog['xmlrpc'],
-            			$blog['isAdmin']
-            		)
-            	);
-            	
+              
+              array_push(
+                $this->blogs,
+                new WPBlog(
+                  $this,
+                  $blog['blogid'],
+                  $blog['blogName'],
+                  $blog['url'],
+                  $blog['xmlrpc'],
+                  $blog['isAdmin']
+                )
+              );
+              
             }
-    		
-    	} catch (RpcException $rpc) {
-    		
-    		throw new WPException("Unable to login - RPC Exception (".$rpc->getMessage().")");
-    		
-    	} catch (XmlrpcException $xml) {
-    		
-    		throw new WPException("Unable to login - XMLRPC Exception (".$xml->getMessage().")");
-    		
-    	} catch (HttpException $http) {
-    		
-    		throw new WPException("Unable to login - HTTP Exception (".$http->getMessage().")");
-    		
-    	} catch (Exception $e) {
-    		
-    		throw new WPException("Unable to login - Generic Exception (".$e->getMessage().")");
-    		
-    	}
-    	
-    	if (count($this->blogs) > 0) {
-    		
-    		$this->logged = true;
-    		
-    	}
-    	
-    	$this->username = $username;
-    	$this->password = $password;
-    	
-    	return $this->logged;
-    	
+        
+        } catch (RpcException $rpc) {
+        
+            throw new WPException("Unable to login - RPC Exception (".$rpc->getMessage().")");
+        
+        } catch (XmlrpcException $xml) {
+        
+            throw new WPException("Unable to login - XMLRPC Exception (".$xml->getMessage().")");
+        
+        } catch (HttpException $http) {
+        
+            throw new WPException("Unable to login - HTTP Exception (".$http->getMessage().")");
+        
+        } catch (Exception $e) {
+        
+            throw new WPException("Unable to login - Generic Exception (".$e->getMessage().")");
+        
+        }
+      
+        if (count($this->blogs) > 0) {
+        
+            $this->logged = true;
+        
+        }
+      
+        $this->username = $username;
+        $this->password = $password;
+      
+        return $this->logged;
+      
     }
     
     /**
@@ -165,9 +165,9 @@ class WP {
      * @return  boolean  $this->logged
      */
     public function isLogged() {
-    	
-    	return $this->logged;
-    	
+      
+        return $this->logged;
+      
     }
     
     /**
@@ -176,9 +176,9 @@ class WP {
      * @return  string  $this->username
      */
     public function getUsername() {
-    	
-    	return $this->username;
-    	
+      
+        return $this->username;
+      
     }
     
     /**
@@ -187,9 +187,9 @@ class WP {
      * @return  string  $this->password
      */
     public function getPassword() {
-    	
-    	return $this->password;
-    	
+      
+        return $this->password;
+      
     }
     
     /**
@@ -198,9 +198,9 @@ class WP {
      * @return  array  $this->blogs
      */
     public function getBlogs() {
-    	
-    	return $this->blogs;
-    	
+      
+        return $this->blogs;
+      
     }
     
     /**
@@ -211,17 +211,17 @@ class WP {
      * @return  Object  $blog
      */
     public function getBlogByID($id) {
-    	
-    	$id = intval($id);
-    	
-    	foreach ($this->blogs as $blog) {
-    		
-    		if ($blog->getID() == $id) return $blog;
-    		
-    	}
-    	
-    	return null;
-    	
+      
+        $id = intval($id);
+      
+        foreach ($this->blogs as $blog) {
+        
+            if ($blog->getID() == $id) return $blog;
+        
+        }
+      
+        return null;
+      
     }
     
     /**
@@ -232,15 +232,15 @@ class WP {
      * @return  Object  $blog
      */
     public function getBlogByName($name) {
-    	
-    	foreach ($this->blogs as $blog) {
-    		
-    		if ($blog->getName() == $name) return $blog;
-    		
-    	}
-    	
-    	return null;
-    	
+      
+        foreach ($this->blogs as $blog) {
+        
+            if ($blog->getName() == $name) return $blog;
+        
+        }
+      
+        return null;
+      
     }
     
     

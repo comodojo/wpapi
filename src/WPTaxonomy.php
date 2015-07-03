@@ -159,24 +159,8 @@ class WPTaxonomy {
             ));
             
             $taxonomy = $rpc_client->send();
-        
-	        $this->name         = $taxonomy['name'];
-	        
-	        $this->label        = $taxonomy['label'];
-	        
-	        $this->hierarchical = filter_var($taxonomy['hierarchical'], FILTER_VALIDATE_BOOLEAN);
-	        
-	        $this->public_tax   = filter_var($taxonomy['public'], FILTER_VALIDATE_BOOLEAN);
-	        
-	        $this->show_ui      = filter_var($taxonomy['show_ui'], FILTER_VALIDATE_BOOLEAN);
-	        
-	        $this->builtin      = filter_var($taxonomy['_builtin'], FILTER_VALIDATE_BOOLEAN);
-	        
-	        $this->labels       = $taxonomy['labels'];
-	        
-	        $this->cap          = $taxonomy['cap'];
-	        
-	        $this->object_type  = $taxonomy['object_type'];
+            
+            $this->loadData($taxonomy);
             
     	} catch (RpcException $rpc) {
     		
@@ -409,6 +393,38 @@ class WPTaxonomy {
     	
     	return $terms;
     	
+    }
+	
+    /**
+     * Load taxonomy data
+     *
+     * @param   array   $taxonomy
+     *
+     * @return  Object  $this
+     */
+    
+    public function loadData($taxonomy) {
+		
+        $this->name         = $taxonomy['name'];
+        
+        $this->label        = $taxonomy['label'];
+        
+        $this->hierarchical = filter_var($taxonomy['hierarchical'], FILTER_VALIDATE_BOOLEAN);
+        
+        $this->public_tax   = filter_var($taxonomy['public'], FILTER_VALIDATE_BOOLEAN);
+        
+        $this->show_ui      = filter_var($taxonomy['show_ui'], FILTER_VALIDATE_BOOLEAN);
+        
+        $this->builtin      = filter_var($taxonomy['_builtin'], FILTER_VALIDATE_BOOLEAN);
+        
+        $this->labels       = $taxonomy['labels'];
+        
+        $this->cap          = $taxonomy['cap'];
+        
+        $this->object_type  = $taxonomy['object_type'];
+    	
+    	return $this;
+        
     }
     
 }

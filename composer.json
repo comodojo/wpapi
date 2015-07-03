@@ -20,11 +20,12 @@
     },
     "autoload": {
         "psr-4": {
-             "Comodojo\\Exception\\": "src/Exception",
-             "Comodojo\\WP\\": "src"
-         }
+            "Comodojo\\Exception\\": "src/Exception",
+            "Comodojo\\WP\\": "src"
+        }
     },
     "require-dev": {
+        "php": ">=5.3.0",
         "phpunit/phpunit": "~4.0",
         "comodojo/rpcclient": "1.1.*"
     }

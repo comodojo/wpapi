@@ -349,21 +349,31 @@ class WPBlog {
 			
 			$this->sticky       = filter_var($post['sticky'], FILTER_VALIDATE_BOOLEAN);
 			
-			$this->thumbnail    = null; // TO DO: As soon as the WPMediaItem class is ready
-			
 			$this->terms        = array();
 			
 			$this->custom       = $post['custom_fields'];
 			
 			$this->enclosure    = $post['enclosure'];
 			
+			if ( isset($post['post_thumbnail']['attachment_id']) ) {
+				
+				$this->thumbnail = new WPMedia($this->getBlog());
+				
+				$this->thumbnail->loadData($post['post_thumbnail']);
+				
+			}
+			
 			foreach ($post['terms'] as $term) {
 				
 				$taxonomy = new WPTaxonomy($this->getBlog(), $term['taxonomy']);
 				
+				$termObj  = new WPTerm($taxonomy);
+				
+				$termObj->loadData($term);
+				
 				array_push(
 					$this->terms,
-					new WPTerm($taxonomy, $term['term_id'])
+					$termObj
 				);
 				
 			}
@@ -1288,7 +1298,7 @@ class WPBlog {
      * @param   int    $number Number of comments to fetch
      * @param   int    $offset Number of comments to skip
      *
-     * @return  array  $comments List of comment objects (WPComment)
+     * @return  Object $commentIterator
      * 
      * @throws \Comodojo\Exception\WPException
      */
@@ -1327,15 +1337,12 @@ class WPBlog {
 	            	
 	            	array_push(
 	            		$comments,
-	            		new WPComment(
-	            			$this,
-	            			$comment['comment_id']
-	            		)
+	            		$comment['comment_id']
 	            	);
 	            	
 	            }
 	            
-	            return $comments;
+	            return new WPCommentIterator($this, $comments);
             
 	    	} catch (RpcException $rpc) {
 	    		
@@ -1358,6 +1365,75 @@ class WPBlog {
     	}
     	
     	return null;
+    	
+    }
+    
+    /**
+     * Get post thumbnail
+     *
+     * @return  Object  $this->thumbnail
+     */
+    public function getThumbnail() {
+    	
+    	return $this->thumbnail;
+    	
+    }
+    
+    /**
+     * Set post thumbnail
+     *
+     * @param   mixed  $thumb
+     *
+     * @return  Object  $this
+     * 
+     * @throws \Comodojo\Exception\WPException
+     */
+    public function setThumbnail($thumb) {
+    	
+    	if (is_numeric($thumb)) {
+    	
+	    	try {
+	    		
+	    		$this->thumbnail = new WPMedia($this->getBlog(), $thumb);
+	            
+	    	} catch (WPException $wpe) {
+	    		
+	    		throw $wpe;
+	    		
+	    	}
+    		
+    	} else {
+    		
+    		$this->thumbnail = $thumb;
+    		
+    	}
+    	
+    	return $this;
+    	
+    }
+    
+    /**
+     * Get post attachments
+     *
+     * @return  Object  $mediaIterator
+     * 
+     * @throws \Comodojo\Exception\WPException
+     */
+    public function getAttachments() {
+    	
+    	$mediaIterator = null;
+    	
+    	try {
+    		
+            $mediaIterator = new WPMediaIterator($this, $this->getID());
+            
+    	} catch (WPException $wpe) {
+    		
+    		throw $wpe;
+    		
+    	}
+    	
+    	return $mediaIterator;
     	
     }
 	
@@ -1500,11 +1576,7 @@ class WPBlog {
      * @return  array  $data
      */
     private function getPostData() {
-    	
-    	/*
-    	 * TO DO:
-    	 * - Add thumbnail support
-    	 */   	
+    	 	
     	$data = array(
     		'post_type'      => $this->type,
     		'post_status'    => $this->status,
@@ -1537,6 +1609,12 @@ class WPBlog {
     	if (!is_null($this->getParent())) {
     		
     		$data['post_parent'] = $this->parent;
+    		
+    	}
+    	
+    	if (!is_null($this->thumbnail)) {
+    		
+    		$data['post_thumbnail'] = $this->thumbnail->getID();
     		
     	}
     	
@@ -1674,7 +1752,7 @@ class WPBlog {
 		
 		$this->sticky       = false;
 		
-		$this->thumbnail    = null; // TO DO: As soon as the WPMediaItem class is ready
+		$this->thumbnail    = null;
 		
 		$this->terms        = array();
 		

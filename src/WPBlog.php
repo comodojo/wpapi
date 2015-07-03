@@ -476,7 +476,7 @@ class WPBlog {
      *
      * @param   string  $role User's role
      *
-     * @return  array  $users
+     * @return  Object  $userIterator
      * 
      * @throws \Comodojo\Exception\WPException
      */
@@ -497,7 +497,7 @@ class WPBlog {
     /**
      * Get authors
      *
-     * @return  array  $users
+     * @return  Object  $userIterator
      * 
      * @throws \Comodojo\Exception\WPException
      */
@@ -525,7 +525,7 @@ class WPBlog {
      * @param   string  $orderby Field to use for ordering
      * @param   string  $order   Type of ordering (asd or desc)
      *
-     * @return  array  $users
+     * @return  Object  $userIterator
      * 
      * @throws \Comodojo\Exception\WPException
      */
@@ -569,10 +569,7 @@ class WPBlog {
             	
             	array_push(
             		$users,
-            		new WPUser(
-		            	$this,
-		            	$user['user_id']
-		            )
+            		$user['user_id']
             	);
             	
             }
@@ -595,7 +592,7 @@ class WPBlog {
     		
     	}
     	
-    	return $users;
+    	return new WPUserIterator($this, $users);
     	
     }
     
@@ -625,7 +622,7 @@ class WPBlog {
     /**
      * Get pages
      *
-     * @return  array  $posts
+     * @return  Object $postIterator
      * 
      * @throws \Comodojo\Exception\WPException
      */
@@ -648,7 +645,7 @@ class WPBlog {
      * 
      * @param   int    $count  Number of posts retrived
      *
-     * @return  array  $posts
+     * @return  Object $postIterator
      * 
      * @throws \Comodojo\Exception\WPException
      */
@@ -676,7 +673,7 @@ class WPBlog {
      * @param   string  $orderby Field to use for ordering
      * @param   string  $order   Type of ordering (asd or desc)
      *
-     * @return  array  $posts
+     * @return  Object $postIterator
      * 
      * @throws \Comodojo\Exception\WPException
      */
@@ -720,10 +717,7 @@ class WPBlog {
             	
             	array_push(
             		$posts,
-            		new WPPost(
-		            	$this,
-		            	$post['post_id']
-		            )
+		            $post['post_id']
             	);
             	
             }
@@ -746,7 +740,7 @@ class WPBlog {
     		
     	}
     	
-    	return $posts;
+    	return new WPPostIterator($this, $posts);
     	
     }
     
@@ -756,7 +750,7 @@ class WPBlog {
      * @param   string $category Category name or description
      * @param   string $number   Number of posts (optional)
      *
-     * @return  array  $posts
+     * @return  Object $postIterator
      * 
      * @throws \Comodojo\Exception\WPException
      */
@@ -780,7 +774,7 @@ class WPBlog {
      * @param   string $tag      Tag name or description
      * @param   string $number   Number of posts (optional)
      *
-     * @return  array  $posts
+     * @return  Object $postIterator
      * 
      * @throws \Comodojo\Exception\WPException
      */
@@ -805,7 +799,7 @@ class WPBlog {
      * @param   string $value    Term name or description
      * @param   int    $number   Number of posts to fetch
      *
-     * @return  array  $posts
+     * @return  Object $postIterator
      * 
      * @throws \Comodojo\Exception\WPException
      */
@@ -849,10 +843,7 @@ class WPBlog {
 	            			
 			            	array_push(
 			            		$posts,
-			            		new WPPost(
-					            	$this,
-					            	$post['post_id']
-					            )
+			            		$post['post_id']
 			            	);
 			            	
 			            	break;
@@ -883,7 +874,7 @@ class WPBlog {
     		
     	}
     	
-    	return $posts;
+    	return new WPPostIterator($this, $posts);
     	
     }
     
@@ -912,12 +903,13 @@ class WPBlog {
             
             foreach ($tax_list as $taxonomy) {
             	
+            	$tax = new WPTaxonomy($this);
+            	
+            	$tax->loadData($taxonomy);
+            	
             	array_push(
             		$taxonomies,
-            		new WPTaxonomy(
-		            	$this,
-		            	$taxonomy['name']
-		            )
+            		$tax
             	);
             	
             }
@@ -941,6 +933,31 @@ class WPBlog {
     	}
     	
     	return $taxonomies;
+    	
+    }
+    
+    /**
+     * Get media library
+     *
+     * @return  Object  $mediaIterator
+     * 
+     * @throws \Comodojo\Exception\WPException
+     */
+    public function getMediaLibrary() {
+    	
+    	$mediaIterator = null;
+    	
+    	try {
+    		
+            $mediaIterator = new WPMediaIterator($this);
+            
+    	} catch (WPException $wpe) {
+    		
+    		throw $wpe;
+    		
+    	}
+    	
+    	return $mediaIterator;
     	
     }
 	

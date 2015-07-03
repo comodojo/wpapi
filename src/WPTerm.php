@@ -153,22 +153,8 @@ class WPTerm {
             ));
             
             $term = $rpc_client->send();
-        
-	        $this->id               = intval($term['term_id']);
-        
-	        $this->name             = $term['name'];
-	        
-	        $this->slug             = $term['slug'];
-	        
-	        $this->group            = $term['term_group'];
-	        
-	        $this->term_taxonomy_id = intval($term['term_taxonomy_id']);
-	        
-	        $this->description      = $term['description'];
-	        
-	        $this->parent           = intval($term['parent']);
-	        
-	        $this->count            = intval($term['count']);
+            
+            $this->loadData($term);
             
     	} catch (RpcException $rpc) {
     		
@@ -613,6 +599,36 @@ class WPTerm {
 		$this->parent           = -1;
 		
 		$this->count            = 0;
+    	
+    	return $this;
+        
+    }
+	
+    /**
+     * Load term data
+     *
+     * @param   array   $term
+     *
+     * @return  Object  $this
+     */
+    
+    public function loadData($term) {
+		
+        $this->id               = intval($term['term_id']);
+    
+        $this->name             = $term['name'];
+        
+        $this->slug             = $term['slug'];
+        
+        $this->group            = $term['term_group'];
+        
+        $this->term_taxonomy_id = intval($term['term_taxonomy_id']);
+        
+        $this->description      = $term['description'];
+        
+        $this->parent           = intval($term['parent']);
+        
+        $this->count            = intval($term['count']);
     	
     	return $this;
         
