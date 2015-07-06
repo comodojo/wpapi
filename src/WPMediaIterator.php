@@ -1,4 +1,5 @@
-<?php namespace Comodojo\WP;
+<?php namespace Comodojo\WPAPI;
+
 use \Comodojo\Exception\WPException;
 use \Comodojo\Exception\RpcException;
 use \Comodojo\Exception\HttpException;
@@ -62,6 +63,13 @@ class WPMediaIterator implements \Iterator {
      */
 	private $post = 0;
 	
+	/**
+     * Mime-Type of the media object to fetch
+     *
+     * @var int
+     */
+	private $mime = "";
+	
     /**
      * Class constructor
      *
@@ -72,7 +80,7 @@ class WPMediaIterator implements \Iterator {
      * 
      * @throws \Comodojo\Exception\WPException
      */
-    public function __construct($blog, $id=0) {
+    public function __construct($blog, $id=0, $mime=null) {
     	
         if ( is_null($blog) || is_null($blog->getWordpress()) || !$blog->getWordpress()->isLogged() ) {
         	
@@ -81,6 +89,8 @@ class WPMediaIterator implements \Iterator {
         }
         
         $this->blog = $blog;
+        
+        $this->mime = $mime;
         
         $this->id   = intval($id);
         
@@ -124,7 +134,7 @@ class WPMediaIterator implements \Iterator {
             
             $image->setPostID($this->post);
             
-            $this->next = $image->loadFromLibrary($this->current);
+            $this->next = $image->loadFromLibrary($this->current, $this->mime);
             
             if (!is_null($this->next)) {
             	

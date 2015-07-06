@@ -1,4 +1,5 @@
-<?php namespace Comodojo\WP;
+<?php namespace Comodojo\WPAPI;
+
 use \Comodojo\Exception\WPException;
 use \Comodojo\Exception\RpcException;
 use \Comodojo\Exception\HttpException;
@@ -9,7 +10,7 @@ use \Comodojo\RpcClient\RpcClient;
 /** 
  * Comodojo Wordpress API Wrapper. This class maps a Wordpress term
  *
- * It allows to retrive terms informations like tags or categories.
+ * It allows to retrieve terms informations like tags or categories.
  * 
  * @package     Comodojo Spare Parts
  * @author      Marco Castiello <marco.castiello@gmail.com>
@@ -140,6 +141,8 @@ class WPTerm {
     
     public function loadFromID($id) {
     	
+    	$this->resetData();
+    	
     	try {
     		
             $rpc_client = new RpcClient($this->getBlog()->getEndPoint());
@@ -158,19 +161,19 @@ class WPTerm {
             
     	} catch (RpcException $rpc) {
     		
-    		throw new WPException("Unable to retrive term informations - RPC Exception (".$rpc->getMessage().")");
+    		throw new WPException("Unable to retrieve term informations - RPC Exception (".$rpc->getMessage().")");
     		
     	} catch (XmlrpcException $xml) {
     		
-    		throw new WPException("Unable to retrive term informations - XMLRPC Exception (".$xml->getMessage().")");
+    		throw new WPException("Unable to retrieve term informations - XMLRPC Exception (".$xml->getMessage().")");
     		
     	} catch (HttpException $http) {
     		
-    		throw new WPException("Unable to retrive term informations - HTTP Exception (".$http->getMessage().")");
+    		throw new WPException("Unable to retrieve term informations - HTTP Exception (".$http->getMessage().")");
     		
     	} catch (Exception $e) {
     		
-    		throw new WPException("Unable to retrive term informations - Generic Exception (".$e->getMessage().")");
+    		throw new WPException("Unable to retrieve term informations - Generic Exception (".$e->getMessage().")");
     		
     	}
     	

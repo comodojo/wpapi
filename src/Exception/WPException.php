@@ -1,4 +1,5 @@
 <?php namespace Comodojo\Exception;
+
 /**
  * RpcException; nothing special, just an extension of
  * standard Exception class.

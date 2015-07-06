@@ -1,4 +1,5 @@
-<?php namespace Comodojo\WP;
+<?php namespace Comodojo\WPAPI;
+
 use \Comodojo\Exception\WPException;
 use \Comodojo\Exception\RpcException;
 use \Comodojo\Exception\HttpException;
@@ -9,7 +10,7 @@ use \Comodojo\RpcClient\RpcClient;
 /** 
  * Comodojo Wordpress API Wrapper. This class maps a Wordpress user
  *
- * It allows to retrive and edit informations about the logged user.
+ * It allows to retrieve and edit informations about the logged user.
  * 
  * @package     Comodojo Spare Parts
  * @author      Marco Castiello <marco.castiello@gmail.com>
@@ -36,15 +37,7 @@ class WPProfile extends WPUser {
      */
     public function setFirstname($firstname) {
     	
-    	$var = $this->firstname;
-    	
     	$this->firstname = $firstname;
-    	
-    	if (!$this->save()) {
-    		
-    		$this->firstname = $var;
-    		
-    	}
     	
     	return $this;
     	
@@ -59,15 +52,7 @@ class WPProfile extends WPUser {
      */
     public function setLastname($lastname) {
     	
-    	$var = $this->lastname;
-    	
     	$this->lastname = $lastname;
-    	
-    	if (!$this->save()) {
-    		
-    		$this->lastname = $var;
-    		
-    	}
     	
     	return $this;
     	
@@ -82,15 +67,7 @@ class WPProfile extends WPUser {
      */
     public function setBiography($bio) {
     	
-    	$var = $this->bio;
-    	
     	$this->bio = $bio;
-    	
-    	if (!$this->save()) {
-    		
-    		$this->bio = $var;
-    		
-    	}
     	
     	return $this;
     	
@@ -105,15 +82,7 @@ class WPProfile extends WPUser {
      */
     public function setNickname($nickname) {
     	
-    	$var = $this->nickname;
-    	
     	$this->nickname = $nickname;
-    	
-    	if (!$this->save()) {
-    		
-    		$this->nickname = $var;
-    		
-    	}
     	
     	return $this;
     	
@@ -128,15 +97,7 @@ class WPProfile extends WPUser {
      */
     public function setNicename($nicename) {
     	
-    	$var = $this->nicename;
-    	
     	$this->nicename = $nicename;
-    	
-    	if (!$this->save()) {
-    		
-    		$this->nicename = $var;
-    		
-    	}
     	
     	return $this;
     	
@@ -151,15 +112,7 @@ class WPProfile extends WPUser {
      */
     public function setURL($url) {
     	
-    	$var = $this->url;
-    	
     	$this->url = $url;
-    	
-    	if (!$this->save()) {
-    		
-    		$this->url = $var;
-    		
-    	}
     	
     	return $this;
     	
@@ -174,15 +127,7 @@ class WPProfile extends WPUser {
      */
     public function setDisplayname($displayname) {
     	
-    	$var = $this->displayname;
-    	
     	$this->displayname = $displayname;
-    	
-    	if (!$this->save()) {
-    		
-    		$this->displayname = $var;
-    		
-    	}
     	
     	return $this;
     	
@@ -223,6 +168,8 @@ class WPProfile extends WPUser {
             ));
             
             $result = filter_var($rpc_client->send(), FILTER_VALIDATE_BOOLEAN);
+            
+            $this->loadFromID($this->id);
     		
     	} catch (RpcException $rpc) {
     		

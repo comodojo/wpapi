@@ -1,4 +1,5 @@
-<?php namespace Comodojo\WP;
+<?php namespace Comodojo\WPAPI;
+
 use \Comodojo\Exception\WPException;
 use \Comodojo\Exception\RpcException;
 use \Comodojo\Exception\HttpException;

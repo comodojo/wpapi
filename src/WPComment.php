@@ -1,4 +1,5 @@
-<?php namespace Comodojo\WP;
+<?php namespace Comodojo\WPAPI;
+
 use \Comodojo\Exception\WPException;
 use \Comodojo\Exception\RpcException;
 use \Comodojo\Exception\HttpException;
@@ -9,7 +10,7 @@ use \Comodojo\RpcClient\RpcClient;
 /** 
  * Comodojo Wordpress API Wrapper. This class maps a Wordpress comment
  *
- * It allows to retrive and edit a comment to a wordpress post.
+ * It allows to retrieve and edit a comment to a wordpress post.
  * 
  * @package     Comodojo Spare Parts
  * @author      Marco Castiello <marco.castiello@gmail.com>
@@ -171,6 +172,8 @@ class WPComment {
     
     public function loadFromID($id) {
     	
+    	$this->resetData();
+    	
     	try {
     		
             $rpc_client = new RpcClient($this->getBlog()->getEndPoint());
@@ -184,45 +187,95 @@ class WPComment {
             
             $comment = $rpc_client->send();
         
-	        $this->id           = intval($comment['term_id']);
-	        
-	        $this->parent       = intval($comment['parent']);
-	        
-	        $this->user         = intval($comment['user_id']);
-	        
-	        $this->date         = strtotime($comment['dateCreated']);
-        
-	        $this->status       = $comment['status'];
-	        
-	        $this->content      = $comment['content'];
-	        
-	        $this->link         = $comment['link'];
-	        
-	        $this->type         = $comment['type'];
-	        
-	        $this->author       = $comment['author'];
-	        
-	        $this->author_url   = $comment['author_url'];
-	        
-	        $this->author_email = $comment['author_email'];
-	        
-	        $this->author_ip    = $comment['author_ip'];
+	        $this->loadData($comment);
             
     	} catch (RpcException $rpc) {
     		
-    		throw new WPException("Unable to retrive comment informations - RPC Exception (".$rpc->getMessage().")");
+    		throw new WPException("Unable to retrieve comment informations - RPC Exception (".$rpc->getMessage().")");
     		
     	} catch (XmlrpcException $xml) {
     		
-    		throw new WPException("Unable to retrive comment informations - XMLRPC Exception (".$xml->getMessage().")");
+    		throw new WPException("Unable to retrieve comment informations - XMLRPC Exception (".$xml->getMessage().")");
     		
     	} catch (HttpException $http) {
     		
-    		throw new WPException("Unable to retrive comment informations - HTTP Exception (".$http->getMessage().")");
+    		throw new WPException("Unable to retrieve comment informations - HTTP Exception (".$http->getMessage().")");
     		
     	} catch (Exception $e) {
     		
-    		throw new WPException("Unable to retrive comment informations - Generic Exception (".$e->getMessage().")");
+    		throw new WPException("Unable to retrieve comment informations - Generic Exception (".$e->getMessage().")");
+    		
+    	}
+    	
+    	return $this;
+    	
+    }
+	
+    /**
+     * Load comment from list
+     *
+     * @param   int    $count Comment count
+     *
+     * @return  Object $this
+     * 
+     * @throws \Comodojo\Exception\WPException
+     */
+    
+    public function loadFromList($count, $status="") {
+    	
+    	$this->resetData();
+    	
+    	try {
+    		
+    		$filter = array(
+    			'post_id' => $this->getPost()->getID(),
+    			'offset'  => $count,
+    			'number'  => 1
+    			
+    		);
+    		
+    		if (!empty($status)) {
+    			$filter['status'] = $status;
+    		}
+    		
+            $rpc_client = new RpcClient($this->getBlog()->getEndPoint());
+            
+            $rpc_client->setAutoclean()->addRequest("wp.getComments", array( 
+                $this->getBlog()->getID(), 
+                $this->getWordpress()->getUsername(), 
+                $this->getWordpress()->getPassword(),
+                $filter
+            ));
+            
+            $comments = $rpc_client->send();
+            
+            if (count($comments) > 0) {
+            	
+            	$this->loadData($comments[0]);
+            	
+            } else {
+            	
+            	$this->reset();
+            	
+            	return null;
+            	
+            }
+            
+    	} catch (RpcException $rpc) {
+    		
+    		throw new WPException("Unable to retrieve comment informations - RPC Exception (".$rpc->getMessage().")");
+    		
+    	} catch (XmlrpcException $xml) {
+    		
+    		throw new WPException("Unable to retrieve comment informations - XMLRPC Exception (".$xml->getMessage().")");
+    		
+    	} catch (HttpException $http) {
+    		
+    		throw new WPException("Unable to retrieve comment informations - HTTP Exception (".$http->getMessage().")");
+    		
+    	} catch (Exception $e) {
+    		
+    		throw new WPException("Unable to retrieve comment informations - Generic Exception (".$e->getMessage().")");
     		
     	}
     	
@@ -708,7 +761,43 @@ class WPComment {
     }
 	
     /**
-     * Reset data of the object, it can still be used calling the loadFromID method
+     * Load comment data
+     *
+     * @return  Object  $this
+     */
+    
+    private function loadData($comment) {
+        
+	    $this->id           = intval($comment['term_id']);
+	    
+	    $this->parent       = intval($comment['parent']);
+	    
+	    $this->user         = intval($comment['user_id']);
+	    
+	    $this->date         = strtotime($comment['dateCreated']);
+	
+	    $this->status       = $comment['status'];
+	    
+	    $this->content      = $comment['content'];
+	    
+	    $this->link         = $comment['link'];
+	    
+	    $this->type         = $comment['type'];
+	    
+	    $this->author       = $comment['author'];
+	    
+	    $this->author_url   = $comment['author_url'];
+	    
+	    $this->author_email = $comment['author_email'];
+	    
+	    $this->author_ip    = $comment['author_ip'];
+    	
+    	return $this;
+        
+    }
+	
+    /**
+     * Reset data of the object, it can still be used calling the methods 'loadFromID' or 'loadFromList'
      *
      * @return  Object  $this
      */

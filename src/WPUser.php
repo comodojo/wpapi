@@ -1,4 +1,5 @@
-<?php namespace Comodojo\WP;
+<?php namespace Comodojo\WPAPI;
+
 use \Comodojo\Exception\WPException;
 use \Comodojo\Exception\RpcException;
 use \Comodojo\Exception\HttpException;
@@ -9,7 +10,7 @@ use \Comodojo\RpcClient\RpcClient;
 /** 
  * Comodojo Wordpress API Wrapper. This class maps a Wordpress user
  *
- * It allows to retrive user's informations.
+ * It allows to retrieve user's informations.
  * 
  * @package     Comodojo Spare Parts
  * @author      Marco Castiello <marco.castiello@gmail.com>
@@ -207,19 +208,19 @@ class WPUser {
             
     	} catch (RpcException $rpc) {
     		
-    		throw new WPException("Unable to retrive user's informations - RPC Exception (".$rpc->getMessage().")");
+    		throw new WPException("Unable to retrieve user's informations - RPC Exception (".$rpc->getMessage().")");
     		
     	} catch (XmlrpcException $xml) {
     		
-    		throw new WPException("Unable to retrive user's informations - XMLRPC Exception (".$xml->getMessage().")");
+    		throw new WPException("Unable to retrieve user's informations - XMLRPC Exception (".$xml->getMessage().")");
     		
     	} catch (HttpException $http) {
     		
-    		throw new WPException("Unable to retrive user's informations - HTTP Exception (".$http->getMessage().")");
+    		throw new WPException("Unable to retrieve user's informations - HTTP Exception (".$http->getMessage().")");
     		
     	} catch (Exception $e) {
     		
-    		throw new WPException("Unable to retrive user's informations - Generic Exception (".$e->getMessage().")");
+    		throw new WPException("Unable to retrieve user's informations - Generic Exception (".$e->getMessage().")");
     		
     	}
     	

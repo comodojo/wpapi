@@ -1,4 +1,5 @@
-<?php namespace Comodojo\WP;
+<?php namespace Comodojo\WPAPI;
+
 use \Comodojo\Exception\WPException;
 use \Comodojo\Exception\RpcException;
 use \Comodojo\Exception\HttpException;
@@ -9,7 +10,7 @@ use \Comodojo\RpcClient\RpcClient;
 /** 
  * Comodojo Wordpress API Wrapper. This class maps a Wordpress media item
  *
- * It allows to retrive informations about a media object.
+ * It allows to retrieve informations about a media object.
  * 
  * @package     Comodojo Spare Parts
  * @author      Marco Castiello <marco.castiello@gmail.com>
@@ -652,6 +653,8 @@ class WPMedia {
      */
     public function loadFromID($id) {
     	
+    	$this->resetData();
+    	
     	try {
     		
             $rpc_client = new RpcClient($this->getBlog()->getEndPoint());
@@ -669,19 +672,19 @@ class WPMedia {
     		
     	} catch (RpcException $rpc) {
     		
-    		throw new WPException("Unable to retrive media informations from attachment ID - RPC Exception (".$rpc->getMessage().")");
+    		throw new WPException("Unable to retrieve media informations from attachment ID - RPC Exception (".$rpc->getMessage().")");
     		
     	} catch (XmlrpcException $xml) {
     		
-    		throw new WPException("Unable to retrive media informations from attachment ID - XMLRPC Exception (".$xml->getMessage().")");
+    		throw new WPException("Unable to retrieve media informations from attachment ID - XMLRPC Exception (".$xml->getMessage().")");
     		
     	} catch (HttpException $http) {
     		
-    		throw new WPException("Unable to retrive media informations from attachment ID - HTTP Exception (".$http->getMessage().")");
+    		throw new WPException("Unable to retrieve media informations from attachment ID - HTTP Exception (".$http->getMessage().")");
     		
     	} catch (Exception $e) {
     		
-    		throw new WPException("Unable to retrive media informations from attachment ID - Generic Exception (".$e->getMessage().")");
+    		throw new WPException("Unable to retrieve media informations from attachment ID - Generic Exception (".$e->getMessage().")");
     		
     	}
     	
@@ -698,7 +701,7 @@ class WPMedia {
      * 
      * @throws \Comodojo\Exception\WPException
      */
-    public function loadFromLibrary($count) {
+    public function loadFromLibrary($count, $mime) {
     	
     	$content = array(
     		"number" => 1,
@@ -707,6 +710,10 @@ class WPMedia {
     	
     	if ($this->post > 0) {
     		$content["parent_id"] = $this->post;
+    	}
+    	
+    	if (!is_null($mime)) {
+    		$content["mime_type"] = $mime;
     	}
     	
     	try {
@@ -736,19 +743,19 @@ class WPMedia {
     		
     	} catch (RpcException $rpc) {
     		
-    		throw new WPException("Unable to retrive media informations from iteration - RPC Exception (".$rpc->getMessage().")");
+    		throw new WPException("Unable to retrieve media informations from iteration - RPC Exception (".$rpc->getMessage().")");
     		
     	} catch (XmlrpcException $xml) {
     		
-    		throw new WPException("Unable to retrive media informations from iteration - XMLRPC Exception (".$xml->getMessage().")");
+    		throw new WPException("Unable to retrieve media informations from iteration - XMLRPC Exception (".$xml->getMessage().")");
     		
     	} catch (HttpException $http) {
     		
-    		throw new WPException("Unable to retrive media informations from iteration - HTTP Exception (".$http->getMessage().")");
+    		throw new WPException("Unable to retrieve media informations from iteration - HTTP Exception (".$http->getMessage().")");
     		
     	} catch (Exception $e) {
     		
-    		throw new WPException("Unable to retrive media informations from iteration - Generic Exception (".$e->getMessage().")");
+    		throw new WPException("Unable to retrieve media informations from iteration - Generic Exception (".$e->getMessage().")");
     		
     	}
     	

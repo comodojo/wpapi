@@ -1,4 +1,5 @@
-<?php namespace Comodojo\WP;
+<?php namespace Comodojo\WPAPI;
+
 use \Comodojo\Exception\WPException;
 use \Comodojo\Exception\RpcException;
 use \Comodojo\Exception\HttpException;
@@ -9,7 +10,7 @@ use \Comodojo\RpcClient\RpcClient;
 /** 
  * Comodojo Wordpress API Wrapper. This class maps a Wordpress taxonomy
  *
- * It allows to retrive taxonomy informations.
+ * It allows to retrieve taxonomy informations.
  * 
  * @package     Comodojo Spare Parts
  * @author      Marco Castiello <marco.castiello@gmail.com>
@@ -136,7 +137,7 @@ class WPTaxonomy {
     }
 	
     /**
-     * Load taxonomy for name
+     * Load taxonomy by name
      *
      * @param   string  $name Taxonomy name
      *
@@ -164,19 +165,19 @@ class WPTaxonomy {
             
     	} catch (RpcException $rpc) {
     		
-    		throw new WPException("Unable to retrive taxonomy informations - RPC Exception (".$rpc->getMessage().")");
+    		throw new WPException("Unable to retrieve taxonomy informations - RPC Exception (".$rpc->getMessage().")");
     		
     	} catch (XmlrpcException $xml) {
     		
-    		throw new WPException("Unable to retrive taxonomy informations - XMLRPC Exception (".$xml->getMessage().")");
+    		throw new WPException("Unable to retrieve taxonomy informations - XMLRPC Exception (".$xml->getMessage().")");
     		
     	} catch (HttpException $http) {
     		
-    		throw new WPException("Unable to retrive taxonomy informations - HTTP Exception (".$http->getMessage().")");
+    		throw new WPException("Unable to retrieve taxonomy informations - HTTP Exception (".$http->getMessage().")");
     		
     	} catch (Exception $e) {
     		
-    		throw new WPException("Unable to retrive taxonomy informations - Generic Exception (".$e->getMessage().")");
+    		throw new WPException("Unable to retrieve taxonomy informations - Generic Exception (".$e->getMessage().")");
     		
     	}
     	
@@ -319,7 +320,7 @@ class WPTaxonomy {
      *
      * @param   string  $search     Restrict to terms with names that contain (case-insensitive) this value
      * @param   boolean $hide_empty Hide empty terms (count=0)
-     * @param   int     $number     Number of terms retrived
+     * @param   int     $number     Number of terms retrieved
      * @param   int     $offset     Number of terms to skip
      * @param   string  $orderby    Field to use for ordering
      * @param   string  $order      Type of ordering (asd or desc)
@@ -356,38 +357,36 @@ class WPTaxonomy {
                 $this->getBlog()->getID(), 
                 $this->getWordpress()->getUsername(), 
                 $this->getWordpress()->getPassword(),
-                $this->name
+                $this->name,
+                $filter
             ));
             
             $list = $rpc_client->send();
             
             foreach ($list as $term) {
             	
-            	array_push(
-            		$terms,
-            		new WPTerm(
-            			$this,
-            			$term['term_id']
-            		)
-            	);
+            	$t = new WPTerm($this);
+            	$t->loadData($term);
+            	
+            	array_push($terms, $t);
             	
             }
             
     	} catch (RpcException $rpc) {
     		
-    		throw new WPException("Unable to retrive term informations - RPC Exception (".$rpc->getMessage().")");
+    		throw new WPException("Unable to retrieve term informations - RPC Exception (".$rpc->getMessage().")");
     		
     	} catch (XmlrpcException $xml) {
     		
-    		throw new WPException("Unable to retrive term informations - XMLRPC Exception (".$xml->getMessage().")");
+    		throw new WPException("Unable to retrieve term informations - XMLRPC Exception (".$xml->getMessage().")");
     		
     	} catch (HttpException $http) {
     		
-    		throw new WPException("Unable to retrive term informations - HTTP Exception (".$http->getMessage().")");
+    		throw new WPException("Unable to retrieve term informations - HTTP Exception (".$http->getMessage().")");
     		
     	} catch (Exception $e) {
     		
-    		throw new WPException("Unable to retrive term informations - Generic Exception (".$e->getMessage().")");
+    		throw new WPException("Unable to retrieve term informations - Generic Exception (".$e->getMessage().")");
     		
     	}
     	

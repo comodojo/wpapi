@@ -1,4 +1,5 @@
-<?php namespace Comodojo\WP;
+<?php namespace Comodojo\WPAPI;
+
 use \Comodojo\Exception\WPException;
 use \Comodojo\Exception\RpcException;
 use \Comodojo\Exception\HttpException;
@@ -9,7 +10,7 @@ use \Comodojo\RpcClient\RpcClient;
 /** 
  * Comodojo Wordpress API Wrapper. This class maps a Wordpress blog
  *
- * It allows to retrive and edit posts from a wordpress blog.
+ * It allows to retrieve and edit posts from a wordpress blog.
  * 
  * @package     Comodojo Spare Parts
  * @author      Marco Castiello <marco.castiello@gmail.com>
@@ -224,12 +225,9 @@ class WPBlog {
 	/**
      * Comments
      *
-     * @var int
+     * @var Object
      */
-	private $comment_approved = 0;
-	private $comment_awaiting = 0;
-	private $comment_spam     = 0;
-	private $comment_total    = 0;
+	private $comments = null;
 	
     /**
      * Class constructor
@@ -290,6 +288,8 @@ class WPBlog {
      */
     
     public function loadFromID($id) {
+    	
+    	$this->resetData();
     	
     	try {
     		
@@ -354,6 +354,8 @@ class WPBlog {
 			$this->custom       = $post['custom_fields'];
 			
 			$this->enclosure    = $post['enclosure'];
+            
+        	$this->comments     = $this->getCommentsByStatus();
 			
 			if ( isset($post['post_thumbnail']['attachment_id']) ) {
 				
@@ -365,7 +367,7 @@ class WPBlog {
 			
 			foreach ($post['terms'] as $term) {
 				
-				$taxonomy = new WPTaxonomy($this->getBlog(), $term['taxonomy']);
+				$taxonomy = $this->getBolg()->getTaxonomy($term['taxonomy']);
 				
 				$termObj  = new WPTerm($taxonomy);
 				
@@ -380,78 +382,24 @@ class WPBlog {
             
     	} catch (RpcException $rpc) {
     		
-    		throw new WPException("Unable to retrive post informations - RPC Exception (".$rpc->getMessage().")");
+    		throw new WPException("Unable to retrieve post informations - RPC Exception (".$rpc->getMessage().")");
     		
     	} catch (XmlrpcException $xml) {
     		
-    		throw new WPException("Unable to retrive post informations - XMLRPC Exception (".$xml->getMessage().")");
+    		throw new WPException("Unable to retrieve post informations - XMLRPC Exception (".$xml->getMessage().")");
     		
     	} catch (HttpException $http) {
     		
-    		throw new WPException("Unable to retrive post informations - HTTP Exception (".$http->getMessage().")");
+    		throw new WPException("Unable to retrieve post informations - HTTP Exception (".$http->getMessage().")");
     		
     	} catch (Exception $e) {
     		
-    		throw new WPException("Unable to retrive post informations - Generic Exception (".$e->getMessage().")");
+    		throw new WPException("Unable to retrieve post informations - Generic Exception (".$e->getMessage().")");
     		
     	}
     	
-    	return $this->loadCommentCount();
-        
-    }
-    
-    /**
-     * Get comment count for current post
-     *
-     * @return  Object  $this
-     */
-    private function loadCommentCount() {
-    	
-    	if ($this->getID() > 0) {
-	    	try {
-	    		
-	            $rpc_client = new RpcClient($this->getBlog()->getEndPoint());
-	            
-	            $rpc_client->setAutoclean()->addRequest("wp.getCommentCount", array( 
-	                $this->getBlog()->getID(), 
-	                $this->getWordpress()->getUsername(), 
-	                $this->getWordpress()->getPassword(),
-	                $this->getID()
-	            ));
-	            
-	            $count = $rpc_client->send();
-	            
-	            $this->comment_approved = $count[0]['approved'];
-	            
-	            $this->comment_awaiting = $count[0]['awaiting_moderation'];
-	            
-	            $this->comment_spam     = $count[0]['spam'];
-	            
-	            $this->comment_total    = $count[0]['approved'];
-            
-	    	} catch (RpcException $rpc) {
-	    		
-	    		throw new WPException("Unable to retrive comment count - RPC Exception (".$rpc->getMessage().")");
-	    		
-	    	} catch (XmlrpcException $xml) {
-	    		
-	    		throw new WPException("Unable to retrive comment count - XMLRPC Exception (".$xml->getMessage().")");
-	    		
-	    	} catch (HttpException $http) {
-	    		
-	    		throw new WPException("Unable to retrive comment count - HTTP Exception (".$http->getMessage().")");
-	    		
-	    	} catch (Exception $e) {
-	    		
-	    		throw new WPException("Unable to retrive comment count - Generic Exception (".$e->getMessage().")");
-	    		
-	    	}
-	            
-    	}
-    	
-    	
     	return $this;
-    	
+        
     }
     
     /**
@@ -1187,6 +1135,34 @@ class WPBlog {
     }
     
     /**
+     * Add category
+     *
+     * @param   string $tag category name
+     *
+     * @return  Object $this
+     */
+    public function addCategory($category) {
+    	
+    	$term = null;
+    	
+    	if ($this->getBlog()->hasCategory($category)) {
+    		
+    		$term = $this->getBlog()->getCategory($category);
+    		
+    	} else {
+    		
+    		$taxonomy = $this->getBolg()->getTaxonomy("category");
+    		$term = new WPTerm($taxonomy);
+    		$term->setName($category)->save();
+    		
+    		$this->getBlog()->addTag($term);
+    	}
+    	
+    	return $this->addTerm($term);
+    	
+    }
+    
+    /**
      * Has category
      *
      * @param   string  $category Category name
@@ -1244,6 +1220,34 @@ class WPBlog {
     }
     
     /**
+     * Add tag
+     *
+     * @param   string  $tag Tag name
+     *
+     * @return  Object $this
+     */
+    public function addTag($tag) {
+    	
+    	$term = null;
+    	
+    	if ($this->getBlog()->hasTag($tag)) {
+    		
+    		$term = $this->getBlog()->getTag($tag);
+    		
+    	} else {
+    		
+    		$taxonomy = $this->getBolg()->getTaxonomy("post_tag");
+    		$term = new WPTerm($taxonomy);
+    		$term->setName($tag)->save();
+    		
+    		$this->getBlog()->addTag($term);
+    	}
+    	
+    	return $this->addTerm($term);
+    	
+    }
+    
+    /**
      * Add term
      *
      * @param   Opject  $term WPTerm object
@@ -1294,71 +1298,35 @@ class WPBlog {
     /**
      * Get comments for current post
      *
+     * @return  Object $commentIterator
+     * 
+     * @throws \Comodojo\Exception\WPException
+     */
+    public function getComments() {
+    	
+    	return $this->comments;
+    	
+    }
+    
+    /**
+     * Get comments for current post filtered by status
+     *
      * @param   string $status Comment status (check WPBlog::getSupportedCommentStatus)
-     * @param   int    $number Number of comments to fetch
-     * @param   int    $offset Number of comments to skip
      *
      * @return  Object $commentIterator
      * 
      * @throws \Comodojo\Exception\WPException
      */
-    public function getComments($status = "", $number = null, $offset = 0) {
+    public function getCommentsByStatus($status = "") {
     	
     	if ($this->getID() > 0) {
 	    	try {
-	    		
-	    		$comments = array();
-	    		
-	    		$filter = array(
-	    			'post_id' => $this->getID(),
-	    			'offset'  => $offset,
-	    		);
-	    		
-	    		if (!empty($status)) {
-	    			$filter['status'] = $status;
-	    		}
-	    		
-	    		if (!is_null($number)) {
-	    			$filter['number'] = $number;
-	    		}
-	    		
-	            $rpc_client = new RpcClient($this->getBlog()->getEndPoint());
 	            
-	            $rpc_client->setAutoclean()->addRequest("wp.getComments", array( 
-	                $this->getBlog()->getID(), 
-	                $this->getWordpress()->getUsername(), 
-	                $this->getWordpress()->getPassword(),
-	                $filter
-	            ));
-	            
-	            $comment_list = $rpc_client->send();
-	            
-	            foreach ($comment_list as $comment) {
-	            	
-	            	array_push(
-	            		$comments,
-	            		$comment['comment_id']
-	            	);
-	            	
-	            }
-	            
-	            return new WPCommentIterator($this, $comments);
+	            return new WPCommentIterator($this, $status);
             
-	    	} catch (RpcException $rpc) {
+	    	} catch (WPException $wpe) {
 	    		
-	    		throw new WPException("Unable to retrive comment list - RPC Exception (".$rpc->getMessage().")");
-	    		
-	    	} catch (XmlrpcException $xml) {
-	    		
-	    		throw new WPException("Unable to retrive comment list - XMLRPC Exception (".$xml->getMessage().")");
-	    		
-	    	} catch (HttpException $http) {
-	    		
-	    		throw new WPException("Unable to retrive comment list - HTTP Exception (".$http->getMessage().")");
-	    		
-	    	} catch (Exception $e) {
-	    		
-	    		throw new WPException("Unable to retrive comment list - Generic Exception (".$e->getMessage().")");
+	    		throw $wpe;
 	    		
 	    	}
 	            
@@ -1414,18 +1382,20 @@ class WPBlog {
     
     /**
      * Get post attachments
+     * 
+     * @param   string $mime The mime-type of the media you want to fetch
      *
      * @return  Object  $mediaIterator
      * 
      * @throws \Comodojo\Exception\WPException
      */
-    public function getAttachments() {
+    public function getAttachments($mime = null) {
     	
     	$mediaIterator = null;
     	
     	try {
     		
-            $mediaIterator = new WPMediaIterator($this, $this->getID());
+            $mediaIterator = new WPMediaIterator($this, $this->getID(), $mime);
             
     	} catch (WPException $wpe) {
     		
@@ -1759,6 +1729,8 @@ class WPBlog {
 		$this->custom       = array();
 		
 		$this->enclosure    = array();
+		
+		$this->comments     = null;
     	
     	return $this;
         
