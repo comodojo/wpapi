@@ -351,7 +351,7 @@ class WPCommentIterator implements \Iterator {
      */
     private function loadCommentCount() {
     	
-    	if ($this->getID() > 0) {
+    	if ($this->getPost()->getID() > 0) {
 	    	try {
 	    		
 	            $rpc_client = new RpcClient($this->getBlog()->getEndPoint());
@@ -365,13 +365,13 @@ class WPCommentIterator implements \Iterator {
 	            
 	            $count = $rpc_client->send();
 	            
-	            $this->comment_approved = $count[0]['approved'];
+	            $this->comment_approved = $count['approved'];
 	            
-	            $this->comment_awaiting = $count[0]['awaiting_moderation'];
+	            $this->comment_awaiting = $count['awaiting_moderation'];
 	            
-	            $this->comment_spam     = $count[0]['spam'];
+	            $this->comment_spam     = $count['spam'];
 	            
-	            $this->comment_total    = $count[0]['approved'];
+	            $this->comment_total    = $count['approved'];
             
 	    	} catch (RpcException $rpc) {
 	    		

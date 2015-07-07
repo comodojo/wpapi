@@ -102,6 +102,9 @@ class WP {
      */
     public function login($username, $password) {
       
+        $this->username = $username;
+        $this->password = $password;
+      
         try {
         
             $rpc_client = new RpcClient($this->url."/xmlrpc.php");
@@ -112,20 +115,30 @@ class WP {
             ));
             
             $blogs = $rpc_client->send();
+      
+	        if (count($blogs) > 0) {
+	        
+	            $this->logged = true;
+	        
+	        }
             
             foreach ($blogs as $blog) {
-              
-              array_push(
-                $this->blogs,
-                new WPBlog(
-                  $this,
-                  $blog['blogid'],
-                  $blog['blogName'],
-                  $blog['url'],
-                  $blog['xmlrpc'],
-                  $blog['isAdmin']
-                )
-              );
+            	
+            	$b = new WPBlog(
+					$this,
+					$blog['blogid'],
+					$blog['blogName'],
+					$blog['url'],
+					$blog['xmlrpc'],
+					$blog['isAdmin']
+				);
+                
+                if ($b->getID() > -1) {
+					array_push(
+						$this->blogs,
+						$b
+					);
+                }
               
             }
         
@@ -146,15 +159,6 @@ class WP {
             throw new WPException("Unable to login - Generic Exception (".$e->getMessage().")");
         
         }
-      
-        if (count($this->blogs) > 0) {
-        
-            $this->logged = true;
-        
-        }
-      
-        $this->username = $username;
-        $this->password = $password;
       
         return $this->logged;
       

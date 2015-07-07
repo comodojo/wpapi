@@ -151,7 +151,7 @@ class WPTerm {
                 $this->getBlog()->getID(), 
                 $this->getWordpress()->getUsername(), 
                 $this->getWordpress()->getPassword(),
-                $taxonomy->getName(),
+                $this->getTaxonomy()->getName(),
                 intval($id)
             ));
             

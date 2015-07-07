@@ -768,13 +768,13 @@ class WPComment {
     
     private function loadData($comment) {
         
-	    $this->id           = intval($comment['term_id']);
+	    $this->id           = intval($comment['comment_id']);
 	    
 	    $this->parent       = intval($comment['parent']);
 	    
 	    $this->user         = intval($comment['user_id']);
 	    
-	    $this->date         = strtotime($comment['dateCreated']);
+	    $this->date         = (isset($comment['dateCreated']))?strtotime($comment['dateCreated']):time();
 	
 	    $this->status       = $comment['status'];
 	    

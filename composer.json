@@ -21,7 +21,7 @@
     "autoload": {
         "psr-4": {
             "Comodojo\\Exception\\": "src/Exception",
-            "Comodojo\\WP\\": "src"
+            "Comodojo\\WPAPI\\": "src"
         }
     },    
     "require": {

@@ -433,11 +433,11 @@ class WPMedia {
     }
     
     /**
-     * Get caption
+     * Get meta caption
      *
      * @return  string  $this->meta_caption
      */
-    public function getCaption() {
+    public function getMetaCaption() {
     	
     	return $this->meta_caption;
     	
@@ -451,17 +451,6 @@ class WPMedia {
     public function getCopyright() {
     	
     	return $this->meta_copyright;
-    	
-    }
-    
-    /**
-     * Get title extracted from metadata, it could differ from the object title, use instead getTitle()
-     *
-     * @return  string  $this->meta_title
-     */
-    public function getImageTitle() {
-    	
-    	return $this->meta_title;
     	
     }
     
@@ -775,7 +764,7 @@ class WPMedia {
 			
 		$this->id          = intval($data['attachment_id']);
 			
-		$this->post        = intval($data['parent_id']);
+		$this->post        = (isset($data['parent_id']))?intval($data['parent_id']):null;
 			
 		$this->date        = strtotime($data['date_created_gmt']);
 		
@@ -789,7 +778,7 @@ class WPMedia {
 		
 		$this->thumbnail   = $data['thumbnail'];
 		
-		if (isset($data['metadata'])) {
+		if (isset($data['metadata']) && is_array($data['metadata'])) {
 			
 			$this->width   = intval($data['metadata']['width']);
 			
@@ -833,7 +822,7 @@ class WPMedia {
      * @return  Object  $this
      */
     
-    public function reset() {
+    public function resetData() {
 			
 		$this->id                  = 0;
 
@@ -892,8 +881,17 @@ class WPMedia {
      */
     public function upload($fname) {
     	
-    	$name   = preg_replace('/^.*\//', '', preg_replace('/^.*\\/', '', $fname));
+    	$name   = explode('/', $fname);
+    	$name   = $name[count($name)-1];
+    	$name   = explode("\\", $name);
+    	$name   = $name[count($name)-1];
     	$buffer = file_get_contents($fname);
+    	
+    	if ($buffer == FALSE) {
+    		
+    		throw new WPException("Unable to open file $name");
+    		
+    	}
     	
     	try {
     	
@@ -919,19 +917,13 @@ class WPMedia {
      */
     public function uploadData($name, $buffer) {
     	
-    	$finfo  = new finfo(FILEINFO_MIME);
+    	$finfo  = new \finfo(FILEINFO_MIME);
     	$type   = $finfo->buffer($buffer);
-    	
-    	if ($buffer == FALSE) {
-    		
-    		throw new WPException("Unable to open file $fname");
-    		
-    	}
     	
     	$content = array(
     		"name" => $name,
     		"type" => $type,
-    		"bits" => $buffer
+    		"bits" => base64_encode($buffer)
     	);
     	
     	if ($this->post > 0) {
@@ -942,7 +934,10 @@ class WPMedia {
     		
             $rpc_client = new RpcClient($this->getBlog()->getEndPoint());
             
-            $rpc_client->addRequest("wp.uploadFile", array( 
+            $rpc_client->setValueType(
+            	$content["bits"], 
+            	"base64"
+            )->addRequest("wp.uploadFile", array( 
                 $this->getBlog()->getID(), 
                 $this->getWordpress()->getUsername(), 
                 $this->getWordpress()->getPassword(),

@@ -26,7 +26,7 @@ use \Comodojo\RpcClient\RpcClient;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-class WPBlog {
+class WPPost {
 	
 	/**
      * Wordpress blog reference
@@ -304,16 +304,15 @@ class WPBlog {
             
             $post = $rpc_client->send();
 	
-			
 			$this->id           = intval($post['post_id']);
 			
 			$this->title        = $post['post_title'];
 			
-			$this->created      = strtotime($post['post_date']);
+			$this->created      = (is_numeric($post['post_date']))?$post['post_date']:strtotime($post['post_date']);
 			
 			//$this->created_gmt  = strtotime($post['post_date_gmt']);
 			
-			$this->modified     = strtotime($post['post_modified']);
+			$this->modified     = (is_numeric($post['post_modified']))?$post['post_modified']:strtotime($post['post_modified']);
 			
 			//$this->modified_gmt = strtotime($post['post_modified_gmt']);
 			
@@ -353,7 +352,7 @@ class WPBlog {
 			
 			$this->custom       = $post['custom_fields'];
 			
-			$this->enclosure    = $post['enclosure'];
+			$this->enclosure    = (isset($post['enclosure']))?$post['enclosure']:null;
             
         	$this->comments     = $this->getCommentsByStatus();
 			
@@ -367,7 +366,7 @@ class WPBlog {
 			
 			foreach ($post['terms'] as $term) {
 				
-				$taxonomy = $this->getBolg()->getTaxonomy($term['taxonomy']);
+				$taxonomy = $this->getBlog()->getTaxonomy($term['taxonomy']);
 				
 				$termObj  = new WPTerm($taxonomy);
 				
@@ -1151,7 +1150,7 @@ class WPBlog {
     		
     	} else {
     		
-    		$taxonomy = $this->getBolg()->getTaxonomy("category");
+    		$taxonomy = $this->getBlog()->getTaxonomy("category");
     		$term = new WPTerm($taxonomy);
     		$term->setName($category)->save();
     		
@@ -1236,7 +1235,7 @@ class WPBlog {
     		
     	} else {
     		
-    		$taxonomy = $this->getBolg()->getTaxonomy("post_tag");
+    		$taxonomy = $this->getBlog()->getTaxonomy("post_tag");
     		$term = new WPTerm($taxonomy);
     		$term->setName($tag)->save();
     		

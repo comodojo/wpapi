@@ -246,7 +246,7 @@ try {
 	    
 	    // You can both add the image as post thumbnail and append it to the content
 	    $post->setTitle( $post->getTitle() . " (with image)" )
-	    	->addThumbnail($image)
+	    	->setThumbnail($image)
 	    	->setContent( $post->getContent() . "<p><img src='" . $image->getLink() . "'/></p>" )
 	    	->save();
 	      

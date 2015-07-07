@@ -120,7 +120,7 @@ class WPTaxonomy {
         
         $this->name         = $name;
         
-        if (empty($name)) {
+        if (!empty($name)) {
         	
         	try {
         		
@@ -330,7 +330,7 @@ class WPTaxonomy {
      * @throws \Comodojo\Exception\WPException
      */
     
-    public function getTerms($search="", $hide_empty=true, $number = null, $offset = 0, $orderby = "name", $order = "ASC") {
+    public function getTerms($search="", $hide_empty=false, $number = null, $offset = 0, $orderby = "name", $order = "ASC") {
     	
     	$terms  = array();
     	

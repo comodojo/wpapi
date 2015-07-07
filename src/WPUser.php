@@ -54,21 +54,21 @@ class WPUser {
      *
      * @var string
      */
-	private $firstname = "";
+	protected $firstname = "";
 	
 	/**
      * Last name
      *
      * @var string
      */
-	private $lastname = "";
+	protected $lastname = "";
 	
 	/**
      * User's biography
      *
      * @var string
      */
-	private $bio = "";
+	protected $bio = "";
 	
 	/**
      * Email address
@@ -82,28 +82,28 @@ class WPUser {
      *
      * @var string
      */
-	private $nickname = "";
+	protected $nickname = "";
 	
 	/**
      * Nicename
      *
      * @var string
      */
-	private $nicename = "";
+	protected $nicename = "";
 	
 	/**
      * URL to user personal website
      *
      * @var string
      */
-	private $url = "";
+	protected $url = "";
 	
 	/**
      * Display name
      *
      * @var string
      */
-	private $displayname = "";
+	protected $displayname = "";
 	
 	/**
      * Timestamp of registration

@@ -140,9 +140,9 @@ class WPProfile extends WPUser {
      * 
      * @throws \Comodojo\Exception\WPException
      */
-    private function save() {
+    public function save() {
     	
-        if ( is_null($this->blog) || is_null($this->blog->getWordpress()) || !$this->blog->getWordpress()->isLogged() ) {
+        if ( is_null($this->getBlog()) || is_null($this->getWordpress()) || !$this->getWordpress()->isLogged() ) {
         	
         	throw new WPException("You must be logged to modify user informations");
         	
@@ -150,7 +150,7 @@ class WPProfile extends WPUser {
         
     	try {
     		
-            $rpc_client = new RpcClient($this->blog->getEndPoint());
+            $rpc_client = new RpcClient($this->getBlog()->getEndPoint());
             
             $rpc_client->addRequest("wp.editProfile", array( 
                 $this->getBlog()->getID(), 
@@ -169,7 +169,7 @@ class WPProfile extends WPUser {
             
             $result = filter_var($rpc_client->send(), FILTER_VALIDATE_BOOLEAN);
             
-            $this->loadFromID($this->id);
+            $this->loadFromID($this->getID());
     		
     	} catch (RpcException $rpc) {
     		

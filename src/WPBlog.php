@@ -159,21 +159,29 @@ class WPBlog {
         $this->endpoint = $endpoint;
         
         $this->admin    = $admin;
+        
+        if ($this->checkEndPoint()) {
     	
-    	try {
-    		
-            $this->loadBlogOptions()
-            	->loadTaxonomies()
-            	->loadPostFormats()
-            	->loadPostTypes()
-            	->loadPostStatus()
-            	->loadCommentStatus();
-            
-    	} catch (WPException $wpe) {
-    		
-    		throw $wpe;
-    		
-    	}
+	    	try {
+	    		
+	            $this->loadTaxonomies()
+	            	->loadPostFormats()
+	            	->loadPostTypes()
+	            	->loadPostStatus()
+	            	->loadBlogOptions()
+	            	->loadCommentStatus();
+	            
+	    	} catch (WPException $wpe) {
+	    		
+	    		throw $wpe;
+	    		
+	    	}
+	    	
+        } else {
+        	
+        	$this->id = -1;
+        	
+        }
         
     }
     
@@ -338,6 +346,34 @@ class WPBlog {
     		throw new WPException("There isn't any option called '$name'");
     	
     	return $this->options[$name]['readonly'];
+    	
+    }
+    
+    /**
+     * Check if the endpoint is valid
+     *
+     * @return  boolean  $valid
+     */
+    public function checkEndPoint() {
+    	
+    	try {
+        
+            $rpc_client = new RpcClient($this->endpoint);
+            
+            $rpc_client->addRequest("wp.getUsersBlogs", array( 
+                $this->getWordpress()->getUsername(), 
+                $this->getWordpress()->getPassword()
+            ));
+            
+            $rpc_client->send();
+            
+    	} catch (Exception $e) {
+    		
+    		return false;
+    		
+    	}
+    	
+    	return true;
     	
     }
     
