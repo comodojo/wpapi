@@ -35,6 +35,13 @@ class WP {
      * @var string
      */
     private $url      = "";
+  
+    /**
+     * URL of the Wordpress XML-RPC endpoint
+     *
+     * @var string
+     */
+    private $url      = "";
     
     /**
      * Username
@@ -104,10 +111,12 @@ class WP {
       
         $this->username = $username;
         $this->password = $password;
+        
+        $this->setEndPoint($this->url."/xmlrpc.php");
       
         try {
         
-            $rpc_client = new RpcClient($this->url."/xmlrpc.php");
+            $rpc_client = new RpcClient($this->getEndPoint());
             
             $rpc_client->addRequest("wp.getUsersBlogs", array( 
                 $username, 
@@ -120,27 +129,44 @@ class WP {
 	        
 	            $this->logged = true;
 	        
+		        if (count($blogs) == 1) {
+		        	
+		        	$this->blogs = array(
+		        		new WPBlog(
+							$this,
+							$blog['blogid'],
+							$blog['blogName'],
+							$blog['url'],
+							$this->getEndPoint(),
+							$blog['isAdmin']
+						)
+		        	);
+		        	
+		        } else {
+	            
+		            foreach ($blogs as $blog) {
+		            	
+		            	$b = new WPBlog(
+							$this,
+							$blog['blogid'],
+							$blog['blogName'],
+							$blog['url'],
+							$blog['xmlrpc'],
+							$blog['isAdmin']
+						);
+		                
+		                if ($b->getID() > -1) {
+							array_push(
+								$this->blogs,
+								$b
+							);
+		                }
+		              
+		            }
+		            
+		        }
+	        
 	        }
-            
-            foreach ($blogs as $blog) {
-            	
-            	$b = new WPBlog(
-					$this,
-					$blog['blogid'],
-					$blog['blogName'],
-					$blog['url'],
-					$blog['xmlrpc'],
-					$blog['isAdmin']
-				);
-                
-                if ($b->getID() > -1) {
-					array_push(
-						$this->blogs,
-						$b
-					);
-                }
-              
-            }
         
         } catch (RpcException $rpc) {
         
@@ -172,6 +198,32 @@ class WP {
     public function isLogged() {
       
         return $this->logged;
+      
+    }
+    
+    /**
+     * Set endpoint XML-RPX
+     * 
+     * @param   string  $endpoint End point to the XML-RPC server
+     *
+     * @return  Object  $this
+     */
+    public function setEndPoint($endpoint) {
+      
+        $this->endpoint = $endpoint;
+        
+        return $this;
+      
+    }
+    
+    /**
+     * Get endpoint XML-RPX
+     *
+     * @return  string  $this->endpoint
+     */
+    public function getEndPoint($endpoint) {
+      
+        return $this->endpoint;
       
     }
     

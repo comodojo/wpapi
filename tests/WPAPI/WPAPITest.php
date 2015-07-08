@@ -8,7 +8,7 @@ class WPAPITest extends \PHPUnit_Framework_TestCase {
     
     protected function setUp() {
     	
-        $address = "http://localhost/wpapi/";
+        $address = "http://localhost/";
         $user = "admin";
         $pass = "admin";
         
