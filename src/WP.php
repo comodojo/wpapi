@@ -221,7 +221,7 @@ class WP {
      *
      * @return  string  $this->endpoint
      */
-    public function getEndPoint($endpoint) {
+    public function getEndPoint() {
       
         return $this->endpoint;
       
