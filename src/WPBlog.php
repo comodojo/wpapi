@@ -357,7 +357,7 @@ class WPBlog {
     	
     	try {
         
-            $rpc_client = new RpcClient($this->endpoint);
+            $rpc_client = new RpcClient($this->getEndPoint());
             
             $rpc_client->addRequest("wp.getUsersBlogs", array( 
                 $this->getWordpress()->getUsername(), 
@@ -367,8 +367,6 @@ class WPBlog {
             $rpc_client->send();
             
     	} catch (Exception $e) {
-    		
-    		var_dump($e->getMessage());
     		
     		return false;
     		
