@@ -115,8 +115,10 @@ class WP {
             ));
             
             $blogs = $rpc_client->send();
-      
+            var_dump($blogs);
 	        if (count($blogs) > 0) {
+	        	
+	        	//if (!isset($blogs[0])) $blogs = array($blogs);
 	        
 	            $this->logged = true;
 	        
