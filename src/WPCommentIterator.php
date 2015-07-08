@@ -143,10 +143,8 @@ class WPCommentIterator implements \Iterator {
     	try {
 	    		
     		$this->comment = new WPComment($this->getPost());
-    		
-    		$this->comment->loadFromList($this->current, $this->status);
             
-            if (!is_null($this->comment)) {
+            if (!is_null($this->comment->loadFromList($this->current, $this->status))) {
             	
             	$this->has_next = true;
             	

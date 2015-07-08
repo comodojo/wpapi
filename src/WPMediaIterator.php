@@ -190,7 +190,7 @@ class WPMediaIterator implements \Iterator {
      */
     public function getFetchedItems() {
     	
-    	return $this->current;
+    	return $this->current + 1;
     	
     }
 	

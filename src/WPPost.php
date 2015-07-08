@@ -57,25 +57,11 @@ class WPPost {
 	private $created = 0;
 	
 	/**
-     * GMT Date of post creation in unix timestamp
-     *
-     * @var int
-     */
-	//private $created_gmt = 0;
-	
-	/**
      * Date of last edit in unix timestamp
      *
      * @var int
      */
 	private $modified = 0;
-	
-	/**
-     * GMT Date of last edit in unix timestamp
-     *
-     * @var int
-     */
-	//private $modified_gmt = 0;
 	
 	/**
      * Post status
@@ -304,11 +290,7 @@ class WPPost {
 			
 			$this->created      = (is_numeric($post['post_date']))?$post['post_date']:strtotime($post['post_date']);
 			
-			//$this->created_gmt  = strtotime($post['post_date_gmt']);
-			
 			$this->modified     = (is_numeric($post['post_modified']))?$post['post_modified']:strtotime($post['post_modified']);
-			
-			//$this->modified_gmt = strtotime($post['post_modified_gmt']);
 			
 			$this->status       = $post['post_status'];
 			
@@ -1009,7 +991,7 @@ class WPPost {
     		
     	}
     	
-    	// If the custon field requested does not exists, a new one will be created
+    	// If the custom field requested does not exists, a new one will be created
     	array_push($this->custom, array(
     		'key'   => $key,
     		'value' => $value
@@ -1397,7 +1379,7 @@ class WPPost {
     	
     	try {
     		
-            $mediaIterator = new WPMediaIterator($this, $this->getID(), $mime);
+            $mediaIterator = new WPMediaIterator($this->getBlog(), $this->getID(), $mime);
             
     	} catch (WPException $wpe) {
     		
@@ -1565,16 +1547,7 @@ class WPPost {
     	
     	if (count($this->custom) > 0) {
     		
-    		$data['custom_fields'] = array();
-    		
-    		foreach ($this->custom as $custom) {
-    			
-    			array_push($data['custom_fields'], array(
-    				$custom['key'],
-    				$custom['value']
-    			));
-    			
-    		}
+    		$data['custom_fields'] = $this->custom;
     		
     	}
     	
@@ -1686,11 +1659,7 @@ class WPPost {
 		
 		$this->created      = 0;
 		
-		//$this->created_gmt  = 0;
-		
 		$this->modified     = 0;
-		
-		//$this->modified_gmt = 0;
 		
 		$this->status       = "draft";
 		

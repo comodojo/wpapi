@@ -917,7 +917,7 @@ class WPMedia {
      */
     public function uploadData($name, $buffer) {
     	
-    	$finfo  = new \finfo(FILEINFO_MIME);
+    	$finfo  = new \finfo(FILEINFO_MIME_TYPE);
     	$type   = $finfo->buffer($buffer);
     	
     	$content = array(

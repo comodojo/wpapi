@@ -354,7 +354,7 @@ class WPUser {
      *
      * @return  string  $this->displayname
      */
-    public function getDisplayName() {
+    public function getDisplayname() {
     	
     	return $this->displayname;
     	

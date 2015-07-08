@@ -204,7 +204,7 @@ class WP {
     /**
      * Set endpoint XML-RPX
      * 
-     * @param   string  $endpoint End point to the XML-RPC server
+     * @param   string  $endpoint Set the endpoint to the XML-RPC server. It should only be used when the endpoint differs from the default one
      *
      * @return  Object  $this
      */

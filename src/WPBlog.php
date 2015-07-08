@@ -1380,6 +1380,9 @@ class WPBlog {
             	
             }
             
+            var_dump($status);
+            var_dump($this->supportedCommentStatus);
+            
     	} catch (RpcException $rpc) {
     		
     		throw new WPException("Unable to retrieve comment status - RPC Exception (".$rpc->getMessage().")");

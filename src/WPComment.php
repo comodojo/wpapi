@@ -142,7 +142,7 @@ class WPComment {
         
         $this->id   = intval($id);
         
-        if ($id > -1) {
+        if ($id > 0) {
         	
         	try {
         		
@@ -253,7 +253,7 @@ class WPComment {
             	
             } else {
             	
-            	$this->reset();
+            	$this->resetData();
             	
             	return null;
             	
@@ -340,7 +340,7 @@ class WPComment {
     		
     		try {
     		
-    			$parent = new WPUser($this->getPost(), $this->user);
+    			$parent = new WPUser($this->getBlog(), $this->user);
     			
     		} catch (WPException $wpe) {
     			
@@ -697,9 +697,9 @@ class WPComment {
     	  	
     	$data = array(
     		'content'      => $this->content,
-    		'author'       => (empty($this->author))?$profile->getDisplayName():$this->author,
-    		'author_url'   => (empty($this->author_url))?$profile->getURL():$this->author_url,
-    		'author_email' => (empty($this->author_email))?$profile->getEmail():$this->author_email
+    		'author'       => (empty($this->author))?$profile->getDisplayName():$this->getAuthor(),
+    		'author_url'   => (empty($this->author_url))?$profile->getURL():$this->getAuthorURL(),
+    		'author_email' => (empty($this->author_email))?$profile->getEmail():$this->getAuthorEmail()
     	);
     	
     	if (!is_null($this->getParent())) {
@@ -726,7 +726,7 @@ class WPComment {
     public function delete() {
     	
     	try {
-            $rpc_client = new RpcClient($this->blog->getEndPoint());
+            $rpc_client = new RpcClient($this->getBlog()->getEndPoint());
             
             $rpc_client->addRequest("wp.deleteComment", array( 
                 $this->getBlog()->getID(), 
