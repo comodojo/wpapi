@@ -68,10 +68,10 @@ class WPCommentIterator implements \Iterator {
      *
      * @var int
      */
-	private $comment_approved = 0;
-	private $comment_awaiting = 0;
-	private $comment_spam     = 0;
-	private $comment_total    = 0;
+	private $comment_approved = -1;
+	private $comment_awaiting = -1;
+	private $comment_spam     = -1;
+	private $comment_total    = -1;
 	
     /**
      * Class constructor
@@ -94,16 +94,6 @@ class WPCommentIterator implements \Iterator {
         $this->post   = $post;
         
         $this->status = $status;
-        
-        try {
-        
-        	$this->loadCommentCount();
-        	
-        } catch (WPException $wpe) {
-        	
-        	throw $wpe;
-        	
-        }
         
     }
     
@@ -239,8 +229,24 @@ class WPCommentIterator implements \Iterator {
      * Get total items
      *
      * @return  int  $this->comment_total
+     * 
+     * @throws \Comodojo\Exception\WPException
      */
     public function getTotal() {
+    	
+    	if ($this->comment_total == -1) {
+        
+	        try {
+	        
+	        	$this->loadCommentCount();
+	        	
+	        } catch (WPException $wpe) {
+	        	
+	        	throw $wpe;
+	        	
+	        }
+	        
+    	}
     	
     	return $this->comment_total;
     	
@@ -250,8 +256,24 @@ class WPCommentIterator implements \Iterator {
      * Get approved
      *
      * @return  int  $this->comment_approved
+     * 
+     * @throws \Comodojo\Exception\WPException
      */
     public function getApproved() {
+    	
+    	if ($this->comment_approved == -1) {
+        
+	        try {
+	        
+	        	$this->loadCommentCount();
+	        	
+	        } catch (WPException $wpe) {
+	        	
+	        	throw $wpe;
+	        	
+	        }
+	        
+    	}
     	
     	return $this->comment_approved;
     	
@@ -261,8 +283,24 @@ class WPCommentIterator implements \Iterator {
      * Get spam
      *
      * @return  int  $this->comment_spam
+     * 
+     * @throws \Comodojo\Exception\WPException
      */
     public function getSpam() {
+    	
+    	if ($this->comment_spam == -1) {
+        
+	        try {
+	        
+	        	$this->loadCommentCount();
+	        	
+	        } catch (WPException $wpe) {
+	        	
+	        	throw $wpe;
+	        	
+	        }
+	        
+    	}
     	
     	return $this->comment_spam;
     	
@@ -272,8 +310,24 @@ class WPCommentIterator implements \Iterator {
      * Get awaiting
      *
      * @return  int  $this->comment_awaiting
+     * 
+     * @throws \Comodojo\Exception\WPException
      */
     public function getAwaiting() {
+    	
+    	if ($this->comment_awaiting == -1) {
+        
+	        try {
+	        
+	        	$this->loadCommentCount();
+	        	
+	        } catch (WPException $wpe) {
+	        	
+	        	throw $wpe;
+	        	
+	        }
+	        
+    	}
     	
     	return $this->comment_awaiting;
     	

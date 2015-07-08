@@ -2,7 +2,9 @@
 
 class WPAPITest extends \PHPUnit_Framework_TestCase {
 	
-    protected $wp = null;
+    protected $wp   = null;
+    
+    protected $blog = null;
     
     protected function setUp() {
     	
@@ -13,12 +15,18 @@ class WPAPITest extends \PHPUnit_Framework_TestCase {
         $this->wp = new \Comodojo\WPAPI\WP($address);
         
         $this->wp->login($user, $pass);
+        
+        $blogs = $this->wp->getBlogs();
+        
+        $this->blog = $blogs[0];
+        
+        
     
     }
     
     public function testGetLatestPosts() {
     	
-    	$posts = $this->wp->getBlogByID(1)->getLatestPosts();
+    	$posts = $this->blog->getLatestPosts();
     	
     	foreach ($posts as $post) {
     		
@@ -30,7 +38,7 @@ class WPAPITest extends \PHPUnit_Framework_TestCase {
     
     public function testGetPages() {
     	
-    	$posts = $this->wp->getBlogByID(1)->getPages();
+    	$posts = $this->blog->getPages();
     	
     	foreach ($posts as $post) {
     		
@@ -43,7 +51,7 @@ class WPAPITest extends \PHPUnit_Framework_TestCase {
     public function testProfile() {
     	
 	    // Get profile
-	    $profile = $this->wp->getBlogByID(1)->getProfile();
+	    $profile = $this->blog->getProfile();
 	    
 	    // You can edit your profile informations
 	    $profile->setFirstname("Arthur")->setLastname("Dent")->save();
@@ -57,7 +65,7 @@ class WPAPITest extends \PHPUnit_Framework_TestCase {
     public function testNewPost() {
     	
 	    // Let's create a new post on the main blog
-	    $new_post = new \Comodojo\WPAPI\WPPost($this->wp->getBlogByID(1));
+	    $new_post = new \Comodojo\WPAPI\WPPost($this->blog);
 	    
 	    // Chain like there's no tomorrow
 	    $new_post->setTitle("Awesome new post")
@@ -76,7 +84,7 @@ class WPAPITest extends \PHPUnit_Framework_TestCase {
     public function testNewPage() {
     	
 	    // Let's create a new page on the main blog
-	    $new_page = new \Comodojo\WPAPI\WPPost($this->wp->getBlogByID(1));
+	    $new_page = new \Comodojo\WPAPI\WPPost($this->blog);
 	    
 	    // A page is basically a post with a different 'type' value
 	    $new_page->setTitle("Awesome new page")
@@ -94,7 +102,7 @@ class WPAPITest extends \PHPUnit_Framework_TestCase {
     public function testAddImage() {
     	
 	    // Let's create a new post on the main blog
-	    $new_post = new \Comodojo\WPAPI\WPPost($this->wp->getBlogByID(1));
+	    $new_post = new \Comodojo\WPAPI\WPPost($this->blog);
 	    
 	    // Chain like there's no tomorrow
 	    $new_post->setTitle("Awesome new post")
@@ -108,7 +116,7 @@ class WPAPITest extends \PHPUnit_Framework_TestCase {
 	      ->save();
 	    
 	    // Create an image
-	    $image = new \Comodojo\WPAPI\WPMedia($this->wp->getBlogByID(1));
+	    $image = new \Comodojo\WPAPI\WPMedia($this->blog);
 	    
 	    // You can set the image object as an attachment to the post
 	    // This only works BEFORE calling the 'upload' method
@@ -133,7 +141,7 @@ class WPAPITest extends \PHPUnit_Framework_TestCase {
     public function testAddComment() {
     	
 	    // Let's create a new post on the main blog
-	    $new_post = new \Comodojo\WPAPI\WPPost($this->wp->getBlogByID(1));
+	    $new_post = new \Comodojo\WPAPI\WPPost($this->blog);
 	    
 	    // Chain like there's no tomorrow
 	    $new_post->setTitle("Awesome new post with comments")

@@ -69,7 +69,7 @@ class WPComment {
      * @var string
      */
 	private $status = "";
-	private $supportedStatus = array('hold', 'approve', 'spam');
+	private $supportedStatus = array();
 	
 	/**
      * Comment content
@@ -141,8 +141,6 @@ class WPComment {
         $this->post = $post;
         
         $this->id   = intval($id);
-            
-        $this->supportedStatus = array_keys($this->getBlog()->getSupportedCommentStatus());
         
         if ($id > -1) {
         	
@@ -505,6 +503,9 @@ class WPComment {
      * @throws \Comodojo\Exception\WPException
      */
     public function setStatus($status) {
+            
+        if (empty($this->supportedStatus)) 
+        	$this->supportedStatus = array_keys($this->getBlog()->getSupportedCommentStatus());
     	
     	if (in_array($status, $this->supportedStatus)) {
     		

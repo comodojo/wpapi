@@ -23,7 +23,7 @@ try {
     if ($wp->login("awesome_user", "awesome_password")) {
     
 	    // Get last 10 posts (methods are chainable)
-	    $posts = $wp->getBlogByID(0)->getLatestPosts();
+	    $posts = $wp->getBlogByID(1)->getLatestPosts();
 	    
 	    // $posts is an Iterator object, so it can be used in a foreach statement
 	    foreach ($posts as $p) {
@@ -55,7 +55,7 @@ try {
     if ($wp->login("awesome_user", "awesome_password")) {
     
 	    // Get profile
-	    $profile = $wp->getBlogByID(0)->getProfile();
+	    $profile = $wp->getBlogByID(1)->getProfile();
 	    
 	    echo "<p>Hello " . $profile->getDisplayName() . "!</p>";
 	    
@@ -87,7 +87,7 @@ try {
     if ($wp->login("awesome_user", "awesome_password")) {
     
 	    // Let's create a new post on the main blog
-	    $new_post = new \Comodojo\WPAPI\WPPost($wp->getBlogByID(0));
+	    $new_post = new \Comodojo\WPAPI\WPPost($wp->getBlogByID(1));
 	    
 	    // Chain like there's no tomorrow
 	    $new_post->setTitle("Awesome new post")
@@ -121,7 +121,7 @@ try {
     if ($wp->login("awesome_user", "awesome_password")) {
     
 	    // Let's create a new page on the main blog
-	    $new_page = new \Comodojo\WPAPI\WPPost($wp->getBlogByID(0));
+	    $new_page = new \Comodojo\WPAPI\WPPost($wp->getBlogByID(1));
 	    
 	    // A page is basically a post with a different 'type' value
 	    $new_page->setTitle("Awesome new page")
@@ -152,7 +152,7 @@ try {
     if ($wp->login("awesome_user", "awesome_password")) {
     
 	    // Initialize a post object
-	    $post = new \Comodojo\WPAPI\WPPost($wp->getBlogByID(0));
+	    $post = new \Comodojo\WPAPI\WPPost($wp->getBlogByID(1));
 	    
 	    // You can load a post starting from its ID
 	    // and then retrieve its comments
@@ -192,7 +192,7 @@ try {
     
 	    // Initialize a media gallery iterator
 	    // You can filter the results by the mime-type
-	    $library = $wp->getBlogByID(0)->getMediaLibrary("image/jpeg");
+	    $library = $wp->getBlogByID(1)->getMediaLibrary("image/jpeg");
 	    
 	    /* The iterator is meant to load each object on demand during iteration.
 	     * This means that it won't do any query to Wordpress until you start
@@ -231,10 +231,10 @@ try {
     
 	    // Load a post (you can use the 'loadFromID' method or
 	    // set the post ID directly into the constructor)
-	    $post = new \Comodojo\WPAPI\WPPost($wp->getBlogByID(0), 42);
+	    $post = new \Comodojo\WPAPI\WPPost($wp->getBlogByID(1), 42);
 	    
 	    // Create an image
-	    $image = new \Comodojo\WPAPI\WPMedia($wp->getBlogByID(0));
+	    $image = new \Comodojo\WPAPI\WPMedia($wp->getBlogByID(1));
 	    
 	    // You can set the image object as an attachment to the post
 	    // This only works BEFORE calling the 'upload' method

@@ -160,24 +160,7 @@ class WPBlog {
         
         $this->admin    = $admin;
         
-        if ($this->checkEndPoint()) {
-    	
-	    	try {
-	    		
-	            $this->loadTaxonomies()
-	            	->loadPostFormats()
-	            	->loadPostTypes()
-	            	->loadPostStatus()
-	            	->loadBlogOptions()
-	            	->loadCommentStatus();
-	            
-	    	} catch (WPException $wpe) {
-	    		
-	    		throw $wpe;
-	    		
-	    	}
-	    	
-        } else {
+        if (!$this->checkEndPoint()) {
         	
         	$this->id = -1;
         	
@@ -247,6 +230,8 @@ class WPBlog {
      */
     public function getSupportedFormats() {
     	
+    	if (empty($this->supportedFormats)) $this->loadPostFormats();
+    	
     	return $this->supportedFormats;
     	
     }
@@ -257,6 +242,8 @@ class WPBlog {
      * @return  array  $types
      */
     public function getSupportedTypes() {
+    	
+    	if (empty($this->supportedTypes)) $this->loadPostTypes();
     	
     	return $this->supportedTypes;
     	
@@ -269,6 +256,8 @@ class WPBlog {
      */
     public function getSupportedPostStatus() {
     	
+    	if (empty($this->supportedPostStatus)) $this->loadPostStatus();
+    	
     	return $this->supportedPostStatus;
     	
     }
@@ -280,6 +269,8 @@ class WPBlog {
      */
     public function getSupportedCommentStatus() {
     	
+    	if (empty($this->supportedCommentStatus)) $this->loadCommentStatus();
+    	
     	return $this->supportedCommentStatus;
     	
     }
@@ -290,6 +281,8 @@ class WPBlog {
      * @return  array  $options
      */
     public function getAvailableOptions() {
+    	
+    	if (empty($this->options)) $this->loadBlogOptions();
     	
     	return array_keys($this->options);
     	
@@ -305,6 +298,8 @@ class WPBlog {
      * @throws \Comodojo\Exception\WPException
      */
     public function getOptionValue($name) {
+    	
+    	if (empty($this->options)) $this->loadBlogOptions();
     	
     	if (!isset($this->options[$name]))
     		throw new WPException("There isn't any option called '$name'");
@@ -324,6 +319,8 @@ class WPBlog {
      */
     public function getOptionDescription($name) {
     	
+    	if (empty($this->options)) $this->loadBlogOptions();
+    	
     	if (!isset($this->options[$name]))
     		throw new WPException("There isn't any option called '$name'");
     	
@@ -341,6 +338,8 @@ class WPBlog {
      * @throws \Comodojo\Exception\WPException
      */
     public function isReadOnlyOption($name) {
+    	
+    	if (empty($this->options)) $this->loadBlogOptions();
     	
     	if (!isset($this->options[$name]))
     		throw new WPException("There isn't any option called '$name'");
@@ -389,6 +388,8 @@ class WPBlog {
      * @throws \Comodojo\Exception\WPException
      */
     public function setOption($name, $value, $desc = null) {
+    	
+    	if (is_null($this->options)) $this->loadBlogOptions();
     	
     	if (!isset($this->options[$name]))
     		throw new WPException("There isn't any option called '$name'");
@@ -944,6 +945,8 @@ class WPBlog {
      */
     public function getTaxonomies() {
     	
+    	if (empty($this->taxonomies)) $this->loadTaxonomies();
+    	
     	return $this->taxonomies;
     	
     }
@@ -995,8 +998,6 @@ class WPBlog {
      */
     private function loadTaxonomies() {
     	
-    	$taxonomies  = array();
-    	
     	try {
     		
             $rpc_client = new RpcClient($this->getEndPoint());
@@ -1040,7 +1041,7 @@ class WPBlog {
     		
     	}
     	
-    	return $this->loadBlogTerms();
+    	return $this;
     	
     }
     
@@ -1050,6 +1051,8 @@ class WPBlog {
      * @return  array  $tags
      */
     public function getTags() {
+    	
+    	if (empty($this->tags)) $this->loadBlogTerms();
     	
     	return $this->tags;
     	
@@ -1118,6 +1121,8 @@ class WPBlog {
      * @return  array  $categories
      */
     public function getCategories() {
+    	
+    	if (empty($this->categories)) $this->loadBlogTerms();
     	
     	return $this->categories;
     	
@@ -1462,6 +1467,8 @@ class WPBlog {
     private function loadBlogTerms() {
     	
     	try {
+    	
+    		if (empty($this->taxonomies)) $this->loadTaxonomies();
 			
 			$this->tags = $this->getTaxonomy("post_tag")->getTerms();
 			

@@ -83,7 +83,7 @@ class WPPost {
      * @var string
      */
 	private $status = "draft";
-	private $supportedStatus = array('draft', 'publish', 'pending', 'future', 'private');
+	private $supportedStatus = array();
 	
 	/**
      * Post type
@@ -91,7 +91,7 @@ class WPPost {
      * @var string
      */
 	private $type = "post";
-	private $supportedTypes = array('post', 'page', 'link', 'nav_menu_item');
+	private $supportedTypes = array();
 	
 	/**
      * Post format
@@ -99,7 +99,7 @@ class WPPost {
      * @var string
      */
 	private $format = "standard";
-	private $supportedFormats = array('standard', 'image');
+	private $supportedFormats = array();
 	
 	/**
      * Post name
@@ -268,12 +268,6 @@ class WPPost {
         	$this->author  = $blog->getProfile();
         	
         }
-            
-        $this->supportedFormats = array_keys($this->getBlog()->getSupportedFormats());
-            
-        $this->supportedTypes   = array_keys($this->getBlog()->getSupportedTypes());
-            
-        $this->supportedStatus  = array_keys($this->getBlog()->getSupportedPostStatus());
         
     }
 	
@@ -544,6 +538,9 @@ class WPPost {
      * @return  Object  $this
      */
     public function setStatus($value) {
+            
+        if (empty($this->supportedStatus)) 
+        	$this->supportedStatus  = array_keys($this->getBlog()->getSupportedPostStatus());
     	
     	if (in_array($value, $this->supportedStatus)) {
     		
@@ -578,6 +575,9 @@ class WPPost {
      * @return  Object  $this
      */
     public function setType($value) {
+            
+        if (empty($this->supportedTypes)) 
+        	$this->supportedTypes   = array_keys($this->getBlog()->getSupportedTypes());
     	
     	if (in_array($value, $this->supportedTypes)) {
     		
@@ -612,6 +612,9 @@ class WPPost {
      * @return  Object  $this
      */
     public function setFormat($value) {
+            
+        if (empty($this->supportedFormats)) 
+        	$this->supportedFormats = array_keys($this->getBlog()->getSupportedFormats());
     	
     	if (in_array($value, $this->supportedFormats)) {
     		
