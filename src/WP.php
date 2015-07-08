@@ -134,11 +134,11 @@ class WP {
 		        	$this->blogs = array(
 		        		new WPBlog(
 							$this,
-							$blog['blogid'],
-							$blog['blogName'],
-							$blog['url'],
+							$blogs[0]['blogid'],
+							$blogs[0]['blogName'],
+							$blogs[0]['url'],
 							$this->getEndPoint(),
-							$blog['isAdmin']
+							$blogs[0]['isAdmin']
 						)
 		        	);
 		        	
