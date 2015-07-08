@@ -364,7 +364,9 @@ class WPBlog {
                 $this->getWordpress()->getPassword()
             ));
             
-            $rpc_client->send();
+            $result = $rpc_client->send();
+            
+            var_dump($result);
             
     	} catch (Exception $e) {
     		
