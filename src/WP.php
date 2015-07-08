@@ -41,7 +41,7 @@ class WP {
      *
      * @var string
      */
-    private $url      = "";
+    private $endpoint = "";
     
     /**
      * Username
