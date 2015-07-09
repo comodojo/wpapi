@@ -889,7 +889,7 @@ class WPMedia {
             
             $data = $this->getWordpress()->sendMessage("wp.uploadFile", array(
                 $content
-            ), $this->getBlog(), array( array( &$content["bits"], "base64" )));
+            ), $this->getBlog(), array( "bits" => "base64" ) );
             
             $this->loadFromID($data['id']);
     		
