@@ -647,7 +647,7 @@ class WPComment {
     	try {
     		
             $return = $this->getWordpress()->sendMessage("wp.deleteComment", array(
-                $this->getPost()->getID()
+                $this->getID()
             ), $this->getBlog());
     		
     	} catch (WPException $wpe) {
