@@ -13,14 +13,30 @@ class WPAPITest extends \PHPUnit_Framework_TestCase {
         $pass = "admin";
         
         $this->wp = new \Comodojo\WPAPI\WP($address);
-        
-        $this->wp->login($user, $pass);
-        
-        $blogs = $this->wp->getBlogs();
-        
-        $this->blog = $blogs[0];
-        
-        
+    	
+    	if ($this->wp->login($user, $pass)) {
+    		
+    		foreach ($this->wp->getBlogs() as $blog) {
+    			
+    			foreach ($blog->getPosts() as $id => $post) {
+    				
+		    		$post->delete();
+		    		
+		    	}
+    			
+    			foreach ($blog->getPages() as $id => $post) {
+    				
+		    		$post->delete();
+		    		
+		    	}
+    		
+    			$this->blog = $blog;
+    			
+    			break;
+		    	
+    		}
+    		
+    	}
     
     }
     
@@ -67,6 +83,22 @@ class WPAPITest extends \PHPUnit_Framework_TestCase {
     	$timestamp = time();
     	
     	if ($this->wp->isLogged()) {
+    		
+    		foreach ($this->wp->getBlogs() as $blog) {
+    			
+    			foreach ($blog->getPosts() as $id => $post) {
+    				
+		    		$post->delete();
+		    		
+		    	}
+    			
+    			foreach ($blog->getPages() as $id => $post) {
+    				
+		    		$post->delete();
+		    		
+		    	}
+		    	
+    		}
     		
     		foreach ($this->wp->getBlogs() as $blog) {
     			
