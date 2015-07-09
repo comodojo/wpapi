@@ -496,7 +496,7 @@ class WPPost {
     public function setStatus($value) {
             
         if (empty($this->supportedStatus)) 
-        	$this->supportedStatus  = array_keys($this->getBlog()->getSupportedPostStatus());
+        	$this->supportedStatus  = $this->getBlog()->getSupportedPostStatus();
     	
     	if (in_array($value, $this->supportedStatus)) {
     		
@@ -533,7 +533,7 @@ class WPPost {
     public function setType($value) {
             
         if (empty($this->supportedTypes)) 
-        	$this->supportedTypes   = array_keys($this->getBlog()->getSupportedTypes());
+        	$this->supportedTypes = $this->getBlog()->getSupportedTypes();
     	
     	if (in_array($value, $this->supportedTypes)) {
     		
@@ -570,7 +570,7 @@ class WPPost {
     public function setFormat($value) {
             
         if (empty($this->supportedFormats)) 
-        	$this->supportedFormats = array_keys($this->getBlog()->getSupportedFormats());
+        	$this->supportedFormats = $this->getBlog()->getSupportedFormats();
     	
     	if (in_array($value, $this->supportedFormats)) {
     		

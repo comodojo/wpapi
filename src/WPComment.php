@@ -460,7 +460,7 @@ class WPComment {
     public function setStatus($status) {
             
         if (empty($this->supportedStatus)) 
-        	$this->supportedStatus = array_keys($this->getBlog()->getSupportedCommentStatus());
+        	$this->supportedStatus = $this->getBlog()->getSupportedCommentStatus();
     	
     	if (in_array($status, $this->supportedStatus)) {
     		

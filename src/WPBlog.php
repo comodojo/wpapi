@@ -225,7 +225,7 @@ class WPBlog {
     	
     	if (empty($this->supportedFormats)) $this->loadPostFormats();
     	
-    	return $this->supportedFormats;
+    	return array_keys($this->supportedFormats);
     	
     }
     
@@ -238,7 +238,7 @@ class WPBlog {
     	
     	if (empty($this->supportedTypes)) $this->loadPostTypes();
     	
-    	return $this->supportedTypes;
+    	return array_keys($this->supportedTypes);
     	
     }
     
@@ -251,7 +251,7 @@ class WPBlog {
     	
     	if (empty($this->supportedPostStatus)) $this->loadPostStatus();
     	
-    	return $this->supportedPostStatus;
+    	return array_keys($this->supportedPostStatus);
     	
     }
     
@@ -1177,7 +1177,7 @@ class WPBlog {
             
             foreach ($status as $s) {
             
-            	$this->supportedCommentStatus[$s['key']] = $s['value'];
+            	array_push($this->supportedCommentStatus, $s);
             	
             }
             
