@@ -408,8 +408,7 @@ class WPCommentIterator implements \Iterator {
 	            
 	            $this->comment_awaiting = intval($count['awaiting_moderation']);
 	            
-	            $this->comment_spam     = intva
-($count['spam']);
+	            $this->comment_spam     = intval($count['spam']);
 	            
 	            $this->comment_total    = intval($count['approved']);
             
