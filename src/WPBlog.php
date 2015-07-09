@@ -1208,7 +1208,7 @@ class WPBlog {
             foreach ($options as $name => $option) {
             	
             	$this->options[$name] = array(
-            		"descr"    => $option['desc'],
+            		"desc"     => $option['desc'],
             		"value"    => $option['value'],
             		"readonly" => filter_var($option['readonly'], FILTER_VALIDATE_BOOLEAN)
             	);

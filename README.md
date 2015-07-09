@@ -1,6 +1,6 @@
 # comodojo/wpapi
 
-[![Build Status](https://api.travis-ci.org/comodojo/wpapi.png)](http://travis-ci.org/comodojo/wpapi) [![Latest Stable Version](https://poser.pugx.org/comodojo/wpapi/v/stable)](https://packagist.org/packages/comodojo/wpapi) [![Total Downloads](https://poser.pugx.org/comodojo/wpapi/downloads)](https://packagist.org/packages/comodojo/wpapi) [![Latest Unstable Version](https://poser.pugx.org/comodojo/rpcclient/v/wpapi)](https://packagist.org/packages/comodojo/wpapi) [![License](https://poser.pugx.org/comodojo/wpapi/license)](https://packagist.org/packages/comodojo/wpapi)
+[![Build Status](https://api.travis-ci.org/comodojo/wpapi.png)](http://travis-ci.org/comodojo/wpapi) [![Latest Stable Version](https://poser.pugx.org/comodojo/wpapi/v/stable)](https://packagist.org/packages/comodojo/wpapi) [![Total Downloads](https://poser.pugx.org/comodojo/wpapi/downloads)](https://packagist.org/packages/comodojo/wpapi) [![License](https://poser.pugx.org/comodojo/wpapi/license)](https://packagist.org/packages/comodojo/wpapi)
 
 A [XML-RPC Wordpress API](https://codex.wordpress.org/XML-RPC_WordPress_API) wrapper. It uses the [comodojo/rpcclient](https://github.com/comodojo/rpcclient) to send requests.
 

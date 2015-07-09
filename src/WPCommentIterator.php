@@ -404,13 +404,14 @@ class WPCommentIterator implements \Iterator {
 		            $this->getPost()->getID()
 	            ), $this->getBlog());
 	            
-	            $this->comment_approved = $count['approved'];
+	            $this->comment_approved = intval($count['approved']);
 	            
-	            $this->comment_awaiting = $count['awaiting_moderation'];
+	            $this->comment_awaiting = intval($count['awaiting_moderation']);
 	            
-	            $this->comment_spam     = $count['spam'];
+	            $this->comment_spam     = intva
+($count['spam']);
 	            
-	            $this->comment_total    = $count['approved'];
+	            $this->comment_total    = intval($count['approved']);
             
 	    	} catch (WPException $wpe) {
 	    		

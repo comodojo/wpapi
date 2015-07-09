@@ -85,7 +85,7 @@ class WPMediaIterator implements \Iterator {
         
         $this->mime = $mime;
         
-        $this->post = intval($id);
+        $this->post = intval($post);
         
     }
     
