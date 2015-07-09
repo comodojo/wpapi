@@ -1408,8 +1408,8 @@ class WPPost {
     	try {
     		
             $id = $this->getWordpress()->sendMessage("wp.newPost", array(
-                $content
-            ), $this->getBlog(), array( "post_date" => "datetime" ));
+                &$content
+            ), $this->getBlog(), array( array( &$content["post_date"], "datetime" )));
             
             $this->loadFromID($id);
     		
@@ -1439,8 +1439,8 @@ class WPPost {
     		
             $this->getWordpress()->sendMessage("wp.editPost", array(
                 $this->getID(),
-                $content
-            ), $this->getBlog(), array( "post_date" => "datetime" ));
+                &$content
+            ), $this->getBlog(), array( array( &$content["post_date"], "datetime" )));
     		
     	} catch (WPException $wpe) {
     		

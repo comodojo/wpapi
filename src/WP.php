@@ -317,9 +317,9 @@ class WP {
     		
             $rpc_client = new RpcClient($endpoint);
             
-            foreach ($types as $sid => $type) {
+            foreach ($types as $$type) {
             	
-            	$this->setRpcClientValueType($rpc_client, $message, $sid, $type);
+            	$rpc_client->setValueType($type[0], $type[1]);
             	
             }
     		
@@ -345,38 +345,6 @@ class WP {
     	} catch (Exception $e) {
     		
     		throw new WPException("Generic Exception: ".$e->getMessage());
-    		
-    	}
-    	
-    }
-    
-    /**
-     * Set value types for specified SID
-     * 
-     * @param   Object $rpc_client Reference to the RPC client
-     * @param   array  $datasource Array to search for SID
-     * @param   string $sid        SID to search in datasource
-     * @param   string $type       Type of data to be set
-     * 
-     */
-    private function setRpcClientValueType($rpc_client, &$datasource, $sid, $type) {
-    	
-    	if (is_array($datasource)) {
-    		
-    		if (isset($datasource[$sid])) {
-    			
-    			$rpc_client->setValueType($datasource[$sid], $type);
-    			
-    		}
-    		else {
-    		
-	    		foreach ($datasource as $id => $data) {
-	    			
-	    			$this->setRpcClientValueType($rpc_client, $datasource[$id], $sid, $type);
-	    			
-	    		}
-	    		
-    		}
     		
     	}
     	
