@@ -350,7 +350,7 @@ class WPBlog {
     	
     	try {
         
-            $this->getWordpress()->sendMessage("wp.getUsersBlogs", array(), $this);
+            $this->getWordpress()->sendMessage("wp.getProfile", array(), $this);
             
     	} catch (WPException $wpe) {
     		

@@ -111,7 +111,7 @@ class WP {
         $this->password = $password;
         
         $this->setEndPoint($this->url."/xmlrpc.php");
-      
+        
         try {
             
             $blogs = $this->sendMessage("wp.getUsersBlogs");
