@@ -359,12 +359,12 @@ class WP {
      * @param   string $type       Type of data to be set
      * 
      */
-    private function setRpcClientValueType($rpc_client, &$datasource, $sid, $type) {
+    private function setRpcClientValueType(&$rpc_client, &$datasource, $sid, $type) {
     	
     	if (is_array($datasource)) {
     		
     		if (isset($datasource[$sid])) {
-    			var_dump($datasource[$sid]);
+    			
     			$rpc_client->setValueType($datasource[$sid], $type);
     			
     		} else {
