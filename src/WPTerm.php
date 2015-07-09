@@ -1,11 +1,6 @@
 <?php namespace Comodojo\WPAPI;
 
 use \Comodojo\Exception\WPException;
-use \Comodojo\Exception\RpcException;
-use \Comodojo\Exception\HttpException;
-use \Comodojo\Exception\XmlrpcException;
-use \Exception;
-use \Comodojo\RpcClient\RpcClient;
 
 /** 
  * Comodojo Wordpress API Wrapper. This class maps a Wordpress term
@@ -96,8 +91,6 @@ class WPTerm {
      *
      * @param   Object  $taxonomy Reference to a taxonomy object
      * @param   int     $id       Term ID (optional)
-     *
-     * @return  Object  $this
      * 
      * @throws \Comodojo\Exception\WPException
      */
@@ -145,35 +138,16 @@ class WPTerm {
     	
     	try {
     		
-            $rpc_client = new RpcClient($this->getBlog()->getEndPoint());
-            
-            $rpc_client->addRequest("wp.getTerm", array( 
-                $this->getBlog()->getID(), 
-                $this->getWordpress()->getUsername(), 
-                $this->getWordpress()->getPassword(),
+            $term = $this->getWordpress()->sendMessage("wp.getTerm", array(
                 $this->getTaxonomy()->getName(),
                 intval($id)
-            ));
-            
-            $term = $rpc_client->send();
+            ), $this->getBlog());
             
             $this->loadData($term);
             
-    	} catch (RpcException $rpc) {
+    	} catch (WPException $wpe) {
     		
-    		throw new WPException("Unable to retrieve term informations - RPC Exception (".$rpc->getMessage().")");
-    		
-    	} catch (XmlrpcException $xml) {
-    		
-    		throw new WPException("Unable to retrieve term informations - XMLRPC Exception (".$xml->getMessage().")");
-    		
-    	} catch (HttpException $http) {
-    		
-    		throw new WPException("Unable to retrieve term informations - HTTP Exception (".$http->getMessage().")");
-    		
-    	} catch (Exception $e) {
-    		
-    		throw new WPException("Unable to retrieve term informations - Generic Exception (".$e->getMessage().")");
+    		throw new WPException("Unable to retrieve term informations (".$wpe->getMessage().")");
     		
     	}
     	
@@ -422,34 +396,16 @@ class WPTerm {
     	$content = $this->getTermData();
     	
     	try {
-            $rpc_client = new RpcClient($this->getBlog()->getEndPoint());
-            
-            $rpc_client->addRequest("wp.newTerm", array( 
-                $this->getBlog()->getID(), 
-                $this->getWordpress()->getUsername(), 
-                $this->getWordpress()->getPassword(),
+    		
+            $id = $this->getWordpress()->sendMessage("wp.newTerm", array(
                 $content
-            ));
-            
-            $id = $rpc_client->send();
+            ), $this->getBlog());
             
             $this->loadFromID($id);
     		
-    	} catch (RpcException $rpc) {
+    	} catch (WPException $wpe) {
     		
-    		throw new WPException("Unable to create term - RPC Exception (".$rpc->getMessage().")");
-    		
-    	} catch (XmlrpcException $xml) {
-    		
-    		throw new WPException("Unable to create term - XMLRPC Exception (".$xml->getMessage().")");
-    		
-    	} catch (HttpException $http) {
-    		
-    		throw new WPException("Unable to create term - HTTP Exception (".$http->getMessage().")");
-    		
-    	} catch (Exception $e) {
-    		
-    		throw new WPException("Unable to create term - Generic Exception (".$e->getMessage().")");
+    		throw new WPException("Unable to create term (".$wpe->getMessage().")");
     		
     	}
     	
@@ -470,33 +426,15 @@ class WPTerm {
     	$content = $this->getTermData();
     	
     	try {
-            $rpc_client = new RpcClient($this->getBlog()->getEndPoint());
-            
-            $rpc_client->addRequest("wp.editTerm", array( 
-                $this->getBlog()->getID(),
-                $this->getWordpress()->getUsername(), 
-                $this->getWordpress()->getPassword(),
+    		
+            $this->getWordpress()->sendMessage("wp.editTerm", array(
                 $this->getID(),
                 $content
-            ));
-            
-            $rpc_client->send();
+            ), $this->getBlog());
     		
-    	} catch (RpcException $rpc) {
+    	} catch (WPException $wpe) {
     		
-    		throw new WPException("Unable to edit term - RPC Exception (".$rpc->getMessage().")");
-    		
-    	} catch (XmlrpcException $xml) {
-    		
-    		throw new WPException("Unable to edit term - XMLRPC Exception (".$xml->getMessage().")");
-    		
-    	} catch (HttpException $http) {
-    		
-    		throw new WPException("Unable to edit term - HTTP Exception (".$http->getMessage().")");
-    		
-    	} catch (Exception $e) {
-    		
-    		throw new WPException("Unable to edit term - Generic Exception (".$e->getMessage().")");
+    		throw new WPException("Unable to edit term (".$wpe->getMessage().")");
     		
     	}
     	
@@ -543,33 +481,15 @@ class WPTerm {
     public function delete() {
     	
     	try {
-            $rpc_client = new RpcClient($this->blog->getEndPoint());
             
-            $rpc_client->addRequest("wp.deleteTerm", array( 
-                $this->getBlog()->getID(), 
-                $this->getWordpress()->getUsername(), 
-                $this->getWordpress()->getPassword(),
+            $return = $this->getWordpress()->sendMessage("wp.deleteTerm", array(
                 $this->getTaxonomy()->getName(),
                 $this->getID()
-            ));
-            
-            $return = $rpc_client->send();
+            ), $this->getBlog());
     		
-    	} catch (RpcException $rpc) {
+    	} catch (WPException $wpe) {
     		
-    		throw new WPException("Unable to delete term - RPC Exception (".$rpc->getMessage().")");
-    		
-    	} catch (XmlrpcException $xml) {
-    		
-    		throw new WPException("Unable to delete term - XMLRPC Exception (".$xml->getMessage().")");
-    		
-    	} catch (HttpException $http) {
-    		
-    		throw new WPException("Unable to delete term - HTTP Exception (".$http->getMessage().")");
-    		
-    	} catch (Exception $e) {
-    		
-    		throw new WPException("Unable to delete term - Generic Exception (".$e->getMessage().")");
+    		throw new WPException("Unable to delete term (".$wpe->getMessage().")");
     		
     	}
     	

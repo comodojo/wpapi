@@ -75,8 +75,6 @@ class WP {
      * Class constructor
      *
      * @param   string  $url  URL of the Wordpress installation
-     *
-     * @return  Object  $this
      * 
      * @throws \Comodojo\Exception\WPException
      */
@@ -115,15 +113,8 @@ class WP {
         $this->setEndPoint($this->url."/xmlrpc.php");
       
         try {
-        
-            $rpc_client = new RpcClient($this->getEndPoint());
             
-            $rpc_client->addRequest("wp.getUsersBlogs", array( 
-                $username, 
-                $password
-            ));
-            
-            $blogs = $rpc_client->send();
+            $blogs = $this->sendMessage("wp.getUsersBlogs");
             
 	        if (count($blogs) > 0) {
 	        
@@ -168,21 +159,9 @@ class WP {
 	        
 	        }
         
-        } catch (RpcException $rpc) {
+        } catch (WPException $wpe) {
         
-            throw new WPException("Unable to login - RPC Exception (".$rpc->getMessage().")");
-        
-        } catch (XmlrpcException $xml) {
-        
-            throw new WPException("Unable to login - XMLRPC Exception (".$xml->getMessage().")");
-        
-        } catch (HttpException $http) {
-        
-            throw new WPException("Unable to login - HTTP Exception (".$http->getMessage().")");
-        
-        } catch (Exception $e) {
-        
-            throw new WPException("Unable to login - Generic Exception (".$e->getMessage().")");
+            throw new WPException("Unable to login (".$wpe->getMessage().")");
         
         }
       
@@ -299,6 +278,108 @@ class WP {
         return null;
       
     }
+	
+    /**
+     * Send message to wordpress
+     * 
+     * @param   string $method Name of the rpc method to call
+     * @param   array  $msg    List of data to send to wordpress
+     * @param   Object $blog   Blog reference to use as destination of the message
+     *
+     * @return  array  $response
+     * 
+     * @throws \Comodojo\Exception\WPException
+     */
+    public function sendMessage($method, $msg = array(), $blog = null, $types = array()) {
+    	
+    	$message  = array();
+    	$endpoint = $this->getEndPoint();
+    	
+    	if (!is_null($blog)) {
+    		
+    		array_push($message, $blog->getID());
+    		
+    		$endpoint = $blog->getEndPoint();
+    		
+    	}
+    	
+    	array_push($message, $this->getUsername());
+    	
+    	array_push($message, $this->getPassword());
+    	
+    	foreach ($msg as $content) {
+    		
+    		array_push($message, $content);
+    		
+    	}
+    	
+    	try {
+    		
+            $rpc_client = new RpcClient($endpoint);
+            
+            foreach ($types as $sid => $type) {
+            	
+            	$this->setRpcClientValueType($rpc_client, $message, $sid, $type);
+            	
+            }
+    		
+            $rpc_client->addRequest(
+            	$method, 
+            	$message
+            );
+            
+            return $rpc_client->send();
+            
+    	} catch (RpcException $rpc) {
+    		
+    		throw new WPException("RPC Exception: ".$rpc->getMessage());
+    		
+    	} catch (XmlrpcException $xml) {
+    		
+    		throw new WPException("XMLRPC Exception: ".$xml->getMessage());
+    		
+    	} catch (HttpException $http) {
+    		
+    		throw new WPException("HTTP Exception: ".$http->getMessage());
+    		
+    	} catch (Exception $e) {
+    		
+    		throw new WPException("Generic Exception: ".$e->getMessage());
+    		
+    	}
+    	
+    }
     
+    /**
+     * Set value types for specified SID
+     * 
+     * @param   Object $rpc_client Reference to the RPC client
+     * @param   array  $datasource Array to search for SID
+     * @param   string $sid        SID to search in datasource
+     * @param   string $type       Type of data to be set
+     * 
+     */
+    private function setRpcClientValueType($rpc_client, &$datasource, $sid, $type) {
+    	
+    	if (is_array($datasource)) {
+    		
+    		if (isset($datasource[$sid])) {
+    			
+    			$rpc_client->setValueType($datasource[$sid], $type);
+    			
+    		}
+    		else {
+    		
+	    		foreach ($datasource as $id => $data) {
+	    			
+	    			$this->setRpcClientValueType($rpc_client, $datasource[$id], $sid, $type);
+	    			
+	    		}
+	    		
+    		}
+    		
+    	}
+    	
+    }
     
 }

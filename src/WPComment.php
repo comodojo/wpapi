@@ -1,11 +1,6 @@
 <?php namespace Comodojo\WPAPI;
 
 use \Comodojo\Exception\WPException;
-use \Comodojo\Exception\RpcException;
-use \Comodojo\Exception\HttpException;
-use \Comodojo\Exception\XmlrpcException;
-use \Exception;
-use \Comodojo\RpcClient\RpcClient;
 
 /** 
  * Comodojo Wordpress API Wrapper. This class maps a Wordpress comment
@@ -125,8 +120,6 @@ class WPComment {
      *
      * @param   Object  $post Reference to a post object
      * @param   int     $id   Comment ID (optional)
-     *
-     * @return  Object  $this
      * 
      * @throws \Comodojo\Exception\WPException
      */
@@ -174,34 +167,15 @@ class WPComment {
     	
     	try {
     		
-            $rpc_client = new RpcClient($this->getBlog()->getEndPoint());
-            
-            $rpc_client->addRequest("wp.getComment", array( 
-                $this->getBlog()->getID(), 
-                $this->getWordpress()->getUsername(), 
-                $this->getWordpress()->getPassword(),
+            $comment = $this->getWordpress()->sendMessage("wp.getComment", array(
                 intval($id)
-            ));
-            
-            $comment = $rpc_client->send();
+            ), $this->getBlog());
         
 	        $this->loadData($comment);
             
-    	} catch (RpcException $rpc) {
+    	} catch (WPException $wpe) {
     		
-    		throw new WPException("Unable to retrieve comment informations - RPC Exception (".$rpc->getMessage().")");
-    		
-    	} catch (XmlrpcException $xml) {
-    		
-    		throw new WPException("Unable to retrieve comment informations - XMLRPC Exception (".$xml->getMessage().")");
-    		
-    	} catch (HttpException $http) {
-    		
-    		throw new WPException("Unable to retrieve comment informations - HTTP Exception (".$http->getMessage().")");
-    		
-    	} catch (Exception $e) {
-    		
-    		throw new WPException("Unable to retrieve comment informations - Generic Exception (".$e->getMessage().")");
+    		throw new WPException("Unable to retrieve comment informations (".$wpe->getMessage().")");
     		
     	}
     	
@@ -236,16 +210,9 @@ class WPComment {
     			$filter['status'] = $status;
     		}
     		
-            $rpc_client = new RpcClient($this->getBlog()->getEndPoint());
-            
-            $rpc_client->setAutoclean()->addRequest("wp.getComments", array( 
-                $this->getBlog()->getID(), 
-                $this->getWordpress()->getUsername(), 
-                $this->getWordpress()->getPassword(),
+            $comments = $this->getWordpress()->sendMessage("wp.getComments", array(
                 $filter
-            ));
-            
-            $comments = $rpc_client->send();
+            ), $this->getBlog());
             
             if (count($comments) > 0) {
             	
@@ -259,21 +226,9 @@ class WPComment {
             	
             }
             
-    	} catch (RpcException $rpc) {
+    	} catch (WPException $wpe) {
     		
-    		throw new WPException("Unable to retrieve comment informations - RPC Exception (".$rpc->getMessage().")");
-    		
-    	} catch (XmlrpcException $xml) {
-    		
-    		throw new WPException("Unable to retrieve comment informations - XMLRPC Exception (".$xml->getMessage().")");
-    		
-    	} catch (HttpException $http) {
-    		
-    		throw new WPException("Unable to retrieve comment informations - HTTP Exception (".$http->getMessage().")");
-    		
-    	} catch (Exception $e) {
-    		
-    		throw new WPException("Unable to retrieve comment informations - Generic Exception (".$e->getMessage().")");
+    		throw new WPException("Unable to retrieve comment informations (".$wpe->getMessage().")");
     		
     	}
     	
@@ -603,35 +558,17 @@ class WPComment {
     	$content = $this->getCommentData();
     	
     	try {
-            $rpc_client = new RpcClient($this->getBlog()->getEndPoint());
             
-            $rpc_client->addRequest("wp.newComment", array( 
-                $this->getBlog()->getID(), 
-                $this->getWordpress()->getUsername(), 
-                $this->getWordpress()->getPassword(),
+            $id = $this->getWordpress()->sendMessage("wp.newComment", array(
                 $this->getPost()->getID(),
                 $content
-            ));
-            
-            $id = $rpc_client->send();
+            ), $this->getBlog());
             
             $this->loadFromID($id);
     		
-    	} catch (RpcException $rpc) {
+    	} catch (WPException $wpe) {
     		
-    		throw new WPException("Unable to create new comment - RPC Exception (".$rpc->getMessage().")");
-    		
-    	} catch (XmlrpcException $xml) {
-    		
-    		throw new WPException("Unable to create new comment - XMLRPC Exception (".$xml->getMessage().")");
-    		
-    	} catch (HttpException $http) {
-    		
-    		throw new WPException("Unable to create new comment - HTTP Exception (".$http->getMessage().")");
-    		
-    	} catch (Exception $e) {
-    		
-    		throw new WPException("Unable to create new comment - Generic Exception (".$e->getMessage().")");
+    		throw new WPException("Unable to create new comment (".$wpe->getMessage().")");
     		
     	}
     	
@@ -652,33 +589,15 @@ class WPComment {
     	$content = $this->getCommentData();
     	
     	try {
-            $rpc_client = new RpcClient($this->getBlog()->getEndPoint());
-            
-            $rpc_client->addRequest("wp.editComment", array( 
-                $this->getBlog()->getID(),
-                $this->getWordpress()->getUsername(), 
-                $this->getWordpress()->getPassword(),
+    		
+            $this->getWordpress()->sendMessage("wp.editComment", array(
                 $this->getID(),
                 $content
-            ));
-            
-            $rpc_client->send();
+            ), $this->getBlog());
     		
-    	} catch (RpcException $rpc) {
+    	} catch (WPException $wpe) {
     		
-    		throw new WPException("Unable to edit comment - RPC Exception (".$rpc->getMessage().")");
-    		
-    	} catch (XmlrpcException $xml) {
-    		
-    		throw new WPException("Unable to edit comment - XMLRPC Exception (".$xml->getMessage().")");
-    		
-    	} catch (HttpException $http) {
-    		
-    		throw new WPException("Unable to edit comment - HTTP Exception (".$http->getMessage().")");
-    		
-    	} catch (Exception $e) {
-    		
-    		throw new WPException("Unable to edit comment - Generic Exception (".$e->getMessage().")");
+    		throw new WPException("Unable to edit comment (".$wpe->getMessage().")");
     		
     	}
     	
@@ -726,32 +645,14 @@ class WPComment {
     public function delete() {
     	
     	try {
-            $rpc_client = new RpcClient($this->getBlog()->getEndPoint());
-            
-            $rpc_client->addRequest("wp.deleteComment", array( 
-                $this->getBlog()->getID(), 
-                $this->getWordpress()->getUsername(), 
-                $this->getWordpress()->getPassword(),
-                $this->getID()
-            ));
-            
-            $return = $rpc_client->send();
     		
-    	} catch (RpcException $rpc) {
+            $return = $this->getWordpress()->sendMessage("wp.deleteComment", array(
+                $this->getPost()->getID()
+            ), $this->getBlog());
     		
-    		throw new WPException("Unable to delete comment - RPC Exception (".$rpc->getMessage().")");
+    	} catch (WPException $wpe) {
     		
-    	} catch (XmlrpcException $xml) {
-    		
-    		throw new WPException("Unable to delete comment - XMLRPC Exception (".$xml->getMessage().")");
-    		
-    	} catch (HttpException $http) {
-    		
-    		throw new WPException("Unable to delete comment - HTTP Exception (".$http->getMessage().")");
-    		
-    	} catch (Exception $e) {
-    		
-    		throw new WPException("Unable to delete comment - Generic Exception (".$e->getMessage().")");
+    		throw new WPException("Unable to delete comment (".$wpe->getMessage().")");
     		
     	}
     	

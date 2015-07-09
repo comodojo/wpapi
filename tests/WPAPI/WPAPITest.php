@@ -58,6 +58,28 @@ class WPAPITest extends \PHPUnit_Framework_TestCase {
     			
     			$this->assertSame($b2->getName(), $blog->getName());
     			
+    			$blog->getSupportedFormats();
+    			
+    			$blog->getSupportedTypes();
+    			
+    			$blog->getSupportedPostStatus();
+    			
+    			$blog->getSupportedCommentStatus();
+    			
+    			$options = $blog->getAvailableOptions();
+    			
+    			foreach ($options as $opt) {
+    				
+    				$blog->getOptionValue($opt);
+    				
+    				$blog->getOptionDescription($opt);
+    				
+    				$blog->isReadOnlyOption($opt);
+    				
+    			}
+    			
+    			$blog->setOption('blogname', "Test Blog");
+    			
     		}
     		
     	}
@@ -128,6 +150,25 @@ class WPAPITest extends \PHPUnit_Framework_TestCase {
     					->save();
     					
     				array_push($post_ids[$blog->getID()], intval($post->getID()));
+    				
+    			}
+    			
+    			break;
+    			
+    		}
+    		
+    		
+    		foreach ($this->wp->getBlogs() as $blog) {
+    			
+    			$posts = $blog->getPosts()->reverse();
+    			
+    			while ($posts->hasPrevious()) {
+    				
+    				$post  = $posts->getPrevious();
+    				
+    				$check = $blog->getPostByID($posts->getCurrentID());
+    				
+    				$this->assertSame($post->getTitle(), $check->getTitle());
     				
     			}
     			
@@ -210,6 +251,8 @@ class WPAPITest extends \PHPUnit_Framework_TestCase {
     				
     			$comment_ids[$blog->getID()][$post->getID()] = array();
     			
+    			$this->assertSame($post->getComments()->getTotal(), 0);
+    			
     			for ($i=0; $i<10; $i++) {
     				
     				$comment = new \Comodojo\WPAPI\WPComment($post);
@@ -235,6 +278,14 @@ class WPAPITest extends \PHPUnit_Framework_TestCase {
     				$comment->setContent($comment->getContent() . " N." . $comment->getID())->save();
     				
     			}
+    			
+    			$this->assertSame($post->getCommentsByStatus()->getTotal(), 10);
+    			
+    			$post->getCommentsByStatus()->getApproved();
+    			
+    			$post->getCommentsByStatus()->getSpam();
+    			
+    			$post->getCommentsByStatus()->getAwaiting();
     			
     			break;
     			
@@ -309,7 +360,7 @@ class WPAPITest extends \PHPUnit_Framework_TestCase {
 			    	->setLastname("Dent")
 			    	->setDisplayname("Arthur Dent")
 			    	->setNicename("Arthy")
-			    	->setBiography("Hitchhiking through the universe")
+			    	->setBiography("Hitchhiking through the galaxy")
 			    	->setURL("http://localhost/")
 			    	->save();
 			    
@@ -336,6 +387,22 @@ class WPAPITest extends \PHPUnit_Framework_TestCase {
 		    		$this->assertSame($user->getBiography(), $u->getBiography());
 			    
 		    		$this->assertSame($user->getRegistration("Y/m/d"), $u->getRegistration("Y/m/d"));
+		    		
+		    	}
+		    	
+		    	$admins = $blog->getUsersByRole("administrator")->reverse();
+		    	
+		    	while ($admins->hasPrevious()) {
+		    		
+		    		$user = $admins->getPrevious();
+		    		
+		    		if ($admins->getCurrentID() == $profile->getID()) {
+		    			
+		    			$this->assertTrue($blog->isAdmin());
+		    			
+		    		}
+			    
+		    		$this->assertTrue(in_array("administrator", $user->getRoles()));
 		    		
 		    	}
     			

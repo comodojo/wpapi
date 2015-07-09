@@ -1,11 +1,6 @@
 <?php namespace Comodojo\WPAPI;
 
 use \Comodojo\Exception\WPException;
-use \Comodojo\Exception\RpcException;
-use \Comodojo\Exception\HttpException;
-use \Comodojo\Exception\XmlrpcException;
-use \Exception;
-use \Comodojo\RpcClient\RpcClient;
 
 /** 
  * Comodojo Wordpress API Wrapper. This class maps a Wordpress taxonomy
@@ -102,9 +97,7 @@ class WPTaxonomy {
      * Class constructor
      *
      * @param   Object  $blog     Reference to the wordpress blog
-     * @param   int     $name     Taxonomy name (optional)
-     *
-     * @return  Object  $this
+     * @param   string  $name     Taxonomy name (optional)
      * 
      * @throws \Comodojo\Exception\WPException
      */
@@ -150,34 +143,15 @@ class WPTaxonomy {
     	
     	try {
     		
-            $rpc_client = new RpcClient($this->getBlog()->getEndPoint());
-            
-            $rpc_client->addRequest("wp.getTaxonomy", array( 
-                $this->getBlog()->getID(), 
-                $this->getWordpress()->getUsername(), 
-                $this->getWordpress()->getPassword(),
+            $taxonomy = $this->getWordpress()->sendMessage("wp.getTaxonomy", array(
                 $name
-            ));
-            
-            $taxonomy = $rpc_client->send();
+            ), $this->getBlog());
             
             $this->loadData($taxonomy);
             
-    	} catch (RpcException $rpc) {
+    	} catch (WPException $wpe) {
     		
-    		throw new WPException("Unable to retrieve taxonomy informations - RPC Exception (".$rpc->getMessage().")");
-    		
-    	} catch (XmlrpcException $xml) {
-    		
-    		throw new WPException("Unable to retrieve taxonomy informations - XMLRPC Exception (".$xml->getMessage().")");
-    		
-    	} catch (HttpException $http) {
-    		
-    		throw new WPException("Unable to retrieve taxonomy informations - HTTP Exception (".$http->getMessage().")");
-    		
-    	} catch (Exception $e) {
-    		
-    		throw new WPException("Unable to retrieve taxonomy informations - Generic Exception (".$e->getMessage().")");
+    		throw new WPException("Unable to retrieve taxonomy informations (".$wpe->getMessage().")");
     		
     	}
     	
@@ -351,17 +325,10 @@ class WPTaxonomy {
         
     	try {
     		
-            $rpc_client = new RpcClient($this->getBlog()->getEndPoint());
-            
-            $rpc_client->addRequest("wp.getTerms", array( 
-                $this->getBlog()->getID(), 
-                $this->getWordpress()->getUsername(), 
-                $this->getWordpress()->getPassword(),
-                $this->name,
+            $list = $this->getWordpress()->sendMessage("wp.getTerms", array(
+                $this->getName(),
                 $filter
-            ));
-            
-            $list = $rpc_client->send();
+            ), $this->getBlog());
             
             foreach ($list as $term) {
             	
@@ -372,21 +339,9 @@ class WPTaxonomy {
             	
             }
             
-    	} catch (RpcException $rpc) {
+    	} catch (WPException $wpe) {
     		
-    		throw new WPException("Unable to retrieve term informations - RPC Exception (".$rpc->getMessage().")");
-    		
-    	} catch (XmlrpcException $xml) {
-    		
-    		throw new WPException("Unable to retrieve term informations - XMLRPC Exception (".$xml->getMessage().")");
-    		
-    	} catch (HttpException $http) {
-    		
-    		throw new WPException("Unable to retrieve term informations - HTTP Exception (".$http->getMessage().")");
-    		
-    	} catch (Exception $e) {
-    		
-    		throw new WPException("Unable to retrieve term informations - Generic Exception (".$e->getMessage().")");
+    		throw new WPException("Unable to retrieve term informations (".$wpe->getMessage().")");
     		
     	}
     	

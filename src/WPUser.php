@@ -1,11 +1,6 @@
 <?php namespace Comodojo\WPAPI;
 
 use \Comodojo\Exception\WPException;
-use \Comodojo\Exception\RpcException;
-use \Comodojo\Exception\HttpException;
-use \Comodojo\Exception\XmlrpcException;
-use \Exception;
-use \Comodojo\RpcClient\RpcClient;
 
 /** 
  * Comodojo Wordpress API Wrapper. This class maps a Wordpress user
@@ -124,8 +119,6 @@ class WPUser {
      *
      * @param   Object  $blog     Reference to the wordpress blog
      * @param   int     $id       User ID (optional)
-     *
-     * @return  Object  $this
      * 
      * @throws \Comodojo\Exception\WPException
      */
@@ -171,16 +164,9 @@ class WPUser {
     	
     	try {
     		
-            $rpc_client = new RpcClient($this->getBlog()->getEndPoint());
-            
-            $rpc_client->addRequest("wp.getUser", array( 
-                $this->getBlog()->getID(), 
-                $this->getWordpress()->getUsername(), 
-                $this->getWordpress()->getPassword(),
+            $user = $this->getWordpress()->sendMessage("wp.getUser", array(
                 $id
-            ));
-            
-            $user = $rpc_client->send();
+            ), $this->getBlog());
         
         	$this->id           = intval($user['user_id']);
         
@@ -206,21 +192,9 @@ class WPUser {
 	        
 	        $this->roles        = $user['roles'];
             
-    	} catch (RpcException $rpc) {
+    	} catch (WPException $wpe) {
     		
-    		throw new WPException("Unable to retrieve user's informations - RPC Exception (".$rpc->getMessage().")");
-    		
-    	} catch (XmlrpcException $xml) {
-    		
-    		throw new WPException("Unable to retrieve user's informations - XMLRPC Exception (".$xml->getMessage().")");
-    		
-    	} catch (HttpException $http) {
-    		
-    		throw new WPException("Unable to retrieve user's informations - HTTP Exception (".$http->getMessage().")");
-    		
-    	} catch (Exception $e) {
-    		
-    		throw new WPException("Unable to retrieve user's informations - Generic Exception (".$e->getMessage().")");
+    		throw new WPException("Unable to retrieve user's informations (".$wpe->getMessage().")");
     		
     	}
     	

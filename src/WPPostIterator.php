@@ -1,11 +1,6 @@
 <?php namespace Comodojo\WPAPI;
 
 use \Comodojo\Exception\WPException;
-use \Comodojo\Exception\RpcException;
-use \Comodojo\Exception\HttpException;
-use \Comodojo\Exception\XmlrpcException;
-use \Exception;
-use \Comodojo\RpcClient\RpcClient;
 
 /** 
  * Comodojo Wordpress API Wrapper. This class is an iterator for WPPost class
@@ -52,7 +47,7 @@ class WPPostIterator implements \Iterator {
 	/**
      * Post count
      *
-     * @var array
+     * @var int
      */
 	private $count = 0;
 	
@@ -61,8 +56,6 @@ class WPPostIterator implements \Iterator {
      *
      * @param   Object  $blog Reference to a blog object
      * @param   array   $ids  List of Post IDs (optional)
-     *
-     * @return  Object  $this
      * 
      * @throws \Comodojo\Exception\WPException
      */

@@ -1,11 +1,6 @@
 <?php namespace Comodojo\WPAPI;
 
 use \Comodojo\Exception\WPException;
-use \Comodojo\Exception\RpcException;
-use \Comodojo\Exception\HttpException;
-use \Comodojo\Exception\XmlrpcException;
-use \Exception;
-use \Comodojo\RpcClient\RpcClient;
 
 /** 
  * Comodojo Wordpress API Wrapper. This class is an iterator for WPMedia class
@@ -74,13 +69,11 @@ class WPMediaIterator implements \Iterator {
      * Class constructor
      *
      * @param   Object  $blog Reference to a blog object
-     * @param   int     $id   Post ID (optional)
-     *
-     * @return  Object  $this
+     * @param   int     $post Post ID (optional)
      * 
      * @throws \Comodojo\Exception\WPException
      */
-    public function __construct($blog, $id=0, $mime=null) {
+    public function __construct($blog, $post=0, $mime=null) {
     	
         if ( is_null($blog) || is_null($blog->getWordpress()) || !$blog->getWordpress()->isLogged() ) {
         	
@@ -92,7 +85,7 @@ class WPMediaIterator implements \Iterator {
         
         $this->mime = $mime;
         
-        $this->id   = intval($id);
+        $this->post = intval($id);
         
     }
     

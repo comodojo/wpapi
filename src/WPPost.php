@@ -1,11 +1,6 @@
 <?php namespace Comodojo\WPAPI;
 
 use \Comodojo\Exception\WPException;
-use \Comodojo\Exception\RpcException;
-use \Comodojo\Exception\HttpException;
-use \Comodojo\Exception\XmlrpcException;
-use \Exception;
-use \Comodojo\RpcClient\RpcClient;
 
 /** 
  * Comodojo Wordpress API Wrapper. This class maps a Wordpress blog
@@ -125,7 +120,7 @@ class WPPost {
 	/**
      * Post parent
      *
-     * @var string
+     * @var int
      */
 	private $parent = null;
 	
@@ -220,8 +215,6 @@ class WPPost {
      *
      * @param   Object  $blog     Reference to the wordpress blog
      * @param   int     $id       ID of the post (optional)
-     *
-     * @return  Object  $this
      * 
      * @throws \Comodojo\Exception\WPException
      */
@@ -273,16 +266,9 @@ class WPPost {
     	
     	try {
     		
-            $rpc_client = new RpcClient($this->getBlog()->getEndPoint());
-            
-            $rpc_client->setAutoclean()->addRequest("wp.getPost", array( 
-                $this->getBlog()->getID(), 
-                $this->getWordpress()->getUsername(), 
-                $this->getWordpress()->getPassword(),
+            $post = $this->getWordpress()->sendMessage("wp.getPost", array(
                 intval($id)
-            ));
-            
-            $post = $rpc_client->send();
+            ), $this->getBlog());
 	
 			$this->id           = intval($post['post_id']);
 			
@@ -355,21 +341,9 @@ class WPPost {
 				
 			}
             
-    	} catch (RpcException $rpc) {
+    	} catch (WPException $wpe) {
     		
-    		throw new WPException("Unable to retrieve post informations - RPC Exception (".$rpc->getMessage().")");
-    		
-    	} catch (XmlrpcException $xml) {
-    		
-    		throw new WPException("Unable to retrieve post informations - XMLRPC Exception (".$xml->getMessage().")");
-    		
-    	} catch (HttpException $http) {
-    		
-    		throw new WPException("Unable to retrieve post informations - HTTP Exception (".$http->getMessage().")");
-    		
-    	} catch (Exception $e) {
-    		
-    		throw new WPException("Unable to retrieve post informations - Generic Exception (".$e->getMessage().")");
+    		throw new WPException("Unable to retrieve post informations (".$wpe->getMessage().")");
     		
     	}
     	
@@ -1121,13 +1095,11 @@ class WPPost {
     /**
      * Add category
      *
-     * @param   string $tag category name
+     * @param   string $category category name
      *
      * @return  Object $this
      */
     public function addCategory($category) {
-    	
-    	$term = null;
     	
     	if ($this->getBlog()->hasCategory($category)) {
     		
@@ -1211,8 +1183,6 @@ class WPPost {
      * @return  Object $this
      */
     public function addTag($tag) {
-    	
-    	$term = null;
     	
     	if ($this->getBlog()->hasTag($tag)) {
     		
@@ -1436,37 +1406,16 @@ class WPPost {
     	$content = $this->getPostData();
     	
     	try {
-            $rpc_client = new RpcClient($this->getBlog()->getEndPoint());
-            
-            $rpc_client->setValueType(
-            	$content['post_date'],
-            	"datetime"
-            )->addRequest("wp.newPost", array( 
-                $this->getBlog()->getID(), 
-                $this->getWordpress()->getUsername(), 
-                $this->getWordpress()->getPassword(),
+    		
+            $id = $this->getWordpress()->sendMessage("wp.newPost", array(
                 $content
-            ));
-            
-            $id = $rpc_client->send();
+            ), $this->getBlog(), array( "post_date", "datetime" ));
             
             $this->loadFromID($id);
     		
-    	} catch (RpcException $rpc) {
+    	} catch (WPException $wpe) {
     		
-    		throw new WPException("Unable to create new post - RPC Exception (".$rpc->getMessage().")");
-    		
-    	} catch (XmlrpcException $xml) {
-    		
-    		throw new WPException("Unable to create new post - XMLRPC Exception (".$xml->getMessage().")");
-    		
-    	} catch (HttpException $http) {
-    		
-    		throw new WPException("Unable to create new post - HTTP Exception (".$http->getMessage().")");
-    		
-    	} catch (Exception $e) {
-    		
-    		throw new WPException("Unable to create new post - Generic Exception (".$e->getMessage().")");
+    		throw new WPException("Unable to create new post (".$wpe->getMessage().")");
     		
     	}
     	
@@ -1487,36 +1436,15 @@ class WPPost {
     	$content = $this->getPostData();
     	
     	try {
-            $rpc_client = new RpcClient($this->blog->getEndPoint());
-            
-            $rpc_client->setValueType(
-            	$content['post_date'],
-            	"datetime"
-            )->addRequest("wp.editPost", array( 
-                $this->getBlog()->getID(), 
-                $this->getWordpress()->getUsername(), 
-                $this->getWordpress()->getPassword(),
+    		
+            $this->getWordpress()->sendMessage("wp.editPost", array(
                 $this->getID(),
                 $content
-            ));
-            
-            $rpc_client->send();
+            ), $this->getBlog(), array( "post_date", "datetime" ));
     		
-    	} catch (RpcException $rpc) {
+    	} catch (WPException $wpe) {
     		
-    		throw new WPException("Unable to edit post - RPC Exception (".$rpc->getMessage().")");
-    		
-    	} catch (XmlrpcException $xml) {
-    		
-    		throw new WPException("Unable to edit post - XMLRPC Exception (".$xml->getMessage().")");
-    		
-    	} catch (HttpException $http) {
-    		
-    		throw new WPException("Unable to edit post - HTTP Exception (".$http->getMessage().")");
-    		
-    	} catch (Exception $e) {
-    		
-    		throw new WPException("Unable to edit post - Generic Exception (".$e->getMessage().")");
+    		throw new WPException("Unable to edit post (".$wpe->getMessage().")");
     		
     	}
     	
@@ -1610,32 +1538,15 @@ class WPPost {
     public function delete() {
     	
     	try {
-            $rpc_client = new RpcClient($this->blog->getEndPoint());
             
-            $rpc_client->addRequest("wp.deletePost", array( 
-                $this->getBlog()->getID(), 
-                $this->getWordpress()->getUsername(), 
-                $this->getWordpress()->getPassword(),
+            $return = $this->getWordpress()->sendMessage("wp.deletePost", array(
                 $this->getID()
-            ));
+            ), $this->getBlog());
             
-            $return = $rpc_client->send();
     		
-    	} catch (RpcException $rpc) {
+    	} catch (WPException $wpe) {
     		
-    		throw new WPException("Unable to delete post - RPC Exception (".$rpc->getMessage().")");
-    		
-    	} catch (XmlrpcException $xml) {
-    		
-    		throw new WPException("Unable to delete post - XMLRPC Exception (".$xml->getMessage().")");
-    		
-    	} catch (HttpException $http) {
-    		
-    		throw new WPException("Unable to delete post - HTTP Exception (".$http->getMessage().")");
-    		
-    	} catch (Exception $e) {
-    		
-    		throw new WPException("Unable to delete post - Generic Exception (".$e->getMessage().")");
+    		throw new WPException("Unable to delete post (".$wpe->getMessage().")");
     		
     	}
     	

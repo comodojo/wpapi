@@ -1,11 +1,6 @@
 <?php namespace Comodojo\WPAPI;
 
 use \Comodojo\Exception\WPException;
-use \Comodojo\Exception\RpcException;
-use \Comodojo\Exception\HttpException;
-use \Comodojo\Exception\XmlrpcException;
-use \Exception;
-use \Comodojo\RpcClient\RpcClient;
 
 /** 
  * Comodojo Wordpress API Wrapper. This class maps a Wordpress user
@@ -149,13 +144,8 @@ class WPProfile extends WPUser {
         }
         
     	try {
-    		
-            $rpc_client = new RpcClient($this->getBlog()->getEndPoint());
             
-            $rpc_client->addRequest("wp.editProfile", array( 
-                $this->getBlog()->getID(), 
-                $this->getWordpress()->getUsername(), 
-                $this->getWordpress()->getPassword(),
+            $result = $this->getWordpress()->sendMessage("wp.editProfile", array(
                 array(
                 	"first_name"   => $this->getFirstname(),
                 	"last_name"    => $this->getLastname(),
@@ -165,31 +155,17 @@ class WPProfile extends WPUser {
                 	"nicename"     => $this->getNicename(),
                 	"bio"          => $this->getBiography()
                 )
-            ));
-            
-            $result = filter_var($rpc_client->send(), FILTER_VALIDATE_BOOLEAN);
+            ), $this->getBlog());
             
             $this->loadFromID($this->getID());
     		
-    	} catch (RpcException $rpc) {
+    	} catch (WPException $wpe) {
     		
-    		throw new WPException("Unable to save user informations - RPC Exception (".$rpc->getMessage().")");
-    		
-    	} catch (XmlrpcException $xml) {
-    		
-    		throw new WPException("Unable to save user informations - XMLRPC Exception (".$xml->getMessage().")");
-    		
-    	} catch (HttpException $http) {
-    		
-    		throw new WPException("Unable to save user informations - HTTP Exception (".$http->getMessage().")");
-    		
-    	} catch (Exception $e) {
-    		
-    		throw new WPException("Unable to save user informations - Generic Exception (".$e->getMessage().")");
+    		throw new WPException("Unable to save user informations (".$wpe->getMessage().")");
     		
     	}
     	
-    	return $result;
+    	return filter_var($result, FILTER_VALIDATE_BOOLEAN);
     	
     }
     

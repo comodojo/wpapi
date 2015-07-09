@@ -1,11 +1,6 @@
 <?php namespace Comodojo\WPAPI;
 
 use \Comodojo\Exception\WPException;
-use \Comodojo\Exception\RpcException;
-use \Comodojo\Exception\HttpException;
-use \Comodojo\Exception\XmlrpcException;
-use \Exception;
-use \Comodojo\RpcClient\RpcClient;
 
 /** 
  * Comodojo Wordpress API Wrapper. This class maps a Wordpress media item
@@ -194,8 +189,6 @@ class WPMedia {
      *
      * @param   Object  $blog Reference to a blog object
      * @param   int     $id   Attachment ID (optional)
-     *
-     * @return  Object  $this
      * 
      * @throws \Comodojo\Exception\WPException
      */
@@ -646,34 +639,15 @@ class WPMedia {
     	
     	try {
     		
-            $rpc_client = new RpcClient($this->getBlog()->getEndPoint());
-            
-            $rpc_client->addRequest("wp.getMediaItem", array( 
-                $this->getBlog()->getID(), 
-                $this->getWordpress()->getUsername(), 
-                $this->getWordpress()->getPassword(),
+            $data = $this->getWordpress()->sendMessage("wp.getMediaItem", array(
                 intval($id)
-            ));
-            
-            $data = $rpc_client->send();
+            ), $this->getBlog());
             
             $this->loadData($data);
     		
-    	} catch (RpcException $rpc) {
+    	} catch (WPException $wpe) {
     		
-    		throw new WPException("Unable to retrieve media informations from attachment ID - RPC Exception (".$rpc->getMessage().")");
-    		
-    	} catch (XmlrpcException $xml) {
-    		
-    		throw new WPException("Unable to retrieve media informations from attachment ID - XMLRPC Exception (".$xml->getMessage().")");
-    		
-    	} catch (HttpException $http) {
-    		
-    		throw new WPException("Unable to retrieve media informations from attachment ID - HTTP Exception (".$http->getMessage().")");
-    		
-    	} catch (Exception $e) {
-    		
-    		throw new WPException("Unable to retrieve media informations from attachment ID - Generic Exception (".$e->getMessage().")");
+    		throw new WPException("Unable to retrieve media informations from attachment ID (".$wpe->getMessage().")");
     		
     	}
     	
@@ -706,17 +680,10 @@ class WPMedia {
     	}
     	
     	try {
-    		
-            $rpc_client = new RpcClient($this->getBlog()->getEndPoint());
             
-            $rpc_client->addRequest("wp.getMediaLibrary", array( 
-                $this->getBlog()->getID(), 
-                $this->getWordpress()->getUsername(), 
-                $this->getWordpress()->getPassword(),
+            $data = $this->getWordpress()->sendMessage("wp.getMediaLibrary", array(
                 $content
-            ));
-            
-            $data = $rpc_client->send();
+            ), $this->getBlog());
             
             if (count($data) > 0) {
             
@@ -724,27 +691,15 @@ class WPMedia {
             	
             } else {
             	
-            	$this->reset();
+            	$this->resetData();
             	
             	return null;
             	
             }
     		
-    	} catch (RpcException $rpc) {
+    	} catch (WPException $wpe) {
     		
-    		throw new WPException("Unable to retrieve media informations from iteration - RPC Exception (".$rpc->getMessage().")");
-    		
-    	} catch (XmlrpcException $xml) {
-    		
-    		throw new WPException("Unable to retrieve media informations from iteration - XMLRPC Exception (".$xml->getMessage().")");
-    		
-    	} catch (HttpException $http) {
-    		
-    		throw new WPException("Unable to retrieve media informations from iteration - HTTP Exception (".$http->getMessage().")");
-    		
-    	} catch (Exception $e) {
-    		
-    		throw new WPException("Unable to retrieve media informations from iteration - Generic Exception (".$e->getMessage().")");
+    		throw new WPException("Unable to retrieve media informations from iteration (".$wpe->getMessage().")");
     		
     	}
     	
@@ -887,7 +842,7 @@ class WPMedia {
     	$name   = $name[count($name)-1];
     	$buffer = file_get_contents($fname);
     	
-    	if ($buffer == FALSE) {
+    	if (!is_string($buffer)) {
     		
     		throw new WPException("Unable to open file $name");
     		
@@ -931,38 +886,16 @@ class WPMedia {
     	}
     	
     	try {
-    		
-            $rpc_client = new RpcClient($this->getBlog()->getEndPoint());
             
-            $rpc_client->setValueType(
-            	$content["bits"], 
-            	"base64"
-            )->addRequest("wp.uploadFile", array( 
-                $this->getBlog()->getID(), 
-                $this->getWordpress()->getUsername(), 
-                $this->getWordpress()->getPassword(),
+            $data = $this->getWordpress()->sendMessage("wp.uploadFile", array(
                 $content
-            ));
-            
-            $data = $rpc_client->send();
+            ), $this->getBlog(), array( "bits" => "base64" ) );
             
             $this->loadFromID($data['id']);
     		
-    	} catch (RpcException $rpc) {
+    	} catch (WPException $wpe) {
     		
-    		throw new WPException("Unable to upload file - RPC Exception (".$rpc->getMessage().")");
-    		
-    	} catch (XmlrpcException $xml) {
-    		
-    		throw new WPException("Unable to upload file - XMLRPC Exception (".$xml->getMessage().")");
-    		
-    	} catch (HttpException $http) {
-    		
-    		throw new WPException("Unable to upload file - HTTP Exception (".$http->getMessage().")");
-    		
-    	} catch (Exception $e) {
-    		
-    		throw new WPException("Unable to upload file - Generic Exception (".$e->getMessage().")");
+    		throw new WPException("Unable to upload file (".$wpe->getMessage().")");
     		
     	}
     	

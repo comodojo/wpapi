@@ -1,11 +1,6 @@
 <?php namespace Comodojo\WPAPI;
 
 use \Comodojo\Exception\WPException;
-use \Comodojo\Exception\RpcException;
-use \Comodojo\Exception\HttpException;
-use \Comodojo\Exception\XmlrpcException;
-use \Exception;
-use \Comodojo\RpcClient\RpcClient;
 
 /** 
  * Comodojo Wordpress API Wrapper. This class is an iterator for WPComment class
@@ -76,10 +71,8 @@ class WPCommentIterator implements \Iterator {
     /**
      * Class constructor
      *
-     * @param   Object  $blog Reference to a blog object
-     * @param   array   $ids  List of Comment IDs (optional)
-     *
-     * @return  Object  $this
+     * @param   Object  $post   Reference to a post object
+     * @param   array   $status Filter on the comment status
      * 
      * @throws \Comodojo\Exception\WPException
      */
@@ -404,18 +397,12 @@ class WPCommentIterator implements \Iterator {
     private function loadCommentCount() {
     	
     	if ($this->getPost()->getID() > 0) {
+    		
 	    	try {
 	    		
-	            $rpc_client = new RpcClient($this->getBlog()->getEndPoint());
-	            
-	            $rpc_client->setAutoclean()->addRequest("wp.getCommentCount", array( 
-	                $this->getBlog()->getID(), 
-	                $this->getWordpress()->getUsername(), 
-	                $this->getWordpress()->getPassword(),
-	                $this->getPost()->getID()
-	            ));
-	            
-	            $count = $rpc_client->send();
+	            $count = $this->getWordpress()->sendMessage("wp.getCommentCount", array(
+		            $this->getPost()->getID()
+	            ), $this->getBlog());
 	            
 	            $this->comment_approved = $count['approved'];
 	            
@@ -425,26 +412,13 @@ class WPCommentIterator implements \Iterator {
 	            
 	            $this->comment_total    = $count['approved'];
             
-	    	} catch (RpcException $rpc) {
+	    	} catch (WPException $wpe) {
 	    		
-	    		throw new WPException("Unable to retrieve comment count - RPC Exception (".$rpc->getMessage().")");
-	    		
-	    	} catch (XmlrpcException $xml) {
-	    		
-	    		throw new WPException("Unable to retrieve comment count - XMLRPC Exception (".$xml->getMessage().")");
-	    		
-	    	} catch (HttpException $http) {
-	    		
-	    		throw new WPException("Unable to retrieve comment count - HTTP Exception (".$http->getMessage().")");
-	    		
-	    	} catch (Exception $e) {
-	    		
-	    		throw new WPException("Unable to retrieve comment count - Generic Exception (".$e->getMessage().")");
+	    		throw new WPException("Unable to retrieve comment count (".$wpe->getMessage().")");
 	    		
 	    	}
 	            
     	}
-    	
     	
     	return $this;
     	

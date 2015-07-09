@@ -1,11 +1,6 @@
 <?php namespace Comodojo\WPAPI;
 
 use \Comodojo\Exception\WPException;
-use \Comodojo\Exception\RpcException;
-use \Comodojo\Exception\HttpException;
-use \Comodojo\Exception\XmlrpcException;
-use \Exception;
-use \Comodojo\RpcClient\RpcClient;
 
 /** 
  * Comodojo Wordpress API Wrapper. This class maps a Wordpress blog
@@ -135,8 +130,6 @@ class WPBlog {
      * @param   string  $url      URL of the blog
      * @param   string  $endpoint End point to the XML-RPC server
      * @param   boolean $admin    Administration privileges
-     *
-     * @return  Object  $this
      * 
      * @throws \Comodojo\Exception\WPException
      */
@@ -357,16 +350,9 @@ class WPBlog {
     	
     	try {
         
-            $rpc_client = new RpcClient($this->getEndPoint());
+            $this->getWordpress()->sendMessage("wp.getUsersBlogs", array(), $this);
             
-            $rpc_client->addRequest("wp.getUsersBlogs", array( 
-                $this->getWordpress()->getUsername(), 
-                $this->getWordpress()->getPassword()
-            ));
-            
-            $rpc_client->send();
-            
-    	} catch (Exception $e) {
+    	} catch (WPException $wpe) {
     		
     		return false;
     		
@@ -404,19 +390,12 @@ class WPBlog {
     	);
     	
     	try {
-    		
-            $rpc_client = new RpcClient($this->getEndPoint());
             
-            $rpc_client->addRequest("wp.setOptions", array( 
-                $this->getID(), 
-                $this->getWordpress()->getUsername(), 
-                $this->getWordpress()->getPassword(),
+            $options = $this->getWordpress()->sendMessage("wp.setOptions", array(
                 array(
                 	$name => $opt_info
                 )
-            ));
-            
-            $options = $rpc_client->send();
+            ), $this);
             
             foreach ($options as $name => $option) {
             	
@@ -428,21 +407,9 @@ class WPBlog {
             	
             }
             
-    	} catch (RpcException $rpc) {
+    	} catch (WPException $wpe) {
     		
-    		throw new WPException("Unable to set value for option '$name' - RPC Exception (".$rpc->getMessage().")");
-    		
-    	} catch (XmlrpcException $xml) {
-    		
-    		throw new WPException("Unable to set value for option '$name' - XMLRPC Exception (".$xml->getMessage().")");
-    		
-    	} catch (HttpException $http) {
-    		
-    		throw new WPException("Unable to set value for option '$name' - HTTP Exception (".$http->getMessage().")");
-    		
-    	} catch (Exception $e) {
-    		
-    		throw new WPException("Unable to set value for option '$name' - Generic Exception (".$e->getMessage().")");
+    		throw new WPException("Unable to set value for option '$name' (".$wpe->getMessage().")");
     		
     	}
     	
@@ -471,38 +438,19 @@ class WPBlog {
     public function getProfile() {
     	
     	try {
-    		
-            $rpc_client = new RpcClient($this->getEndPoint());
             
-            $rpc_client->addRequest("wp.getProfile", array( 
-                $this->getID(), 
-                $this->getWordpress()->getUsername(), 
-                $this->getWordpress()->getPassword(),
+            $user = $this->getWordpress()->sendMessage("wp.getProfile", array(
                 array('user_id')
-            ));
-            
-            $user = $rpc_client->send();
+            ), $this);
             
             return new WPProfile(
             	$this,
             	$user['user_id']
             );
             
-    	} catch (RpcException $rpc) {
+    	} catch (WPException $wpe) {
     		
-    		throw new WPException("Unable to retrieve user's profile - RPC Exception (".$rpc->getMessage().")");
-    		
-    	} catch (XmlrpcException $xml) {
-    		
-    		throw new WPException("Unable to retrieve user's profile - XMLRPC Exception (".$xml->getMessage().")");
-    		
-    	} catch (HttpException $http) {
-    		
-    		throw new WPException("Unable to retrieve user's profile - HTTP Exception (".$http->getMessage().")");
-    		
-    	} catch (Exception $e) {
-    		
-    		throw new WPException("Unable to retrieve user's profile - Generic Exception (".$e->getMessage().")");
+    		throw new WPException("Unable to retrieve user's profile (".$wpe->getMessage().")");
     		
     	}
     	
@@ -613,17 +561,10 @@ class WPBlog {
     	
     	try {
     		
-            $rpc_client = new RpcClient($this->getEndPoint());
-            
-            $rpc_client->addRequest("wp.getUsers", array( 
-                $this->getID(), 
-                $this->getWordpress()->getUsername(), 
-                $this->getWordpress()->getPassword(),
+            $users_list = $this->getWordpress()->sendMessage("wp.getUsers", array(
                 $filter,
                 array('user_id')
-            ));
-            
-            $users_list = $rpc_client->send();
+            ), $this);
             
             foreach ($users_list as $user) {
             	
@@ -634,21 +575,9 @@ class WPBlog {
             	
             }
             
-    	} catch (RpcException $rpc) {
+    	} catch (WPException $wpe) {
     		
-    		throw new WPException("Unable to retrieve user's informations - RPC Exception (".$rpc->getMessage().")");
-    		
-    	} catch (XmlrpcException $xml) {
-    		
-    		throw new WPException("Unable to retrieve user's informations - XMLRPC Exception (".$xml->getMessage().")");
-    		
-    	} catch (HttpException $http) {
-    		
-    		throw new WPException("Unable to retrieve user's informations - HTTP Exception (".$http->getMessage().")");
-    		
-    	} catch (Exception $e) {
-    		
-    		throw new WPException("Unable to retrieve user's informations - Generic Exception (".$e->getMessage().")");
+    		throw new WPException("Unable to retrieve user's informations (".$wpe->getMessage().")");
     		
     	}
     	
@@ -761,17 +690,10 @@ class WPBlog {
     	
     	try {
     		
-            $rpc_client = new RpcClient($this->getEndPoint());
-            
-            $rpc_client->addRequest("wp.getPosts", array( 
-                $this->getID(), 
-                $this->getWordpress()->getUsername(), 
-                $this->getWordpress()->getPassword(),
+            $post_list = $this->getWordpress()->sendMessage("wp.getPosts", array(
                 $filter,
                 array('post_id')
-            ));
-            
-            $post_list = $rpc_client->send();
+            ), $this);
             
             foreach ($post_list as $post) {
             	
@@ -782,21 +704,9 @@ class WPBlog {
             	
             }
             
-    	} catch (RpcException $rpc) {
+    	} catch (WPException $wpe) {
     		
-    		throw new WPException("Unable to retrieve post informations - RPC Exception (".$rpc->getMessage().")");
-    		
-    	} catch (XmlrpcException $xml) {
-    		
-    		throw new WPException("Unable to retrieve post informations - XMLRPC Exception (".$xml->getMessage().")");
-    		
-    	} catch (HttpException $http) {
-    		
-    		throw new WPException("Unable to retrieve post informations - HTTP Exception (".$http->getMessage().")");
-    		
-    	} catch (Exception $e) {
-    		
-    		throw new WPException("Unable to retrieve post informations - Generic Exception (".$e->getMessage().")");
+    		throw new WPException("Unable to retrieve post informations (".$wpe->getMessage().")");
     		
     	}
     	
@@ -881,17 +791,10 @@ class WPBlog {
     	
     	try {
     		
-            $rpc_client = new RpcClient($this->getEndPoint());
-            
-            $rpc_client->addRequest("wp.getPosts", array( 
-                $this->getID(), 
-                $this->getWordpress()->getUsername(), 
-                $this->getWordpress()->getPassword(),
+            $post_list = $this->getWordpress()->sendMessage("wp.getPosts", array(
                 $filter,
                 array('post_id', 'terms')
-            ));
-            
-            $post_list = $rpc_client->send();
+            ), $this);
             
             foreach ($post_list as $post) {
             	
@@ -916,21 +819,9 @@ class WPBlog {
             	
             }
             
-    	} catch (RpcException $rpc) {
+    	} catch (WPException $wpe) {
     		
-    		throw new WPException("Unable to retrieve post informations - RPC Exception (".$rpc->getMessage().")");
-    		
-    	} catch (XmlrpcException $xml) {
-    		
-    		throw new WPException("Unable to retrieve post informations - XMLRPC Exception (".$xml->getMessage().")");
-    		
-    	} catch (HttpException $http) {
-    		
-    		throw new WPException("Unable to retrieve post informations - HTTP Exception (".$http->getMessage().")");
-    		
-    	} catch (Exception $e) {
-    		
-    		throw new WPException("Unable to retrieve post informations - Generic Exception (".$e->getMessage().")");
+    		throw new WPException("Unable to retrieve post informations (".$wpe->getMessage().")");
     		
     	}
     	
@@ -1000,15 +891,7 @@ class WPBlog {
     	
     	try {
     		
-            $rpc_client = new RpcClient($this->getEndPoint());
-            
-            $rpc_client->addRequest("wp.getTaxonomies", array( 
-                $this->getID(), 
-                $this->getWordpress()->getUsername(), 
-                $this->getWordpress()->getPassword()
-            ));
-            
-            $tax_list = $rpc_client->send();
+            $tax_list = $this->getWordpress()->sendMessage("wp.getTaxonomies", array(), $this);
             
             foreach ($tax_list as $taxonomy) {
             	
@@ -1023,21 +906,9 @@ class WPBlog {
             	
             }
             
-    	} catch (RpcException $rpc) {
+    	} catch (WPException $wpe) {
     		
-    		throw new WPException("Unable to retrieve taxonomy informations - RPC Exception (".$rpc->getMessage().")");
-    		
-    	} catch (XmlrpcException $xml) {
-    		
-    		throw new WPException("Unable to retrieve taxonomy informations - XMLRPC Exception (".$xml->getMessage().")");
-    		
-    	} catch (HttpException $http) {
-    		
-    		throw new WPException("Unable to retrieve taxonomy informations - HTTP Exception (".$http->getMessage().")");
-    		
-    	} catch (Exception $e) {
-    		
-    		throw new WPException("Unable to retrieve taxonomy informations - Generic Exception (".$e->getMessage().")");
+    		throw new WPException("Unable to retrieve taxonomy informations (".$wpe->getMessage().")");
     		
     	}
     	
@@ -1223,34 +1094,12 @@ class WPBlog {
     private function loadPostFormats() {
     	
     	try {
-    		
-            $rpc_client = new RpcClient($this->getEndPoint());
-    		
-            $rpc_client->addRequest("wp.getPostFormats", array( 
-                $this->getID(), 
-                $this->getWordpress()->getUsername(), 
-                $this->getWordpress()->getPassword()
-            ));
             
-            $formats = $rpc_client->send();
+            $this->supportedFormats = $this->getWordpress()->sendMessage("wp.getPostFormats", array(), $this);
             
-            $this->supportedFormats = $formats;
-            
-    	} catch (RpcException $rpc) {
+    	} catch (WPException $wpe) {
     		
-    		throw new WPException("Unable to retrieve post formats - RPC Exception (".$rpc->getMessage().")");
-    		
-    	} catch (XmlrpcException $xml) {
-    		
-    		throw new WPException("Unable to retrieve post formats - XMLRPC Exception (".$xml->getMessage().")");
-    		
-    	} catch (HttpException $http) {
-    		
-    		throw new WPException("Unable to retrieve post formats - HTTP Exception (".$http->getMessage().")");
-    		
-    	} catch (Exception $e) {
-    		
-    		throw new WPException("Unable to retrieve post formats - Generic Exception (".$e->getMessage().")");
+    		throw new WPException("Unable to retrieve post formats (".$wpe->getMessage().")");
     		
     	}
     	
@@ -1270,15 +1119,7 @@ class WPBlog {
     	
     	try {
     		
-            $rpc_client = new RpcClient($this->getEndPoint());
-    		
-            $rpc_client->addRequest("wp.getPostTypes", array( 
-                $this->getID(), 
-                $this->getWordpress()->getUsername(), 
-                $this->getWordpress()->getPassword()
-            ));
-            
-            $types = $rpc_client->send();
+            $types = $this->getWordpress()->sendMessage("wp.getPostTypes", array(), $this);
             
             foreach ($types as $name => $type) {
             
@@ -1286,21 +1127,9 @@ class WPBlog {
             	
             }
             
-    	} catch (RpcException $rpc) {
+    	} catch (WPException $wpe) {
     		
-    		throw new WPException("Unable to retrieve post types - RPC Exception (".$rpc->getMessage().")");
-    		
-    	} catch (XmlrpcException $xml) {
-    		
-    		throw new WPException("Unable to retrieve post types - XMLRPC Exception (".$xml->getMessage().")");
-    		
-    	} catch (HttpException $http) {
-    		
-    		throw new WPException("Unable to retrieve post types - HTTP Exception (".$http->getMessage().")");
-    		
-    	} catch (Exception $e) {
-    		
-    		throw new WPException("Unable to retrieve post types - Generic Exception (".$e->getMessage().")");
+    		throw new WPException("Unable to retrieve post types (".$wpe->getMessage().")");
     		
     	}
     	
@@ -1319,32 +1148,12 @@ class WPBlog {
     private function loadPostStatus() {
     	
     	try {
-    		
-            $rpc_client = new RpcClient($this->getEndPoint());
-    		
-            $rpc_client->addRequest("wp.getPostStatusList", array( 
-                $this->getID(), 
-                $this->getWordpress()->getUsername(), 
-                $this->getWordpress()->getPassword()
-            ));
             
-            $this->supportedPostStatus = $rpc_client->send();
+            $this->supportedPostStatus = $this->getWordpress()->sendMessage("wp.getPostStatusList", array(), $this);
             
-    	} catch (RpcException $rpc) {
+    	} catch (WPException $wpe) {
     		
-    		throw new WPException("Unable to retrieve post status - RPC Exception (".$rpc->getMessage().")");
-    		
-    	} catch (XmlrpcException $xml) {
-    		
-    		throw new WPException("Unable to retrieve post status - XMLRPC Exception (".$xml->getMessage().")");
-    		
-    	} catch (HttpException $http) {
-    		
-    		throw new WPException("Unable to retrieve post status - HTTP Exception (".$http->getMessage().")");
-    		
-    	} catch (Exception $e) {
-    		
-    		throw new WPException("Unable to retrieve post status - Generic Exception (".$e->getMessage().")");
+    		throw new WPException("Unable to retrieve post status (".$wpe->getMessage().")");
     		
     	}
     	
@@ -1363,16 +1172,8 @@ class WPBlog {
     private function loadCommentStatus() {
     	
     	try {
-    		
-            $rpc_client = new RpcClient($this->getEndPoint());
-    		
-            $rpc_client->addRequest("wp.getCommentStatusList", array( 
-                $this->getID(), 
-                $this->getWordpress()->getUsername(), 
-                $this->getWordpress()->getPassword()
-            ));
             
-            $status = $rpc_client->send();
+            $status = $this->getWordpress()->sendMessage("wp.getCommentStatusList", array(), $this);
             
             foreach ($status as $s) {
             
@@ -1380,24 +1181,9 @@ class WPBlog {
             	
             }
             
-            var_dump($status);
-            var_dump($this->supportedCommentStatus);
-            
-    	} catch (RpcException $rpc) {
+    	} catch (WPException $wpe) {
     		
-    		throw new WPException("Unable to retrieve comment status - RPC Exception (".$rpc->getMessage().")");
-    		
-    	} catch (XmlrpcException $xml) {
-    		
-    		throw new WPException("Unable to retrieve comment status - XMLRPC Exception (".$xml->getMessage().")");
-    		
-    	} catch (HttpException $http) {
-    		
-    		throw new WPException("Unable to retrieve comment status - HTTP Exception (".$http->getMessage().")");
-    		
-    	} catch (Exception $e) {
-    		
-    		throw new WPException("Unable to retrieve comment status - Generic Exception (".$e->getMessage().")");
+    		throw new WPException("Unable to retrieve comment status (".$wpe->getMessage().")");
     		
     	}
     	
@@ -1416,16 +1202,8 @@ class WPBlog {
     private function loadBlogOptions() {
     	
     	try {
-    		
-            $rpc_client = new RpcClient($this->getEndPoint());
             
-            $rpc_client->addRequest("wp.getOptions", array( 
-                $this->getID(), 
-                $this->getWordpress()->getUsername(), 
-                $this->getWordpress()->getPassword()
-            ));
-            
-            $options = $rpc_client->send();
+            $options = $this->getWordpress()->sendMessage("wp.getOptions", array(), $this);
             
             foreach ($options as $name => $option) {
             	
@@ -1437,21 +1215,9 @@ class WPBlog {
             	
             }
             
-    	} catch (RpcException $rpc) {
+    	} catch (WPException $wpe) {
     		
-    		throw new WPException("Unable to retrieve blog options - RPC Exception (".$rpc->getMessage().")");
-    		
-    	} catch (XmlrpcException $xml) {
-    		
-    		throw new WPException("Unable to retrieve blog options - XMLRPC Exception (".$xml->getMessage().")");
-    		
-    	} catch (HttpException $http) {
-    		
-    		throw new WPException("Unable to retrieve blog options - HTTP Exception (".$http->getMessage().")");
-    		
-    	} catch (Exception $e) {
-    		
-    		throw new WPException("Unable to retrieve blog options - Generic Exception (".$e->getMessage().")");
+    		throw new WPException("Unable to retrieve blog options (".$wpe->getMessage().")");
     		
     	}
     	
@@ -1466,7 +1232,6 @@ class WPBlog {
      * 
      * @throws \Comodojo\Exception\WPException
      */
-    
     private function loadBlogTerms() {
     	
     	try {
@@ -1477,27 +1242,14 @@ class WPBlog {
 			
 			$this->categories = $this->getTaxonomy("category")->getTerms();
             
-    	} catch (RpcException $rpc) {
+    	} catch (WPException $wpe) {
     		
-    		throw new WPException("Unable to retrieve blog tags - RPC Exception (".$rpc->getMessage().")");
-    		
-    	} catch (XmlrpcException $xml) {
-    		
-    		throw new WPException("Unable to retrieve blog tags - XMLRPC Exception (".$xml->getMessage().")");
-    		
-    	} catch (HttpException $http) {
-    		
-    		throw new WPException("Unable to retrieve blog tags - HTTP Exception (".$http->getMessage().")");
-    		
-    	} catch (Exception $e) {
-    		
-    		throw new WPException("Unable to retrieve blog tags - Generic Exception (".$e->getMessage().")");
+    		throw $wpe;
     		
     	}
     	
     	return $this;
         
     }
-    
     
 }
