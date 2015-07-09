@@ -142,7 +142,7 @@ class WPAPITest extends \PHPUnit_Framework_TestCase {
     					->setMenuOrder(0)
     					->setCommentStatus("open")
     					->setPingStatus("open")
-    					->setSticky(true)
+    					->setSticky(false)
     					->setCustomField("test_custom_field", $i)
     					->setPingStatus("open")
     					->addCategory("wptest")
