@@ -72,7 +72,7 @@ class WPAPITest extends \PHPUnit_Framework_TestCase {
     				
     				if (!$blog->isReadOnlyOption($opt)) {
             
-            $blog->setOption($opt, "Test " . $blog->getOptionValue($opt), "Test " . $blog->getOptionDescription($opt));
+            			$blog->setOption($opt, "Test " . $blog->getOptionValue($opt), "Test " . $blog->getOptionDescription($opt));
 
             
     				}
@@ -108,22 +108,6 @@ class WPAPITest extends \PHPUnit_Framework_TestCase {
     		
     		foreach ($this->wp->getBlogs() as $blog) {
     			
-    			foreach ($blog->getPosts() as $id => $post) {
-    				
-		    		$post->delete();
-		    		
-		    	}
-    			
-    			foreach ($blog->getPages() as $id => $post) {
-    				
-		    		$post->delete();
-		    		
-		    	}
-		    	
-    		}
-    		
-    		foreach ($this->wp->getBlogs() as $blog) {
-    			
     			$post_ids[$blog->getID()] = array();
     			
     			for ($i=0; $i<10; $i++) {
@@ -131,8 +115,8 @@ class WPAPITest extends \PHPUnit_Framework_TestCase {
     				$post = new \Comodojo\WPAPI\WPPost($blog);
     				
     				$post->setTitle("Test post n." . $i)
-    					->setCreationDate($timestamp - ($i * 60 * 60))
-    					->setStatus("publish")
+    					->setCreationDate($timestamp - ($i * 60))
+    					->setStatus("draft")
     					->setType("post")
     					->setFormat("standard")
     					->setAuthor($blog->getProfile())
@@ -142,7 +126,7 @@ class WPAPITest extends \PHPUnit_Framework_TestCase {
     					->setMenuOrder(0)
     					->setCommentStatus("open")
     					->setPingStatus("open")
-    					->setSticky(true)
+    					->setSticky(false)
     					->setCustomField("test_custom_field", $i)
     					->setPingStatus("open")
     					->addCategory("wptest")
@@ -178,7 +162,7 @@ class WPAPITest extends \PHPUnit_Framework_TestCase {
     		
     		foreach ($this->wp->getBlogs() as $blog) {
     			
-    			foreach ($blog->getLatestPosts(10) as $id => $post) {
+    			foreach ($blog->getPosts("post", "draft", 10) as $id => $post) {
     				
     				$this->assertTrue(in_array(intval($id), $post_ids[$blog->getID()]));
     				
@@ -186,7 +170,7 @@ class WPAPITest extends \PHPUnit_Framework_TestCase {
     				
 					//$this->assertSame($post->getCreationDate(), $timestamp - ($i * 60 * 60));
 					$this->assertSame($post->getTitle(), "Test post n." . $i);
-					$this->assertSame($post->getStatus(), "publish");
+					$this->assertSame($post->getStatus(), "draft");
 					$this->assertSame($post->getType(), "post");
 					$this->assertSame($post->getFormat(), "standard");
 					$this->assertSame($post->getAuthor()->getID(), $blog->getProfile()->getID());
@@ -196,7 +180,7 @@ class WPAPITest extends \PHPUnit_Framework_TestCase {
 					$this->assertSame($post->getMenuOrder(), 0);
 					$this->assertSame($post->getCommentStatus(), "open");
 					$this->assertSame($post->getPingStatus(), "open");
-					$this->assertSame($post->isSticky(), true);
+					$this->assertSame($post->isSticky(), false);
 					$this->assertSame($post->getPingStatus(), "open");
     				
     			}
@@ -428,6 +412,7 @@ class WPAPITest extends \PHPUnit_Framework_TestCase {
 	    			
 	    			$post->setTitle("Test media")
 	    				->setContent("Test")
+    					->setStatus("draft")
 	    				->addTag("images")
 	    				->save();
     				

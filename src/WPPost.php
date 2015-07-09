@@ -1111,7 +1111,7 @@ class WPPost {
     		$term = new WPTerm($taxonomy);
     		$term->setName($category)->save();
     		
-    		$this->getBlog()->addTag($term);
+    		$this->getBlog()->addCategory($term);
     	}
     	
     	return $this->addTerm($term);
