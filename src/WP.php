@@ -360,15 +360,14 @@ class WP {
      * 
      */
     private function setRpcClientValueType($rpc_client, &$datasource, $sid, $type) {
-    	var_dump(is_array($datasource));
+    	
     	if (is_array($datasource)) {
     		
     		if (isset($datasource[$sid])) {
-    			
+    			var_dump($datasource[$sid]);
     			$rpc_client->setValueType($datasource[$sid], $type);
     			
-    		}
-    		else {
+    		} else {
     		
 	    		foreach ($datasource as $id => $data) {
 	    			
