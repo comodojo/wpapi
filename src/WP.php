@@ -317,7 +317,7 @@ class WP {
     		
             $rpc_client = new RpcClient($endpoint);
             
-            foreach ($types as $$type) {
+            foreach ($types as $type) {
             	
             	$rpc_client->setValueType($type[0], $type[1]);
             	
