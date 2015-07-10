@@ -119,41 +119,19 @@ class WP {
 	        if (count($blogs) > 0) {
 	        
 	            $this->logged = true;
-	        
-		        if (count($blogs) == 1) {
-		        	
-		        	$this->blogs = array(
-		        		new WPBlog(
-							$this,
-							$blogs[0]['blogid'],
-							$blogs[0]['blogName'],
-							$blogs[0]['url'],
-							$this->getEndPoint(),
-							$blogs[0]['isAdmin']
-						)
-		        	);
-		        	
-		        } else {
 	            
-		            foreach ($blogs as $blog) {
-		            	
-		            	$b = new WPBlog(
-							$this,
-							$blog['blogid'],
-							$blog['blogName'],
-							$blog['url'],
-							$blog['xmlrpc'],
-							$blog['isAdmin']
+	            foreach ($blogs as $blog) {
+	            	
+	            	$b = new WPBlog($this);
+	            	
+	            	$b->loadData($blog);
+	                
+	                if ($b->getID() > -1) {
+						array_push(
+							$this->blogs,
+							$b
 						);
-		                
-		                if ($b->getID() > -1) {
-							array_push(
-								$this->blogs,
-								$b
-							);
-		                }
-		              
-		            }
+	                }
 		            
 		        }
 	        

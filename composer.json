@@ -21,7 +21,17 @@
     "autoload": {
         "psr-4": {
             "Comodojo\\Exception\\": "src/Exception",
-            "Comodojo\\WPAPI\\": "src"
+            "Comodojo\\WPAPI\\": [
+            	"src",
+            	"src/Object",
+            	"src/Blog",
+            	"src/Post",
+            	"src/Media",
+            	"src/User",
+            	"src/Taxonomy",
+            	"src/Term",
+            	"src/Iterator"
+        	]
         }
     },    
     "require": {

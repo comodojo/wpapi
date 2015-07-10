@@ -423,7 +423,7 @@ class WPAPITest extends \PHPUnit_Framework_TestCase {
     					
     					$image->setPostID($post->getID());
     					
-    					$image->upload(__DIR__."/../resources/keepcalm.png");
+    					$image->upload(__DIR__."/../resources/keepcalm.png")->save();
     					
     					array_push($ids, intval($image->getID()));
     					

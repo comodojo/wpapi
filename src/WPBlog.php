@@ -21,447 +21,48 @@ use \Comodojo\Exception\WPException;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-class WPBlog {
-	
-	/**
-     * Wordpress connection
-     *
-     * @var Object
-     */
-	private $wp = null;
-	
-	/**
-     * ID of the wordpress blog
-     *
-     * @var int
-     */
-	private $id = 0;
-	
-	/**
-     * Name of the wordpress blog
-     *
-     * @var string
-     */
-	private $name = "";
-	
-	/**
-     * URL to access the blog
-     *
-     * @var string
-     */
-	private $url = "";
-	
-	/**
-     * XML-RPC endpoint
-     *
-     * @var string
-     */
-	private $endpoint = "";
-	
-	/**
-     * True if the user is admin of the blog, false otherwise
-     *
-     * @var boolean
-     */
-	private $admin = false;
-	
-	/**
-     * List of options available for the user
-     *
-     * @var array
-     */
-	private $options = array();
-	
-	/**
-     * List of all available taxonomies
-     *
-     * @var array
-     */
-	private $taxonomies = array();
-	
-	/**
-     * List of all available tags
-     *
-     * @var array
-     */
-	private $tags = array();
-	
-	/**
-     * List of all available categories
-     *
-     * @var array
-     */
-	private $categories = array();
-	
-	/**
-     * List of all supported post formats
-     *
-     * @var array
-     */
-	private $supportedFormats = array();
-	
-	/**
-     * List of all supported post types
-     *
-     * @var array
-     */
-	private $supportedTypes = array();
-	
-	/**
-     * List of all supported post status
-     *
-     * @var array
-     */
-	private $supportedPostStatus = array();
-	
-	/**
-     * List of all supported comment status
-     *
-     * @var array
-     */
-	private $supportedCommentStatus = array();
-	
-    /**
-     * Class constructor
-     *
-     * @param   Object  $wp       Reference to the wordpress connection
-     * @param   int     $id       ID of the blog
-     * @param   string  $name     Name of the blog
-     * @param   string  $url      URL of the blog
-     * @param   string  $endpoint End point to the XML-RPC server
-     * @param   boolean $admin    Administration privileges
-     * 
-     * @throws \Comodojo\Exception\WPException
-     */
-    public function __construct($wp, $id, $name, $url, $endpoint, $admin) {
-    	
-        if ( is_null($wp) || !$wp->isLogged() ) {
-        	
-        	throw new WPException("You must be logged to access this blog");
-        	
-        }
-        
-        $this->wp       = $wp;
-        
-        $this->id       = intval($id);
-        
-        $this->name     = $name;
-        
-        $this->url      = $url;
-        
-        $this->endpoint = $endpoint;
-        
-        $this->admin    = $admin;
-        
-        if (!$this->checkEndPoint()) {
-        	
-        	$this->id = -1;
-        	
-        }
-        
-    }
-    
-    /**
-     * Get wordpress connection
-     *
-     * @return  int  $this->wp
-     */
-    public function getWordpress() {
-    	
-    	return $this->wp;
-    	
-    }
-    
-    /**
-     * Get blog ID
-     *
-     * @return  int  $this->id
-     */
-    public function getID() {
-    	
-    	return $this->id;
-    	
-    }
-    
-    /**
-     * Get blog name
-     *
-     * @return  string  $this->name
-     */
-    public function getName() {
-    	
-    	return $this->name;
-    	
-    }
-    
-    /**
-     * Get blog URL
-     *
-     * @return  string  $this->url
-     */
-    public function getURL() {
-    	
-    	return $this->url;
-    	
-    }
-    
-    /**
-     * Get blog XML-RPC endpoint
-     *
-     * @return  string  $this->endpoint
-     */
-    public function getEndPoint() {
-    	
-    	return $this->endpoint;
-    	
-    }
-    
-    /**
-     * Get supported post formats
-     *
-     * @return  array  $formats
-     */
-    public function getSupportedFormats() {
-    	
-    	if (empty($this->supportedFormats)) $this->loadPostFormats();
-    	
-    	return array_keys($this->supportedFormats);
-    	
-    }
-    
-    /**
-     * Get supported post types
-     *
-     * @return  array  $types
-     */
-    public function getSupportedTypes() {
-    	
-    	if (empty($this->supportedTypes)) $this->loadPostTypes();
-    	
-    	return array_keys($this->supportedTypes);
-    	
-    }
-    
-    /**
-     * Get supported post status
-     *
-     * @return  array  $status
-     */
-    public function getSupportedPostStatus() {
-    	
-    	if (empty($this->supportedPostStatus)) $this->loadPostStatus();
-    	
-    	return array_keys($this->supportedPostStatus);
-    	
-    }
-    
-    /**
-     * Get supported comment status
-     *
-     * @return  array  $status
-     */
-    public function getSupportedCommentStatus() {
-    	
-    	if (empty($this->supportedCommentStatus)) $this->loadCommentStatus();
-    	
-    	return $this->supportedCommentStatus;
-    	
-    }
-    
-    /**
-     * Get available options list
-     *
-     * @return  array  $options
-     */
-    public function getAvailableOptions() {
-    	
-    	if (empty($this->options)) $this->loadBlogOptions();
-    	
-    	return array_keys($this->options);
-    	
-    }
-    
-    /**
-     * Get option value
-     *
-     * @param   string  $name Option name
-     *
-     * @return  mixed  $value
-     * 
-     * @throws \Comodojo\Exception\WPException
-     */
-    public function getOptionValue($name) {
-    	
-    	if (empty($this->options)) $this->loadBlogOptions();
-    	
-    	if (!isset($this->options[$name]))
-    		throw new WPException("There isn't any option called '$name'");
-    	
-    	return $this->options[$name]['value'];
-    	
-    }
-    
-    /**
-     * Get option description
-     *
-     * @param   string  $name Option name
-     *
-     * @return  string  $description
-     * 
-     * @throws \Comodojo\Exception\WPException
-     */
-    public function getOptionDescription($name) {
-    	
-    	if (empty($this->options)) $this->loadBlogOptions();
-    	
-    	if (!isset($this->options[$name]))
-    		throw new WPException("There isn't any option called '$name'");
-    	
-    	return $this->options[$name]['desc'];
-    	
-    }
-    
-    /**
-     * Get option description
-     *
-     * @param   string  $name Option name
-     *
-     * @return  boolean  $readonly
-     * 
-     * @throws \Comodojo\Exception\WPException
-     */
-    public function isReadOnlyOption($name) {
-    	
-    	if (empty($this->options)) $this->loadBlogOptions();
-    	
-    	if (!isset($this->options[$name]))
-    		throw new WPException("There isn't any option called '$name'");
-    	
-    	return $this->options[$name]['readonly'];
-    	
-    }
-    
-    /**
-     * Check if the endpoint is valid
-     *
-     * @return  boolean  $valid
-     */
-    public function checkEndPoint() {
-    	
-    	try {
-        
-            $this->getWordpress()->sendMessage("wp.getProfile", array(), $this);
-            
-    	} catch (WPException $wpe) {
-    		
-    		return false;
-    		
-    	}
-    	
-    	return true;
-    	
-    }
-    
-    /**
-     * Set a value for an option
-     *
-     * @param   string  $name  Option name
-     * @param   string  $value Option value
-     * @param   string  $value Option description (optional)
-     *
-     * @return  Object  $this
-     * 
-     * @throws \Comodojo\Exception\WPException
-     */
-    public function setOption($name, $value, $desc = null) {
-    	
-    	if (is_null($this->options)) $this->loadBlogOptions();
-    	
-    	if (!isset($this->options[$name]))
-    		throw new WPException("There isn't any option called '$name'");
-    	
-    	if ($this->options[$name]['readonly'])
-    		throw new WPException("The option '$name' is read-only");
-    		
-    	$opt_info = array(
-    		"value"    => $value,
-    		"desc"     => (is_null($desc))?$this->options[$name]['desc']:$desc,
-    		"readonly" => $this->options[$name]['readonly']
-    	);
-    	
-    	try {
-            
-            $options = $this->getWordpress()->sendMessage("wp.setOptions", array(
-                array(
-                	$name => $opt_info
-                )
-            ), $this);
-            
-            foreach ($options as $name => $option) {
-            	
-            	$this->options[$name] = array(
-            		"descr"    => $option['desc'],
-            		"value"    => $option['value'],
-            		"readonly" => filter_var($option['readonly'], FILTER_VALIDATE_BOOLEAN)
-            	);
-            	
-            }
-            
-    	} catch (WPException $wpe) {
-    		
-    		throw new WPException("Unable to set value for option '$name' (".$wpe->getMessage().")");
-    		
-    	}
-    	
-    	return $this;
-    	
-    }
-    
-    /**
-     * True if the user is admin on the blog, false otherwise
-     *
-     * @return  boolean  $this->admin
-     */
-    public function isAdmin() {
-    	
-    	return $this->admin;
-    	
-    }
+class WPBlog extends WPBlogLoader {
     
     /**
      * Get user's profile
      *
-     * @return  Object  $profile
+     * @return WPProfile $profile
      * 
      * @throws \Comodojo\Exception\WPException
      */
     public function getProfile() {
     	
-    	try {
-            
-            $user = $this->getWordpress()->sendMessage("wp.getProfile", array(
-                array('user_id')
-            ), $this);
-            
-            return new WPProfile(
-            	$this,
-            	$user['user_id']
-            );
-            
-    	} catch (WPException $wpe) {
-    		
-    		throw new WPException("Unable to retrieve user's profile (".$wpe->getMessage().")");
-    		
+    	if (is_null($this->profile)) {
+    	
+	    	try {
+	            
+	            $user = $this->getWordpress()->sendMessage("wp.getProfile", array(
+	                array('user_id')
+	            ), $this);
+	            
+	            $this->profile = new WPProfile(
+	            	$this,
+	            	$user['user_id']
+	            );
+	            
+	    	} catch (WPException $wpe) {
+	    		
+	    		throw new WPException("Unable to retrieve user's profile (".$wpe->getMessage().")");
+	    		
+	    	}
+	    	
     	}
+    	
+    	return $this->profile;
     	
     }
     
     /**
      * Get user's information by id
      *
-     * @param   int  $id User's ID
+     * @param  int    $id User's ID
      *
-     * @return  Object  $user
+     * @return WPUser $user
      * 
      * @throws \Comodojo\Exception\WPException
      */
@@ -482,9 +83,9 @@ class WPBlog {
     /**
      * Get users by role
      *
-     * @param   string  $role User's role
+     * @param  string         $role User's role
      *
-     * @return  Object  $userIterator
+     * @return WPUserIterator $userIterator
      * 
      * @throws \Comodojo\Exception\WPException
      */
@@ -505,7 +106,7 @@ class WPBlog {
     /**
      * Get authors
      *
-     * @return  Object  $userIterator
+     * @return WPUserIterator $userIterator
      * 
      * @throws \Comodojo\Exception\WPException
      */
@@ -526,14 +127,14 @@ class WPBlog {
     /**
      * Get user list
      *
-     * @param   string  $role    User's role
-     * @param   string  $who     Who is
-     * @param   int     $limit   Number of users retrieved
-     * @param   int     $offset  Number of users to skip
-     * @param   string  $orderby Field to use for ordering
-     * @param   string  $order   Type of ordering (asd or desc)
+     * @param  string  $role    User's role
+     * @param  string  $who     Who is
+     * @param  int     $limit   Number of users retrieved
+     * @param  int     $offset  Number of users to skip
+     * @param  string  $orderby Field to use for ordering
+     * @param  string  $order   Type of ordering (asd or desc)
      *
-     * @return  Object  $userIterator
+     * @return WPUserIterator $userIterator
      * 
      * @throws \Comodojo\Exception\WPException
      */
@@ -588,9 +189,9 @@ class WPBlog {
     /**
      * Get post's information by id
      *
-     * @param   int  $id Post's ID
+     * @param  int    $id Post's ID
      *
-     * @return  Object  $post
+     * @return WPPost $post
      * 
      * @throws \Comodojo\Exception\WPException
      */
@@ -611,7 +212,7 @@ class WPBlog {
     /**
      * Get pages
      *
-     * @return  Object $postIterator
+     * @return WPPostIterator $postIterator
      * 
      * @throws \Comodojo\Exception\WPException
      */
@@ -632,9 +233,9 @@ class WPBlog {
     /**
      * Get latest posts
      * 
-     * @param   int    $count  Number of posts retrieved
+     * @param  int            $count  Number of posts retrieved
      *
-     * @return  Object $postIterator
+     * @return WPPostIterator $postIterator
      * 
      * @throws \Comodojo\Exception\WPException
      */
@@ -655,14 +256,14 @@ class WPBlog {
     /**
      * Get post list
      *
-     * @param   string  $type    Type of posts
-     * @param   string  $status  Status of posts
-     * @param   int     $number  Number of posts retrieved
-     * @param   int     $offset  Number of posts to skip
-     * @param   string  $orderby Field to use for ordering
-     * @param   string  $order   Type of ordering (asd or desc)
+     * @param  string  $type    Type of posts
+     * @param  string  $status  Status of posts
+     * @param  int     $number  Number of posts retrieved
+     * @param  int     $offset  Number of posts to skip
+     * @param  string  $orderby Field to use for ordering
+     * @param  string  $order   Type of ordering (asd or desc)
      *
-     * @return  Object $postIterator
+     * @return WPPostIterator $postIterator
      * 
      * @throws \Comodojo\Exception\WPException
      */
@@ -717,10 +318,10 @@ class WPBlog {
     /**
      * Get post list by category
      *
-     * @param   string $category Category name or description
-     * @param   string $number   Number of posts (optional)
+     * @param  string $category Category name or description
+     * @param  string $number   Number of posts (optional)
      *
-     * @return  Object $postIterator
+     * @return WPPostIterator $postIterator
      * 
      * @throws \Comodojo\Exception\WPException
      */
@@ -741,10 +342,10 @@ class WPBlog {
     /**
      * Get post list by tag
      *
-     * @param   string $tag      Tag name or description
-     * @param   string $number   Number of posts (optional)
+     * @param  string $tag    Tag name or description
+     * @param  string $number Number of posts (optional)
      *
-     * @return  Object $postIterator
+     * @return WPPostIterator $postIterator
      * 
      * @throws \Comodojo\Exception\WPException
      */
@@ -765,11 +366,11 @@ class WPBlog {
     /**
      * Get post list by term
      *
-     * @param   string $taxonomy Taxonomy name
-     * @param   string $value    Term name or description
-     * @param   int    $number   Number of posts to fetch
+     * @param  string $taxonomy Taxonomy name
+     * @param  string $value    Term name or description
+     * @param  int    $number   Number of posts to fetch
      *
-     * @return  Object $postIterator
+     * @return WPPostIterator $postIterator
      * 
      * @throws \Comodojo\Exception\WPException
      */
@@ -830,238 +431,11 @@ class WPBlog {
     }
     
     /**
-     * Get taxonomies
-     *
-     * @return  array  $taxonomies
-     */
-    public function getTaxonomies() {
-    	
-    	if (empty($this->taxonomies)) $this->loadTaxonomies();
-    	
-    	return $this->taxonomies;
-    	
-    }
-    
-    /**
-     * Get taxonomy by name
-     *
-     * @param   string $taxonomy taxonomy name
-     *
-     * @return  Object $taxonomy
-     */
-    public function getTaxonomy($taxonomy) {
-    	
-    	foreach ($this->getTaxonomies() as $t) {
-    		
-    		if ($t->getName() == $taxonomy) return $t;
-    		
-    	}
-    	
-    	return null;
-    	
-    }
-    
-    /**
-     * Has taxonomy
-     *
-     * @param   string  $taxonomy Taxonomy name
-     *
-     * @return  boolean $hasTaxonomy
-     */
-    public function hasTaxonomy($taxonomy) {
-    	
-    	foreach ($this->getTaxonomies() as $t) {
-    		
-    		if ($t->getName() == $taxonomy) return true;
-    		
-    	}
-    	
-    	return false;
-    	
-    }
-    
-    /**
-     * Load taxonomy list
-     *
-     * @return  Object  $this
-     * 
-     * @throws \Comodojo\Exception\WPException
-     */
-    private function loadTaxonomies() {
-    	
-    	try {
-    		
-            $tax_list = $this->getWordpress()->sendMessage("wp.getTaxonomies", array(), $this);
-            
-            foreach ($tax_list as $taxonomy) {
-            	
-            	$tax = new WPTaxonomy($this);
-            	
-            	$tax->loadData($taxonomy);
-            	
-            	array_push(
-            		$this->taxonomies,
-            		$tax
-            	);
-            	
-            }
-            
-    	} catch (WPException $wpe) {
-    		
-    		throw new WPException("Unable to retrieve taxonomy informations (".$wpe->getMessage().")");
-    		
-    	}
-    	
-    	return $this;
-    	
-    }
-    
-    /**
-     * Get tags
-     *
-     * @return  array  $tags
-     */
-    public function getTags() {
-    	
-    	if (empty($this->tags)) $this->loadBlogTerms();
-    	
-    	return $this->tags;
-    	
-    }
-    
-    /**
-     * Get tag term by name
-     *
-     * @param   string $tag Tag name
-     *
-     * @return  Object $tag
-     */
-    public function getTag($tag) {
-    	
-    	foreach ($this->getTags() as $t) {
-    		
-    		if ($t->getName() == $tag) return $t;
-    		
-    	}
-    	
-    	return null;
-    	
-    }
-    
-    /**
-     * Has tag
-     *
-     * @param   string  $tag Tag name
-     *
-     * @return  boolean $hasTag
-     */
-    public function hasTag($tag) {
-    	
-    	foreach ($this->getTags() as $t) {
-    		
-    		if ($t->getName() == $tag) return true;
-    		
-    	}
-    	
-    	return false;
-    	
-    }
-    
-    /**
-     * Has tag
-     *
-     * @param   Object $tag WPTerm object
-     *
-     * @return  Object $this
-     */
-    public function addTag($tag) {
-    	
-    	if (!$this->hasTag($tag->getName())) {
-    		
-    		array_push($this->tags, $tag);
-    		
-    	}
-    	
-    	return $this;
-    	
-    }
-    
-    /**
-     * Get categories
-     *
-     * @return  array  $categories
-     */
-    public function getCategories() {
-    	
-    	if (empty($this->categories)) $this->loadBlogTerms();
-    	
-    	return $this->categories;
-    	
-    }
-    
-    /**
-     * Get category by name
-     *
-     * @param   string $category Tag name
-     *
-     * @return  Object $category
-     */
-    public function getCategory($category) {
-    	
-    	foreach ($this->getCategories() as $c) {
-    		
-    		if ($c->getName() == $category) return $c;
-    		
-    	}
-    	
-    	return null;
-    	
-    }
-    
-    /**
-     * Has category
-     *
-     * @param   string  $category Category name
-     *
-     * @return  boolean $hasCategory
-     */
-    public function hasCategory($category) {
-    	
-    	foreach ($this->getCategories() as $c) {
-    		
-    		if ($c->getName() == $category) return true;
-    		
-    	}
-    	
-    	return false;
-    	
-    }
-    
-    /**
-     * Add category
-     *
-     * @param   Object $category WPTerm object
-     *
-     * @return  Object $this
-     */
-    public function addCategory($category) {
-    	
-    	if (!$this->hasCategory($category->getName())) {
-    		
-    		array_push($this->categories, $category);
-    		
-    	}
-    	
-    	return $this;
-    	
-    }
-    
-    /**
      * Get media library
      * 
-     * @param   string $mime The mime-type of the media you want to fetch
+     * @param  string $mime The mime-type of the media you want to fetch
      *
-     * @return  Object  $mediaIterator
+     * @return WPMediaIterator $mediaIterator
      * 
      * @throws \Comodojo\Exception\WPException
      */
@@ -1081,175 +455,6 @@ class WPBlog {
     	
     	return $mediaIterator;
     	
-    }
-	
-    /**
-     * Load supported formats
-     *
-     * @return  Object  $this
-     * 
-     * @throws \Comodojo\Exception\WPException
-     */
-    
-    private function loadPostFormats() {
-    	
-    	try {
-            
-            $this->supportedFormats = $this->getWordpress()->sendMessage("wp.getPostFormats", array(), $this);
-            
-    	} catch (WPException $wpe) {
-    		
-    		throw new WPException("Unable to retrieve post formats (".$wpe->getMessage().")");
-    		
-    	}
-    	
-    	return $this;
-        
-    }
-	
-    /**
-     * Load supported post types
-     *
-     * @return  Object  $this
-     * 
-     * @throws \Comodojo\Exception\WPException
-     */
-    
-    private function loadPostTypes() {
-    	
-    	try {
-    		
-            $types = $this->getWordpress()->sendMessage("wp.getPostTypes", array(), $this);
-            
-            foreach ($types as $name => $type) {
-            
-            	$this->supportedTypes[$name] = $type['label'];
-            	
-            }
-            
-    	} catch (WPException $wpe) {
-    		
-    		throw new WPException("Unable to retrieve post types (".$wpe->getMessage().")");
-    		
-    	}
-    	
-    	return $this;
-        
-    }
-	
-    /**
-     * Load supported post status
-     *
-     * @return  Object  $this
-     * 
-     * @throws \Comodojo\Exception\WPException
-     */
-    
-    private function loadPostStatus() {
-    	
-    	try {
-            
-            $this->supportedPostStatus = $this->getWordpress()->sendMessage("wp.getPostStatusList", array(), $this);
-            
-    	} catch (WPException $wpe) {
-    		
-    		throw new WPException("Unable to retrieve post status (".$wpe->getMessage().")");
-    		
-    	}
-    	
-    	return $this;
-        
-    }
-	
-    /**
-     * Load supported comment status
-     *
-     * @return  Object  $this
-     * 
-     * @throws \Comodojo\Exception\WPException
-     */
-    
-    private function loadCommentStatus() {
-    	
-    	try {
-            
-            $status = $this->getWordpress()->sendMessage("wp.getCommentStatusList", array(), $this);
-            
-            foreach ($status as $s) {
-            
-            	array_push($this->supportedCommentStatus, $s);
-            	
-            }
-            
-    	} catch (WPException $wpe) {
-    		
-    		throw new WPException("Unable to retrieve comment status (".$wpe->getMessage().")");
-    		
-    	}
-    	
-    	return $this;
-        
-    }
-	
-    /**
-     * Load blog options
-     *
-     * @return  Object  $this
-     * 
-     * @throws \Comodojo\Exception\WPException
-     */
-    
-    private function loadBlogOptions() {
-    	
-    	try {
-            
-            $options = $this->getWordpress()->sendMessage("wp.getOptions", array(), $this);
-            
-            foreach ($options as $name => $option) {
-            	
-            	$this->options[$name] = array(
-            		"desc"     => $option['desc'],
-            		"value"    => $option['value'],
-            		"readonly" => filter_var($option['readonly'], FILTER_VALIDATE_BOOLEAN)
-            	);
-            	
-            }
-            
-    	} catch (WPException $wpe) {
-    		
-    		throw new WPException("Unable to retrieve blog options (".$wpe->getMessage().")");
-    		
-    	}
-    	
-    	return $this;
-        
-    }
-	
-    /**
-     * Load blog terms
-     *
-     * @return  Object  $this
-     * 
-     * @throws \Comodojo\Exception\WPException
-     */
-    private function loadBlogTerms() {
-    	
-    	try {
-    	
-    		if (empty($this->taxonomies)) $this->loadTaxonomies();
-			
-			$this->tags = $this->getTaxonomy("post_tag")->getTerms();
-			
-			$this->categories = $this->getTaxonomy("category")->getTerms();
-            
-    	} catch (WPException $wpe) {
-    		
-    		throw $wpe;
-    		
-    	}
-    	
-    	return $this;
-        
     }
     
 }

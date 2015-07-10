@@ -3,7 +3,7 @@
 use \Comodojo\Exception\WPException;
 
 /** 
- * Comodojo Wordpress API Wrapper. This class maps a Wordpress user
+ * Comodojo Wordpress API Wrapper. This class maps a Wordpress profile
  *
  * It allows to retrieve and edit informations about the logged user.
  * 
@@ -32,9 +32,7 @@ class WPProfile extends WPUser {
      */
     public function setFirstname($firstname) {
     	
-    	$this->firstname = $firstname;
-    	
-    	return $this;
+    	return parent::setFirstname($firstname);
     	
     }
     
@@ -47,9 +45,7 @@ class WPProfile extends WPUser {
      */
     public function setLastname($lastname) {
     	
-    	$this->lastname = $lastname;
-    	
-    	return $this;
+    	return parent::setLastname($lastname);
     	
     }
     
@@ -62,9 +58,7 @@ class WPProfile extends WPUser {
      */
     public function setBiography($bio) {
     	
-    	$this->bio = $bio;
-    	
-    	return $this;
+    	return parent::setBiography($bio);
     	
     }
     
@@ -77,9 +71,7 @@ class WPProfile extends WPUser {
      */
     public function setNickname($nickname) {
     	
-    	$this->nickname = $nickname;
-    	
-    	return $this;
+    	return parent::setNickname($nickname);
     	
     }
     
@@ -92,9 +84,7 @@ class WPProfile extends WPUser {
      */
     public function setNicename($nicename) {
     	
-    	$this->nicename = $nicename;
-    	
-    	return $this;
+    	return parent::setNicename($nicename);
     	
     }
     
@@ -107,9 +97,7 @@ class WPProfile extends WPUser {
      */
     public function setURL($url) {
     	
-    	$this->url = $url;
-    	
-    	return $this;
+    	return parent::setURL($url);
     	
     }
     
@@ -122,9 +110,7 @@ class WPProfile extends WPUser {
      */
     public function setDisplayname($displayname) {
     	
-    	$this->displayname = $displayname;
-    	
-    	return $this;
+    	return parent::setDisplayname($displayname);
     	
     }
 	
@@ -146,15 +132,7 @@ class WPProfile extends WPUser {
     	try {
             
             $result = $this->getWordpress()->sendMessage("wp.editProfile", array(
-                array(
-                	"first_name"   => $this->getFirstname(),
-                	"last_name"    => $this->getLastname(),
-                	"url"          => $this->getURL(),
-                	"display_name" => $this->getDisplayname(),
-                	"nickname"     => $this->getNickname(),
-                	"nicename"     => $this->getNicename(),
-                	"bio"          => $this->getBiography()
-                )
+                $this->getData()
             ), $this->getBlog());
             
             $this->loadFromID($this->getID());

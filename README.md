@@ -245,7 +245,7 @@ try {
 	    
 	    // Upload a file directly to Wordpress
 	    // if you have a buffer of data, you can use the 'uploadData' method instead
-	    $image->upload("/path/to/file.jpg");
+	    $image->upload("/path/to/file.jpg")->save();
 	    
 	    // You can both add the image as post thumbnail and append it to the content
 	    $post->setTitle( $post->getTitle() . " (with image)" )
