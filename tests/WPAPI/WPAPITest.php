@@ -72,7 +72,7 @@ class WPAPITest extends \PHPUnit_Framework_TestCase {
     				
     				if (!$blog->isReadOnlyOption($opt)) {
             
-            			$blog->setOption($opt, "Test " . $blog->getOptionValue($opt), "Test " . $blog->getOptionDescription($opt));
+            			$blog->setOption($opt, $blog->getOptionValue($opt), $blog->getOptionDescription($opt));
 
             
     				}
