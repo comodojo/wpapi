@@ -67,7 +67,7 @@ class WPAPITest extends \PHPUnit_Framework_TestCase {
     			$blog->getSupportedCommentStatus();
     			
     			$options = $blog->getAvailableOptions();
-    			
+    			var_dump($options);
     			foreach ($options as $opt) {
     				
     				if (!$blog->isReadOnlyOption($opt)) {
