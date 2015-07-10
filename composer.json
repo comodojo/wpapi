@@ -26,6 +26,7 @@
             	"src/Object",
             	"src/Blog",
             	"src/Post",
+            	"src/Comment",
             	"src/Media",
             	"src/User",
             	"src/Taxonomy",
