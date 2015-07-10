@@ -72,7 +72,7 @@ class WPCommentIterator implements \Iterator {
      * Class constructor
      *
      * @param   Object  $post   Reference to a post object
-     * @param   array   $status Filter on the comment status
+     * @param   string  $status Filter on the comment status
      * 
      * @throws \Comodojo\Exception\WPException
      */
