@@ -151,7 +151,7 @@ abstract class WPObject {
     	
     	try {
     		
-            return new WPMediaIterator($this->getBlog(), $this->getID(), $mime);
+            return new WPMediaIterator($blog, $post, $mime);
             
     	} catch (WPException $wpe) {
     		
