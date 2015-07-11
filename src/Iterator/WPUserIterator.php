@@ -30,13 +30,6 @@ class WPUserIterator extends WPIteratorObject {
      */
 	private $users = array();
 	
-	/**
-     * Post count
-     *
-     * @var int
-     */
-	private $count = 0;
-	
     /**
      * Class constructor
      *

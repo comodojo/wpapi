@@ -31,13 +31,6 @@ class WPCommentIterator extends WPIteratorObject {
 	private $post = null;
 	
 	/**
-     * Actual count ID
-     *
-     * @var int
-     */
-	private $current = 0;
-	
-	/**
      * Comment status
      *
      * @var string
