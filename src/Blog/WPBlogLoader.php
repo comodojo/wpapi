@@ -206,7 +206,7 @@ abstract class WPBlogLoader extends WPBlogDataSetter {
      * 
      * @throws \Comodojo\Exception\WPException
      */
-    private function loadAllowedData($method) {
+    protected function loadAllowedData($method) {
     	
     	try {
     	
