@@ -19,7 +19,7 @@ use \Comodojo\Exception\WPException;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-abstract class WPPostDataTerms extends WPPostLoader {
+abstract class WPPostTerms extends WPPostLoader {
     
     /**
      * Get categories

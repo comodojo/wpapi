@@ -21,7 +21,7 @@ use \Comodojo\Exception\WPException;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-class WPBlog extends WPBlogLoader {
+class WPBlog extends WPBlogTerms {
     
     /**
      * Get user's profile
