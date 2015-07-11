@@ -55,40 +55,13 @@ abstract class WPTermLoader extends WPTermData {
     }
 	
     /**
-     * Reset data of the object, it can still be used calling the loadFromID method
-     *
-     * @return  Object  $this
-     */
-    public function resetData() {
-			
-		$this->id               = -1;
-		
-		$this->name             = "";
-		
-		$this->slug             = "";
-		
-		$this->group            = "";
-		
-		$this->term_taxonomy_id = -1;
-		
-		$this->description      = "";
-		
-		$this->parent           = -1;
-		
-		$this->count            = 0;
-    	
-    	return $this;
-        
-    }
-	
-    /**
      * Load term data
      *
      * @param   array   $term
      *
      * @return  Object  $this
      */
-    protected function loadData($term) {
+    public function loadData($term) {
 		
         $this->id               = intval($term['term_id']);
     
@@ -105,6 +78,33 @@ abstract class WPTermLoader extends WPTermData {
         $this->parent           = intval($term['parent']);
         
         $this->count            = intval($term['count']);
+    	
+    	return $this;
+        
+    }
+	
+    /**
+     * Reset data of the object, it can still be used calling the loadFromID method
+     *
+     * @return  Object  $this
+     */
+    protected function resetData() {
+			
+		$this->id               = -1;
+		
+		$this->name             = "";
+		
+		$this->slug             = "";
+		
+		$this->group            = "";
+		
+		$this->term_taxonomy_id = -1;
+		
+		$this->description      = "";
+		
+		$this->parent           = -1;
+		
+		$this->count            = 0;
     	
     	return $this;
         
