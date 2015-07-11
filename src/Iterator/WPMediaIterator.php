@@ -70,24 +70,28 @@ class WPMediaIterator extends WPIteratorObject {
      */
     public function hasNext() {
     	
-    	try {
+    	if (!$this->has_next) {
     		
-            $image = new WPMedia($this->getBlog());
-            
-            $image->setPostID($this->post);
-            
-            $this->object = $image->loadFromLibrary($this->current, $this->mime);
-            
-            if (!is_null($this->object)) {
-            	
-            	$this->has_next = true;
-            	
-            }
-    		
-    	} catch (WPException $wpe) {
-    		
-    		throw $wpe;
-    		
+	    	try {
+	    		
+	            $image = new WPMedia($this->getBlog());
+	            
+	            $image->setPostID($this->post);
+	            
+	            $this->object = $image->loadFromLibrary($this->current, $this->mime);
+	            
+	            if (!is_null($this->object)) {
+	            	
+	            	$this->has_next = true;
+	            	
+	            }
+	    		
+	    	} catch (WPException $wpe) {
+	    		
+	    		throw $wpe;
+	    		
+	    	}
+	    	
     	}
     	
     	return $this->has_next;

@@ -21,7 +21,7 @@ use \Comodojo\Exception\WPException;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-abstract class WPPostLoader extends WPPostDataSetter {
+abstract class WPPostLoader extends WPPostDataObjectSetter {
 	
     /**
      * Load data for a post

@@ -67,54 +67,6 @@ abstract class WPPostDataSetter extends WPPostData {
     }
     
     /**
-     * Set post status
-     *
-     * @param  string     $value
-     *
-     * @return WPPostData $this
-     */
-    public function setStatus($value) {
-            
-        if (empty($this->supportedStatus)) 
-        	$this->supportedStatus  = $this->getBlog()->getSupportedPostStatus();
-    	
-    	return $this->setCheckedValue($this->supportedStatus, $value, $this->status);
-    	
-    }
-    
-    /**
-     * Set ping post type
-     *
-     * @param  string     $value
-     *
-     * @return WPPostData $this
-     */
-    public function setType($value) {
-            
-        if (empty($this->supportedTypes)) 
-        	$this->supportedTypes = $this->getBlog()->getSupportedTypes();
-    	
-    	return $this->setCheckedValue($this->supportedTypes, $value, $this->type);
-    	
-    }
-    
-    /**
-     * Set post format
-     *
-     * @param  string     $value
-     *
-     * @return WPPostData $this
-     */
-    public function setFormat($value) {
-            
-        if (empty($this->supportedFormats)) 
-        	$this->supportedFormats = $this->getBlog()->getSupportedFormats();
-    	
-    	return $this->setCheckedValue($this->supportedFormats, $value, $this->format);
-    	
-    }
-    
-    /**
      * Set post name
      *
      * @param  string     $value
@@ -124,40 +76,6 @@ abstract class WPPostDataSetter extends WPPostData {
     protected function setName($value) {
     	
     	$this->name = $value;
-    	
-    	return $this;
-    	
-    }
-    
-    /**
-     * Set author
-     *
-     * @param  mixed      $value Author ID or WPUser reference
-     *
-     * @return WPPostData $this
-     * 
-     * @throws \Comodojo\Exception\WPException
-     */
-    public function setAuthor($value) {
-    	
-    	if (is_numeric($value)) {
-    		
-	    	try {
-	    		
-	    		$this->author = new WPUser($this->getBlog(), $value);
-	    		
-	    	} catch (WPException $wpe) {
-	    		
-	    		throw $wpe;
-	    		
-	    	}
-	    	
-    		
-    	} else {
-    		
-    		$this->author = $value;
-    		
-    	}
     	
     	return $this;
     	
@@ -296,32 +214,6 @@ abstract class WPPostDataSetter extends WPPostData {
     }
     
     /**
-     * Set comment status
-     *
-     * @param  string     $value
-     *
-     * @return WPPostData $this
-     */
-    public function setCommentStatus($value) {
-    	
-    	return $this->setCheckedValue($this->supportedCommentStatus, $value, $this->comment);
-    	
-    }
-    
-    /**
-     * Set ping status
-     *
-     * @param  string     $value
-     *
-     * @return WPPostData $this
-     */
-    public function setPingStatus($value) {
-    	
-    	return $this->setCheckedValue($this->supportedPingStatus, $value, $this->ping);
-    	
-    }
-    
-    /**
      * Set sticky
      *
      * @param  boolean    $value
@@ -331,51 +223,6 @@ abstract class WPPostDataSetter extends WPPostData {
     public function setSticky($value) {
     	
     	$this->sticky = $value;
-    	
-    	return $this;
-    	
-    }
-    
-    /**
-     * Clean custom fields
-     *
-     * @return WPPostData $this
-     */
-    public function cleanCustomFields() {
-    	
-    	$this->custom = array();
-    	
-    	return $this;
-    	
-    }
-    
-    /**
-     * Set custom field
-     *
-     * @param  string     $field
-     * @param  string     $value
-     *
-     * @return WPPostData $this
-     */
-    public function setCustomField($field, $value) {
-    	
-    	foreach ($this->custom as $id => $custom) {
-    		
-    		if ($custom['key'] == $field) {
-    			
-    			$this->custom[$id]['value'] = $value;
-    			
-    			return $this;
-    			
-    		}
-    		
-    	}
-    	
-    	// If the custom field requested does not exists, a new one will be created
-    	array_push($this->custom, array(
-    		'key'   => $field,
-    		'value' => $value
-    	));
     	
     	return $this;
     	
@@ -421,43 +268,6 @@ abstract class WPPostDataSetter extends WPPostData {
     public function setEnclosureType($value) {
     	
     	$this->enclosure['type'] = $value;
-    	
-    	return $this;
-    	
-    }
-    
-    /**
-     * Set post thumbnail
-     *
-     * @param  mixed      $thumb Media ID or WPMedia object
-     *
-     * @return WPPostData $this
-     * 
-     * @throws \Comodojo\Exception\WPException
-     */
-    public function setThumbnail($thumb = null) {
-    	
-    	if (is_null($thumb)) {
-    		
-    		$this->thumbnail = null;
-    	
-    	} elseif (is_numeric($thumb)) {
-    	
-	    	try {
-	    		
-	    		$this->thumbnail = new WPMedia($this->getBlog(), $thumb);
-	            
-	    	} catch (WPException $wpe) {
-	    		
-	    		throw $wpe;
-	    		
-	    	}
-    		
-    	} else {
-    		
-    		$this->thumbnail = $thumb;
-    		
-    	}
     	
     	return $this;
     	
