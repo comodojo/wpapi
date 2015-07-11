@@ -87,7 +87,7 @@ abstract class WPIteratorObject extends WPObject implements \Iterator {
      *
      * @return WPIteratorObject $this
      */
-    public function loadData($ids) {
+    public function loadData($data) {
     	
     	return $this;
     	
@@ -181,7 +181,7 @@ abstract class WPIteratorObject extends WPObject implements \Iterator {
     /**
      * Return the current object
      *
-     * @return  Object  $post
+     * @return WPObject  $post
      */
     public function current() {
     	
@@ -192,7 +192,7 @@ abstract class WPIteratorObject extends WPObject implements \Iterator {
     /**
      * Return the current index
      *
-     * @return  int  $id
+     * @return int  $id
      */
     public function key() {
     	
@@ -203,7 +203,7 @@ abstract class WPIteratorObject extends WPObject implements \Iterator {
     /**
      * Return the current index
      *
-     * @return  Object  $this
+     * @return WPIteratorObject $this
      */
     public function next() {
     	
@@ -216,7 +216,7 @@ abstract class WPIteratorObject extends WPObject implements \Iterator {
     /**
      * Check if there's a next value
      *
-     * @return  boolean  $hasNext
+     * @return boolean  $hasNext
      */
     public function valid() {
     	
