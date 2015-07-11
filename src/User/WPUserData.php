@@ -21,14 +21,14 @@ use \Comodojo\Exception\WPException;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-abstract class WPUserData extends WPObject {
+abstract class WPUserData extends WPBlogObject {
 	
 	/**
      * Username
      *
      * @var string
      */
-	private $username = "";
+	protected $username = "";
 	
 	/**
      * First name
@@ -56,7 +56,7 @@ abstract class WPUserData extends WPObject {
      *
      * @var string
      */
-	private $email = "";
+	protected $email = "";
 	
 	/**
      * Nickname
@@ -91,14 +91,14 @@ abstract class WPUserData extends WPObject {
      *
      * @var int
      */
-	private $registration = "";
+	protected $registration = "";
 	
 	/**
      * Array of roles
      *
      * @var string
      */
-	private $roles = array();
+	protected $roles = array();
     
     /**
      * Get username

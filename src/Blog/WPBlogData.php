@@ -28,91 +28,91 @@ abstract class WPBlogData extends WPObject {
      *
      * @var string
      */
-	private $name = "";
+	protected $name = "";
 	
 	/**
      * URL to access the blog
      *
      * @var string
      */
-	private $url = "";
+	protected $url = "";
 	
 	/**
      * XML-RPC endpoint
      *
      * @var string
      */
-	private $endpoint = "";
+	protected $endpoint = "";
 	
 	/**
      * User profile
      *
      * @var WPProfile
      */
-	private $profile = null;
+	protected $profile = null;
 	
 	/**
      * True if the user is admin of the blog, false otherwise
      *
      * @var boolean
      */
-	private $admin = false;
+	protected $admin = false;
 	
 	/**
      * List of options available for the user
      *
      * @var array
      */
-	private $options = array();
+	protected $options = array();
 	
 	/**
      * List of all available taxonomies
      *
      * @var array
      */
-	private $taxonomies = array();
+	protected $taxonomies = array();
 	
 	/**
      * List of all available tags
      *
      * @var array
      */
-	private $tags = array();
+	protected $tags = array();
 	
 	/**
      * List of all available categories
      *
      * @var array
      */
-	private $categories = array();
+	protected $categories = array();
 	
 	/**
      * List of all supported post formats
      *
      * @var array
      */
-	private $supportedFormats = array();
+	protected $supportedFormats = array();
 	
 	/**
      * List of all supported post types
      *
      * @var array
      */
-	private $supportedTypes = array();
+	protected $supportedTypes = array();
 	
 	/**
      * List of all supported post status
      *
      * @var array
      */
-	private $supportedPostStatus = array();
+	protected $supportedPostStatus = array();
 	
 	/**
      * List of all supported comment status
      *
      * @var array
      */
-	private $supportedCommentStatus = array();
+	protected $supportedCommentStatus = array();
     
     /**
      * Get blog name
@@ -374,14 +374,14 @@ abstract class WPBlogData extends WPObject {
             
             $options = $this->getWordpress()->sendMessage("wp.setOptions", array(
                 array(
-                	$name => $opt_info
+                	$name => $value
                 )
             ), $this);
             
             foreach ($options as $name => $option) {
             	
             	$this->options[$name] = array(
-            		"descr"    => $option['desc'],
+            		"desc"     => $option['desc'],
             		"value"    => $option['value'],
             		"readonly" => filter_var($option['readonly'], FILTER_VALIDATE_BOOLEAN)
             	);

@@ -5,7 +5,7 @@ use \Comodojo\Exception\WPException;
 /** 
  * Comodojo Wordpress API Wrapper. This class is a Wordpress post data loader
  *
- * It allows to handel multiple data updates.
+ * It allows to handle multiple data updates.
  * 
  * @package     Comodojo Spare Parts
  * @author      Marco Castiello <marco.castiello@gmail.com>
@@ -76,8 +76,8 @@ abstract class WPPostLoader extends WPPostData {
         
         if (isset($data['custom_fields'])) {
         	
-        	foreach ($data['custom_fields'] as $key => $value)
-        		$this->setCustomField($key, $value);
+        	foreach ($data['custom_fields'] as $value)
+        		$this->setCustomField($value['key'], $value['value']);
         	
         }
         
@@ -157,25 +157,26 @@ abstract class WPPostLoader extends WPPostData {
     		
     	}
     	
-    	if (!empty($this->getEnclosure())) {
+    	$enclosure = $this->getEnclosure();
+    	if (!empty($enclosure)) {
     		
-    		$data['enclosure'] = $this->getEnclosure();
+    		$data['enclosure'] = $enclosure;
     		
     	}
     	
-    	if (!empty($this->getPassword())) {
+    	if ($this->getPassword() != "") {
     		
     		$data['post_password'] = $this->getPassword();
     		
     	}
     	
-    	if (!empty($this->getExcerpt())) {
+    	if ($this->getExcerpt() != "") {
     		
     		$data['post_excerpt'] = $this->getExcerpt();
     		
     	}
     	
-    	if (count($this->terms) > 0) {
+    	if (count($this->getTerms()) > 0) {
     		
     		$data['terms'] = array();
     		

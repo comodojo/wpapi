@@ -3,7 +3,7 @@
 use \Comodojo\Exception\WPException;
 
 /** 
- * Comodojo Wordpress API Wrapper. Abstract class to identify Wordpress entities related to a particular blog
+ * Comodojo Wordpress API Wrapper. Abstract class to identify Wordpress entities related to a particular post
  * 
  * @package     Comodojo Spare Parts
  * @author      Marco Castiello <marco.castiello@gmail.com>
@@ -19,14 +19,14 @@ use \Comodojo\Exception\WPException;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-abstract class WPBlogObject extends WPObject {
+abstract class WPPostObject extends WPBlogObject {
 	
 	/**
      * Wordpress blog reference
      *
-     * @var WPBlog
+     * @var WPPost
      */
-	protected $blog = null;
+	protected $post = null;
 	
     /**
      * Class constructor
@@ -36,17 +36,19 @@ abstract class WPBlogObject extends WPObject {
      * 
      * @throws \Comodojo\Exception\WPException
      */
-    public function __construct($blog, $id=0) {
+    public function __construct($post, $id=0) {
     	
-        if ( is_null($blog) || is_null($blog->getWordpress()) || !$blog->getWordpress()->isLogged() ) {
+        if ( is_null($post) || is_null($post->getWordpress()) || !$post->getWordpress()->isLogged() ) {
         	
         	throw new WPException("You must be logged to access post informations");
         	
         }
         
-        $this->blog = $blog;
+        $this->post = $post;
         
-        $this->wp   = $blog->getWordpress();
+        $this->blog = $post->getBlog();
+        
+        $this->wp   = $post->getWordpress();
         
         $this->id   = intval($id);
         
@@ -67,48 +69,14 @@ abstract class WPBlogObject extends WPObject {
     }
     
     /**
-     * Get blog reference
+     * Get post reference
      *
-     * @return WPBlog $blog
+     * @return WPPost $post
      */
-    public function getBlog() {
+    public function getPost() {
     	
-    	return $this->blog;
+    	return $this->post;
     	
     }
-	
-    /**
-     * Load data for an object
-     *
-     * @param  int      $id    
-     *
-     * @return WPObject $this
-     * 
-     * @throws \Comodojo\Exception\WPException
-     */
-    abstract public function loadFromID($id);
-	
-    /**
-     * Save object data
-     *
-     * @return WPObject $this
-     * 
-     * @throws \Comodojo\Exception\WPException
-     */
-    abstract public function save();
-    
-    /**
-     * Delete object
-     * 
-     * @throws \Comodojo\Exception\WPException
-     */
-    abstract public function delete();
-	
-    /**
-     * Reset data of the object, it can still be used calling the loadFromID method
-     *
-     * @return  Object  $this
-     */
-    abstract protected function resetData();
     
 }

@@ -66,6 +66,18 @@ class WPPost extends WPPostLoader {
     	
 	    	if ($this->getID() == 0) {
 	    		
+	    		if (is_null($this->getAuthor())) {
+	    			
+	    			$this->setAuthor($this->getBlog()->getProfile());
+	    			
+	    		}
+	    		
+	    		if ($this->getCreationDate() == 0) {
+	    			
+	    			$this->setCreationDate(time());
+	    			
+	    		}
+	    		
 	    		$this->createPost();
 	    		
 	    	} else {

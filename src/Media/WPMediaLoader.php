@@ -115,7 +115,7 @@ abstract class WPMediaLoader extends WPMediaData {
      *
      * @return  Object  $this
      */
-    public function resetData() {
+    protected function resetData() {
 			
 		$this->id                  = 0;
 

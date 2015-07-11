@@ -6,15 +6,18 @@ class WPAPITest extends \PHPUnit_Framework_TestCase {
     
     protected $blog = null;
     
+    protected $address = "http://logbookonline.net/wordpress";
+    
+    protected $user = "admin";
+    
+    protected $pass = "admin";
+    
     protected function setUp() {
     	
-        $address = "http://localhost/";
-        $user = "admin";
-        $pass = "admin";
         
-        $this->wp = new \Comodojo\WPAPI\WP($address);
+        $this->wp = new \Comodojo\WPAPI\WP($this->address);
     	
-    	if ($this->wp->login($user, $pass)) {
+    	if ($this->wp->login($this->user, $this->pass)) {
     		
     		foreach ($this->wp->getBlogs() as $blog) {
     			
@@ -79,13 +82,15 @@ class WPAPITest extends \PHPUnit_Framework_TestCase {
 
     			}
     			
-    			$blog->setOption("blog_title", "This is a TEST blog", $blog->getOptionDescription("blog_title"));
+    			$blog->setOption("blog_title", "This is a TEST blog");
+    			
+    			$this->assertSame($blog->getOptionValue("blog_title"), "This is a TEST blog");
     			
     		}
     		
     	}
     	
-    	$endpoint = "http://localhost/xmlrpc.php";
+    	$endpoint = $this->address . "/xmlrpc.php";
     			
     	$this->assertSame($endpoint, $this->wp->getEndPoint());
     	
@@ -170,18 +175,31 @@ class WPAPITest extends \PHPUnit_Framework_TestCase {
     				$i = intval($post->getCustomField("test_custom_field"));
     				
 					//$this->assertSame($post->getCreationDate(), $timestamp - ($i * 60 * 60));
+					
 					$this->assertSame($post->getTitle(), "Test post n." . $i);
+					
 					$this->assertSame($post->getStatus(), "draft");
+					
 					$this->assertSame($post->getType(), "post");
+					
 					$this->assertSame($post->getFormat(), "standard");
+					
 					$this->assertSame($post->getAuthor()->getID(), $blog->getProfile()->getID());
+					
 					$this->assertSame($post->getPassword(), false);
+					
 					$this->assertSame($post->getExcerpt(), "Test " . $i);
+					
 					$this->assertSame($post->getContent(), "Post content N." . $i);
+					
 					$this->assertSame($post->getMenuOrder(), 0);
+					
 					$this->assertSame($post->getCommentStatus(), "open");
+					
 					$this->assertSame($post->getPingStatus(), "open");
+					
 					$this->assertSame($post->isSticky(), false);
+					
 					$this->assertSame($post->getPingStatus(), "open");
     				
     			}

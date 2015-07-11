@@ -26,14 +26,14 @@ abstract class WPObject {
      *
      * @var WP
      */
-	private $wp = null;
+	protected $wp = null;
 	
 	/**
      * ID of the post
      *
      * @var int
      */
-	private $id = 0;
+	protected $id = 0;
 	
     /**
      * Class constructor

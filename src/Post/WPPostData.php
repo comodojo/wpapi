@@ -28,166 +28,166 @@ abstract class WPPostData extends WPBlogObject {
      *
      * @var string
      */
-	private $title = "";
+	protected $title = "";
 	
 	/**
      * Date of post creation in unix timestamp
      *
      * @var int
      */
-	private $created = 0;
+	protected $created = 0;
 	
 	/**
      * Date of last edit in unix timestamp
      *
      * @var int
      */
-	private $modified = 0;
+	protected $modified = 0;
 	
 	/**
      * Post status
      *
      * @var string
      */
-	private $status = "draft";
-	private $supportedStatus = array();
+	protected $status = "draft";
+	protected $supportedStatus = array();
 	
 	/**
      * Post type
      *
      * @var string
      */
-	private $type = "post";
-	private $supportedTypes = array();
+	protected $type = "post";
+	protected $supportedTypes = array();
 	
 	/**
      * Post format
      *
      * @var string
      */
-	private $format = "standard";
-	private $supportedFormats = array();
+	protected $format = "standard";
+	protected $supportedFormats = array();
 	
 	/**
      * Post name
      *
      * @var string
      */
-	private $name = "";
+	protected $name = "";
 	
 	/**
      * Reference to the author of the post
      *
      * @var WPUser
      */
-	private $author = null;
+	protected $author = null;
 	
 	/**
      * Password for the post
      *
      * @var string
      */
-	private $password = "";
+	protected $password = "";
 	
 	/**
      * Post excerpt
      *
      * @var string
      */
-	private $excerpt = "";
+	protected $excerpt = "";
 	
 	/**
      * Post content
      *
      * @var string
      */
-	private $content = "";
+	protected $content = "";
 	
 	/**
      * Post parent
      *
      * @var int
      */
-	private $parent = null;
+	protected $parent = null;
 	
 	/**
      * Post mime type
      *
      * @var string
      */
-	private $mime_type = "";
+	protected $mime_type = "";
 	
 	/**
      * URL to access the post
      *
      * @var string
      */
-	private $link = "";
+	protected $link = "";
 	
 	/**
      * GUID to access the post
      *
      * @var string
      */
-	private $guid = "";
+	protected $guid = "";
 	
 	/**
      * Post menu order
      *
      * @var int
      */
-	private $menu_order = 0;
+	protected $menu_order = 0;
 	
 	/**
      * Comment status
      *
      * @var string
      */
-	private $comment = "open";
-	private $supportedCommentStatus = array('closed', 'open');
+	protected $comment = "open";
+	protected $supportedCommentStatus = array('closed', 'open');
 	
 	/**
      * Ping status
      *
      * @var string
      */
-	private $ping = "open";
-	private $supportedPingStatus = array('closed', 'open');
+	protected $ping = "open";
+	protected $supportedPingStatus = array('closed', 'open');
 	
 	/**
      * Sticky
      *
      * @var boolean
      */
-	private $sticky = false;
+	protected $sticky = false;
 	
 	/**
      * Thumbnail
      *
      * @var Object
      */
-	private $thumbnail = null;
+	protected $thumbnail = null;
 	
 	/**
      * List of terms associated to the post
      *
      * @var array
      */
-	private $terms = array();
+	protected $terms = array();
 	
 	/**
      * List of custom fields for the post
      *
      * @var array
      */
-	private $custom = array();
+	protected $custom = array();
 	
 	/**
      * Enclosure
      *
      * @var array
      */
-	private $enclosure = array();
+	protected $enclosure = array();
     
     /**
      * Get post title
@@ -593,9 +593,13 @@ abstract class WPPostData extends WPBlogObject {
      *
      * @return WPPostData $this
      */
-    public function setParent($value) {
+    public function setParent($value = null) {
     	
-    	if (is_numeric($value)) {
+    	if (is_null($value)) {
+    		
+    		$this->parent = null;
+    		
+    	} elseif (is_numeric($value)) {
     		
     		$this->parent = intval($value);
     		
@@ -889,7 +893,7 @@ abstract class WPPostData extends WPBlogObject {
     /**
      * Get enclosure array
      *
-     * @return string $enclosure_url
+     * @return array $enclosure
      */
     public function getEnclosure() {
     	
