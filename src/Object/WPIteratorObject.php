@@ -207,7 +207,7 @@ abstract class WPIteratorObject extends WPObject implements \Iterator {
      */
     public function next() {
     	
-    	$this->current++;
+    	$this->getNext();
     	
     	return $this;
         
