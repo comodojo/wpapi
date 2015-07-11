@@ -21,106 +21,7 @@ use \Comodojo\Exception\WPException;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-class WPTerm {
-	
-	/**
-     * Taxonomy reference
-     *
-     * @var Object
-     */
-	private $taxonomy = null;
-	
-	/**
-     * Term ID
-     *
-     * @var int
-     */
-	private $id = -1;
-	
-	/**
-     * Term name
-     *
-     * @var string
-     */
-	private $name = "";
-	
-	/**
-     * Term slug
-     *
-     * @var string
-     */
-	private $slug = "";
-	
-	/**
-     * Term group
-     *
-     * @var string
-     */
-	private $group = "";
-	
-	/**
-     * Term taxonomy ID
-     *
-     * @var int
-     */
-	private $term_taxonomy_id = -1;
-	
-	/**
-     * Term description
-     *
-     * @var string
-     */
-	private $description = "";
-	
-	/**
-     * Term parent
-     *
-     * @var int
-     */
-	private $parent = -1;
-	
-	/**
-     * Term post count
-     *
-     * @var int
-     */
-	private $count = 0;
-	
-    /**
-     * Class constructor
-     *
-     * @param   Object  $taxonomy Reference to a taxonomy object
-     * @param   int     $id       Term ID (optional)
-     * 
-     * @throws \Comodojo\Exception\WPException
-     */
-    public function __construct($taxonomy, $id=-1) {
-    	
-        if ( is_null($taxonomy) || is_null($taxonomy->getWordpress()) || !$taxonomy->getWordpress()->isLogged() ) {
-        	
-        	throw new WPException("You must be logged to access terms informations");
-        	
-        }
-        
-        $this->taxonomy = $taxonomy;
-        
-        $this->id       = intval($id);
-        
-        if ($id > -1) {
-        	
-        	try {
-        		
-        		$this->loadFromID($id);
-        		
-        	} catch (WPException $wpe) {
-        		
-        		throw $wpe;
-        		
-        	}
-        	
-        }
-        
-    }
+class WPTerm extends WPTermLoader {
 	
     /**
      * Load term from ID
@@ -131,7 +32,6 @@ class WPTerm {
      * 
      * @throws \Comodojo\Exception\WPException
      */
-    
     public function loadFromID($id) {
     	
     	$this->resetData();
@@ -154,202 +54,6 @@ class WPTerm {
     	return $this;
     	
     }
-    
-    /**
-     * Get wordpress reference
-     *
-     * @return  Object  $wordpress
-     */
-    public function getWordpress() {
-    	
-    	return $this->getBlog()->getWordpress();
-    	
-    }
-    
-    /**
-     * Get user's blog
-     *
-     * @return  Object  $blog
-     */
-    public function getBlog() {
-    	
-    	return $this->getTaxonomy()->getBlog();
-    	
-    }
-    
-    /**
-     * Get taxonomy reference
-     *
-     * @return  Object  $this->taxonomy
-     */
-    public function getTaxonomy() {
-    	
-    	return $this->taxonomy;
-    	
-    }
-    
-    /**
-     * Get ID
-     *
-     * @return  int  $this->id
-     */
-    public function getID() {
-    	
-    	return $this->id;
-    	
-    }
-    
-    /**
-     * Get name
-     *
-     * @return  string  $this->name
-     */
-    public function getName() {
-    	
-    	return $this->name;
-    	
-    }
-    
-    /**
-     * Set name
-     *
-     * @param   string  $name Term name
-     *
-     * @return  Object  $this
-     */
-    public function setName($name) {
-    	
-    	$this->name = $name;
-    	
-    	return $this;
-    	
-    }
-    
-    /**
-     * Get slug
-     *
-     * @return  string  $this->slug
-     */
-    public function getSlug() {
-    	
-    	return $this->slug;
-    	
-    }
-    
-    /**
-     * Set slug
-     *
-     * @param   string  $slug Term slug
-     *
-     * @return  Object  $this
-     */
-    public function setSlug($slug) {
-    	
-    	$this->slug = $slug;
-    	
-    	return $this;
-    	
-    }
-    
-    /**
-     * Get description
-     *
-     * @return  string  $this->description
-     */
-    public function getDescription() {
-    	
-    	return $this->description;
-    	
-    }
-    
-    /**
-     * Set description
-     *
-     * @param   string  $description Term description
-     *
-     * @return  Object  $this
-     */
-    public function setDescription($description) {
-    	
-    	$this->description = $description;
-    	
-    	return $this;
-    	
-    }
-    
-    /**
-     * Get term taxonomy id
-     *
-     * @return  int  $this->term_taxonomy_id
-     */
-    public function getTaxonomyRelationID() {
-    	
-    	return $this->term_taxonomy_id;
-    	
-    }
-    
-    /**
-     * Get parent
-     *
-     * @return  Object  $parent
-     * 
-     * @throws \Comodojo\Exception\WPException
-     */
-    public function getParent() {
-    	
-    	$parent = null;
-    	
-    	if (!is_null($this->parent) && $this->parent > -1) {
-    		
-    		try {
-    		
-    			$parent = new WPTerm($this->getTaxonomy(), $this->parent);
-    			
-    		} catch (WPException $wpe) {
-    			
-    			throw $wpe;
-    			
-    		}
-    		
-    	}
-    	
-    	return $parent;
-    	
-    }
-    
-    /**
-     * Set parent
-     *
-     * @param   mixed   $parent Term parent (it accepts a WPTerm object or a numeric id)
-     *
-     * @return  Object  $this
-     */
-    public function setParent($parent) {
-    	
-    	if (is_numeric($parent)) {
-    		
-    		$this->parent = intval($parent);
-    		
-    	} else {
-    		
-    		$this->parent = $parent->getID();
-    		
-    	}
-    	
-    	return $this;
-    	
-    }
-    
-    /**
-     * Get count
-     *
-     * @return  int  $this->count
-     */
-    public function getCount() {
-    	
-    	return $this->count;
-    	
-    }
 	
     /**
      * Save term
@@ -358,12 +62,11 @@ class WPTerm {
      * 
      * @throws \Comodojo\Exception\WPException
      */
-    
     public function save() {
     	
     	try {
     	
-	    	if ($this->getID() == -1) {
+	    	if ($this->getID() == 0) {
 	    		
 	    		$this->createTerm();
 	    		
@@ -390,10 +93,9 @@ class WPTerm {
      * 
      * @throws \Comodojo\Exception\WPException
      */
-    
     private function createTerm() {
     	
-    	$content = $this->getTermData();
+    	$content = $this->getData();
     	
     	try {
     		
@@ -420,10 +122,9 @@ class WPTerm {
      * 
      * @throws \Comodojo\Exception\WPException
      */
-    
     private function editTerm() {
     	
-    	$content = $this->getTermData();
+    	$content = $this->getData();
     	
     	try {
     		
@@ -439,37 +140,6 @@ class WPTerm {
     	}
     	
     	return $this;
-    		
-    }
-    
-    /**
-     * Load term data
-     *
-     * @return  array  $data
-     * 
-     * @throws \Comodojo\Exception\WPException
-     */
-    private function getTermData() {
-    	  	
-    	$data = array(
-    		'taxonomy'    => $this->getTaxonomy()->getName(),
-    		'name'        => $this->name,
-    		'description' => $this->description
-    	);
-    	
-    	if (!is_null($this->getParent())) {
-    		
-    		$data['parent'] = $this->parent;
-    		
-    	}
-    	
-    	if (!empty($this->slug)) {
-    		
-    		$data['slug'] = $this->slug;
-    		
-    	}
-    	
-    	return $data;
     		
     }
     
@@ -497,64 +167,6 @@ class WPTerm {
     	
     	return filter_var($return, FILTER_VALIDATE_BOOLEAN);
     	
-    }
-	
-    /**
-     * Reset data of the object, it can still be used calling the loadFromID method
-     *
-     * @return  Object  $this
-     */
-    
-    private function resetData() {
-			
-		$this->id               = -1;
-		
-		$this->name             = "";
-		
-		$this->slug             = "";
-		
-		$this->group            = "";
-		
-		$this->term_taxonomy_id = -1;
-		
-		$this->description      = "";
-		
-		$this->parent           = -1;
-		
-		$this->count            = 0;
-    	
-    	return $this;
-        
-    }
-	
-    /**
-     * Load term data
-     *
-     * @param   array   $term
-     *
-     * @return  Object  $this
-     */
-    
-    public function loadData($term) {
-		
-        $this->id               = intval($term['term_id']);
-    
-        $this->name             = $term['name'];
-        
-        $this->slug             = $term['slug'];
-        
-        $this->group            = $term['term_group'];
-        
-        $this->term_taxonomy_id = intval($term['term_taxonomy_id']);
-        
-        $this->description      = $term['description'];
-        
-        $this->parent           = intval($term['parent']);
-        
-        $this->count            = intval($term['count']);
-    	
-    	return $this;
-        
     }
     
 }

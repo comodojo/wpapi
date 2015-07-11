@@ -32,12 +32,12 @@ class WPTaxonomy extends WPTaxonomyLoader {
      * 
      * @throws \Comodojo\Exception\WPException
      */
-    
     public function loadFromID($id) {
     	
     	return $this->callMethotFromID("wp.getTaxonomy", $id);
     	
     }
+    
     /**
      * Get terms from this taxonomy
      *

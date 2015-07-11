@@ -24,15 +24,15 @@ abstract class WPBlogObject extends WPObject {
 	/**
      * Wordpress blog reference
      *
-     * @var WPBlog
+     * @var WPObject
      */
 	protected $blog = null;
 	
     /**
      * Class constructor
      *
-     * @param   WPBlog $blog Reference to the wordpress blog
-     * @param   mixed  $id   Object ID (optional)
+     * @param   WPObject $blog Reference to the wordpress blog
+     * @param   mixed    $id   Object ID (optional)
      * 
      * @throws \Comodojo\Exception\WPException
      */
@@ -69,7 +69,7 @@ abstract class WPBlogObject extends WPObject {
     /**
      * Get blog reference
      *
-     * @return WPBlog $blog
+     * @return WPObject $blog
      */
     public function getBlog() {
     	

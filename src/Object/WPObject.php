@@ -72,7 +72,7 @@ abstract class WPObject {
      */
     public function getID() {
     	
-    	return $this->id;
+    	return intval($this->id);
     	
     }
     

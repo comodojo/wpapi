@@ -3,7 +3,7 @@
 use \Comodojo\Exception\WPException;
 
 /** 
- * Comodojo Wordpress API Wrapper. Abstract class to identify Wordpress entities related to a particular post
+ * Comodojo Wordpress API Wrapper. Abstract class to identify Wordpress entities related to a particular taxonomy
  * 
  * @package     Comodojo Spare Parts
  * @author      Marco Castiello <marco.castiello@gmail.com>
@@ -19,32 +19,32 @@ use \Comodojo\Exception\WPException;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-abstract class WPPostObject extends WPBlogObject {
+abstract class WPTaxonomyObject extends WPBlogObject {
 	
 	/**
-     * Wordpress post reference
+     * Wordpress taxonomy reference
      *
-     * @var WPPost
+     * @var WPTaxonomy
      */
-	protected $post = null;
+	protected $taxonomy = null;
 	
     /**
      * Class constructor
      *
-     * @param   WPPost $post Reference to the wordpress blog post
-     * @param   int    $id   Object ID (optional)
+     * @param   WPTaxonomy $taxonomy Reference to the wordpress blog post
+     * @param   int        $id       Object ID (optional)
      * 
      * @throws \Comodojo\Exception\WPException
      */
-    public function __construct($post, $id=0) {
+    public function __construct($taxonomy, $id=0) {
     	
-        if ( is_null($post) || is_null($post->getWordpress()) || !$post->getWordpress()->isLogged() ) {
+        if ( is_null($taxonomy) || is_null($taxonomy->getWordpress()) || !$taxonomy->getWordpress()->isLogged() ) {
         	
-        	throw new WPException("You must be logged to access post informations");
+        	throw new WPException("You must be logged to access taxonomy informations");
         	
         }
         
-        $this->post = $post;
+        $this->taxonomy = $taxonomy;
         
         $this->blog = $post->getBlog();
         
@@ -69,13 +69,13 @@ abstract class WPPostObject extends WPBlogObject {
     }
     
     /**
-     * Get post reference
+     * Get taxonomy reference
      *
-     * @return WPPost $post
+     * @return WPTaxonomy $taxonomy
      */
-    public function getPost() {
+    public function getTaxonomy() {
     	
-    	return $this->post;
+    	return $this->taxonomy;
     	
     }
     
