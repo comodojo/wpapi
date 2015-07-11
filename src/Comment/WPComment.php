@@ -35,21 +35,7 @@ class WPComment extends WPCommentLoader {
     
     public function loadFromID($id) {
     	
-    	try {
-    		
-            $comment = $this->getWordpress()->sendMessage("wp.getComment", array(
-                intval($id)
-            ), $this->getBlog());
-        
-	        $this->loadData($comment);
-            
-    	} catch (WPException $wpe) {
-    		
-    		throw new WPException("Unable to retrieve comment informations (".$wpe->getMessage().")");
-    		
-    	}
-    	
-    	return $this;
+    	return $this->callMethotFromID("wp.getComment", $id);
     	
     }
 	

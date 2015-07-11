@@ -32,7 +32,7 @@ abstract class WPBlogObject extends WPObject {
      * Class constructor
      *
      * @param   WPBlog $blog Reference to the wordpress blog
-     * @param   int    $id   Object ID (optional)
+     * @param   mixed  $id   Object ID (optional)
      * 
      * @throws \Comodojo\Exception\WPException
      */
@@ -48,7 +48,7 @@ abstract class WPBlogObject extends WPObject {
         
         $this->wp   = $blog->getWordpress();
         
-        $this->id   = intval($id);
+        $this->id   = $id;
         
         if ($id > 0) {
         	
@@ -82,7 +82,7 @@ abstract class WPBlogObject extends WPObject {
      *
      * @param  int      $id    
      *
-     * @return WPObject $this
+     * @return WPBlogObject $this
      * 
      * @throws \Comodojo\Exception\WPException
      */
@@ -91,7 +91,7 @@ abstract class WPBlogObject extends WPObject {
     /**
      * Save object data
      *
-     * @return WPObject $this
+     * @return WPBlogObject $this
      * 
      * @throws \Comodojo\Exception\WPException
      */
@@ -107,8 +107,34 @@ abstract class WPBlogObject extends WPObject {
     /**
      * Reset data of the object, it can still be used calling the loadFromID method
      *
-     * @return  Object  $this
+     * @return  WPBlogObject  $this
      */
     abstract protected function resetData();
+    
+    /**
+     * Load data using a specific method
+     *
+     * @param  string       $method Method for data retrieving
+     * @param  mixed        $id     ID of the object to retrieve
+     *
+     * @return WPBlogObject $this
+     * 
+     * @throws \Comodojo\Exception\WPException
+     */
+    protected function callMethotFromID($method, $id) {
+    	
+    	try {
+    		
+            $result = $this->getWordpress()->sendMessage($method, array($id), $this->getBlog());
+			
+    	} catch (WPException $wpe) {
+    		
+    		throw new WPException("Unable to retrieve informations with method '$method' (".$wpe->getMessage().")");
+    		
+    	}
+    	
+    	return $this->loadData($result);
+    	
+    }
     
 }

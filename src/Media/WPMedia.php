@@ -34,21 +34,7 @@ class WPMedia extends WPMediaLoader {
      */
     public function loadFromID($id) {
     	
-    	try {
-    		
-            $data = $this->getWordpress()->sendMessage("wp.getMediaItem", array(
-                intval($id)
-            ), $this->getBlog());
-            
-            $this->loadData($data);
-    		
-    	} catch (WPException $wpe) {
-    		
-    		throw new WPException("Unable to retrieve media informations from attachment ID (".$wpe->getMessage().")");
-    		
-    	}
-    	
-    	return $this;
+    	return $this->callMethotFromID("wp.getMediaItem", $id);
     	
     }
     

@@ -34,21 +34,7 @@ class WPPost extends WPPostTerms {
      */
     public function loadFromID($id) {
     	
-    	try {
-    		
-            $post = $this->getWordpress()->sendMessage("wp.getPost", array(
-                intval($id)
-            ), $this->getBlog());
-			
-			$this->loadData($post);
-            
-    	} catch (WPException $wpe) {
-    		
-    		throw new WPException("Unable to retrieve post informations (".$wpe->getMessage().")");
-    		
-    	}
-    	
-    	return $this;
+    	return $this->callMethotFromID("wp.getPost", $id);
         
     }
 	
@@ -103,7 +89,6 @@ class WPPost extends WPPostTerms {
      * 
      * @throws \Comodojo\Exception\WPException
      */
-    
     private function createPost() {
     	
     	$content = $this->getData();
@@ -133,7 +118,6 @@ class WPPost extends WPPostTerms {
      * 
      * @throws \Comodojo\Exception\WPException
      */
-    
     private function editPost() {
     	
     	$content = $this->getData();
