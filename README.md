@@ -263,6 +263,10 @@ try {
 
 ```
 
+## Documentation
+
+For a full documentation of the project, check the [Comodojo API](https://api.comodojo.org/libs/Comodojo/WPAPI.html) page.
+
 ## Contributing
 
 Contributions are welcome and will be fully credited. Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
