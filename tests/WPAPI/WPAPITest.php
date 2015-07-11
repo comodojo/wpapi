@@ -6,7 +6,7 @@ class WPAPITest extends \PHPUnit_Framework_TestCase {
     
     protected $blog = null;
     
-    protected $address = "http://logbookonline.net/wordpress";
+    protected $address = "http://localhost";
     
     protected $user = "admin";
     
