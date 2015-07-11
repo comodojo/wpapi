@@ -105,7 +105,7 @@ class WPCommentIterator extends WPIteratorObject {
 		    		
 	    		$this->object = new WPComment($this->getPost());
 	            
-	            if (!is_null($this->comment->loadFromList($this->current, $this->status))) {
+	            if (!is_null($this->object->loadFromList($this->current, $this->status))) {
 	            	
 	            	$this->has_next = true;
 	            	

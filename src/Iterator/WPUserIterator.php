@@ -127,7 +127,7 @@ class WPUserIterator extends WPIteratorObject {
     		
 	    	if ($this->hasNext()) {
 	    		
-	    		$this->object = new WPUser($this->getBlog(), $this->getCurrentID());
+	    		$this->object = new WPUser($this->getBlog(), $this->users[$this->current]);
             	
             	$this->current++;
 	    		

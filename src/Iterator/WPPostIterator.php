@@ -120,7 +120,7 @@ class WPPostIterator extends WPIteratorObject {
     		
 	    	if ($this->hasNext()) {
 	    		
-	    		$this->object = new WPPost($this->getBlog(), $this->getCurrentID());
+	    		$this->object = new WPPost($this->getBlog(), $this->posts[$this->current]);
             	
             	$this->current++;
 	    		
