@@ -46,9 +46,9 @@ abstract class WPTaxonomyObject extends WPBlogObject {
         
         $this->taxonomy = $taxonomy;
         
-        $this->blog = $post->getBlog();
+        $this->blog = $taxonomy->getBlog();
         
-        $this->wp   = $post->getWordpress();
+        $this->wp   = $taxonomy->getWordpress();
         
         $this->id   = intval($id);
         
