@@ -30,7 +30,7 @@ abstract class WPTermLoader extends WPTermData {
      * 
      * @throws \Comodojo\Exception\WPException
      */
-    private function getData() {
+    public function getData() {
     	  	
     	$data = array(
     		'taxonomy'    => $this->getTaxonomy()->getName(),
@@ -59,7 +59,7 @@ abstract class WPTermLoader extends WPTermData {
      *
      * @return  Object  $this
      */
-    private function resetData() {
+    public function resetData() {
 			
 		$this->id               = -1;
 		
@@ -88,7 +88,7 @@ abstract class WPTermLoader extends WPTermData {
      *
      * @return  Object  $this
      */
-    public function loadData($term) {
+    protected function loadData($term) {
 		
         $this->id               = intval($term['term_id']);
     

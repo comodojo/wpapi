@@ -28,49 +28,49 @@ abstract class WPTermData extends WPTaxonomyObject {
      *
      * @var string
      */
-	private $name = "";
+	protected $name = "";
 	
 	/**
      * Term slug
      *
      * @var string
      */
-	private $slug = "";
+	protected $slug = "";
 	
 	/**
      * Term group
      *
      * @var string
      */
-	private $group = "";
+	protected $group = "";
 	
 	/**
      * Term taxonomy ID
      *
      * @var int
      */
-	private $term_taxonomy_id = 0;
+	protected $term_taxonomy_id = 0;
 	
 	/**
      * Term description
      *
      * @var string
      */
-	private $description = "";
+	protected $description = "";
 	
 	/**
      * Term parent
      *
      * @var int
      */
-	private $parent = 0;
+	protected $parent = 0;
 	
 	/**
      * Term post count
      *
      * @var int
      */
-	private $count = 0;
+	protected $count = 0;
     
     /**
      * Get ID
