@@ -204,29 +204,4 @@ abstract class WPObject {
     	
     }
     
-    /**
-     * Get a Media iterator with the requested filters
-     * 
-     * @param  WPBlog $blog Blog referens
-     * @param  int    $post Post ID
-     * @param  string $mime Mime-Typeof the items to fetch
-     *
-     * @return WPMediaIterator $mediaIterator
-     * 
-     * @throws \Comodojo\Exception\WPException
-     */
-    protected function getMediaIterator($blog, $post, $mime) {
-    	
-    	try {
-    		
-            return new WPMediaIterator($blog, $post, $mime);
-            
-    	} catch (WPException $wpe) {
-    		
-    		throw $wpe;
-    		
-    	}
-    	
-    }
-    
 }
