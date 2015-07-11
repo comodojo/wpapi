@@ -224,15 +224,7 @@ abstract class WPPostData extends WPBlogObject {
      */
     public function getCreationDate($format = null) {
     	
-    	if (is_null($format)) {
-    		
-    		return $this->created;
-    		
-    	} else {
-    		
-    		return date($format, $this->created);
-    		
-    	}
+    	return $this->getFormattedDate($this->created, $format);
     	
     }
     
@@ -245,15 +237,7 @@ abstract class WPPostData extends WPBlogObject {
      */
     public function setCreationDate($value) {
     	
-    	if (is_numeric($value)) {
-    		
-    		$this->created = intval($value);
-    		
-    	} else {
-    		
-    		$this->created = strtotime($value);
-    		
-    	}
+    	$this->created = $this->parseTimestamp($value);
     	
     	return $this;
     	
@@ -268,15 +252,7 @@ abstract class WPPostData extends WPBlogObject {
      */
     public function getLastModifiedDate($format = null) {
     	
-    	if (is_null($format)) {
-    		
-    		return $this->modified;
-    		
-    	} else {
-    		
-    		return date($format, $this->modified);
-    		
-    	}
+    	return $this->getFormattedDate($this->modified, $format);
     	
     }
     
@@ -289,15 +265,7 @@ abstract class WPPostData extends WPBlogObject {
      */
     protected function setLastModifiedDate($value) {
     	
-    	if (is_numeric($value)) {
-    		
-    		$this->modified = intval($value);
-    		
-    	} else {
-    		
-    		$this->modified = strtotime($value);
-    		
-    	}
+    	$this->modified = $this->parseTimestamp($value);
     	
     	return $this;
     	
@@ -326,17 +294,7 @@ abstract class WPPostData extends WPBlogObject {
         if (empty($this->supportedStatus)) 
         	$this->supportedStatus  = $this->getBlog()->getSupportedPostStatus();
     	
-    	if (in_array($value, $this->supportedStatus)) {
-    		
-    		$this->status = $value;
-    	
-    		return $this;
-    		
-    	} else {
-    		
-    		throw new WPException("Unsupported post status");
-    		
-    	}
+    	return $this->setCheckedValue($this->supportedStatus, $value, $this->status);
     	
     }
     
@@ -363,17 +321,7 @@ abstract class WPPostData extends WPBlogObject {
         if (empty($this->supportedTypes)) 
         	$this->supportedTypes = $this->getBlog()->getSupportedTypes();
     	
-    	if (in_array($value, $this->supportedTypes)) {
-    		
-    		$this->type = $value;
-    	
-    		return $this;
-    		
-    	} else {
-    		
-    		throw new WPException("Unsupported post type");
-    		
-    	}
+    	return $this->setCheckedValue($this->supportedTypes, $value, $this->type);
     	
     }
     
@@ -400,17 +348,8 @@ abstract class WPPostData extends WPBlogObject {
         if (empty($this->supportedFormats)) 
         	$this->supportedFormats = $this->getBlog()->getSupportedFormats();
     	
-    	if (in_array($value, $this->supportedFormats)) {
-    		
-    		$this->format = $value;
     	
-    		return $this;
-    		
-    	} else {
-    		
-    		throw new WPException("Unsupported post format");
-    		
-    	}
+    	return $this->setCheckedValue($this->supportedFormats, $value, $this->format);
     	
     }
     
@@ -1345,19 +1284,7 @@ abstract class WPPostData extends WPBlogObject {
      */
     public function getAttachments($mime = null) {
     	
-    	$mediaIterator = null;
-    	
-    	try {
-    		
-            $mediaIterator = new WPMediaIterator($this->getBlog(), $this->getID(), $mime);
-            
-    	} catch (WPException $wpe) {
-    		
-    		throw $wpe;
-    		
-    	}
-    	
-    	return $mediaIterator;
+    	return $this->getBlog()->getMediaLibrary($mime, $this->getID());
     	
     }
     

@@ -434,26 +434,15 @@ class WPBlog extends WPBlogLoader {
      * Get media library
      * 
      * @param  string $mime The mime-type of the media you want to fetch
+     * @param  int    $post Post ID
      *
      * @return WPMediaIterator $mediaIterator
      * 
      * @throws \Comodojo\Exception\WPException
      */
-    public function getMediaLibrary($mime = null) {
+    public function getMediaLibrary($mime = null, $post = 0) {
     	
-    	$mediaIterator = null;
-    	
-    	try {
-    		
-            $mediaIterator = new WPMediaIterator($this, 0, $mime);
-            
-    	} catch (WPException $wpe) {
-    		
-    		throw $wpe;
-    		
-    	}
-    	
-    	return $mediaIterator;
+    	return $this->getMediaIterator($this, $post, $mime);
     	
     }
     

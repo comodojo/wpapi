@@ -50,7 +50,7 @@ abstract class WPCommentData extends WPPostObject {
      * @var string
      */
 	protected $status = "";
-	protected $supportedStatus = array();
+	protected $supportedCommentStatus = array();
 	
 	/**
      * Comment content
@@ -246,15 +246,7 @@ abstract class WPCommentData extends WPPostObject {
      */
     public function getDate($format = null) {
     	
-    	if (is_null($format)) {
-    		
-    		return $this->date;
-    		
-    	} else {
-    		
-    		return date($format, $this->date);
-    		
-    	}
+    	return $this->getFormattedDate($this->date, $format);
     	
     }
     
@@ -280,20 +272,10 @@ abstract class WPCommentData extends WPPostObject {
      */
     public function setStatus($status) {
             
-        if (empty($this->supportedStatus)) 
-        	$this->supportedStatus = $this->getBlog()->getSupportedCommentStatus();
+        if (empty($this->supportedCommentStatus)) 
+        	$this->supportedCommentStatus = $this->getBlog()->getSupportedCommentStatus();
     	
-    	if (in_array($status, $this->supportedStatus)) {
-    		
-    		$this->status = $status;
-    	
-    		return $this;
-    		
-    	} else {
-    		
-    		throw new WPException("Unsupported comment status");
-    		
-    	}
+    	return $this->setCheckedValue($this->supportedCommentStatus, $value, $this->status);
     	
     }
     

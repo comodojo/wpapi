@@ -341,10 +341,7 @@ abstract class WPUserData extends WPBlogObject {
      */
     public function getRegistration($format = null) {
     	
-    	if (is_null($format))
-    		return $this->registration;
-    	else
-    		return date($format, $this->registration);
+    	return $this->getFormattedDate($this->registration, $format);
     	
     }
     

@@ -294,12 +294,7 @@ abstract class WPBlogData extends WPObject {
      */
     public function getOptionValue($name) {
     	
-    	if (empty($this->options)) $this->loadBlogOptions();
-    	
-    	if (!isset($this->options[$name]))
-    		throw new WPException("There isn't any option called '$name'");
-    	
-    	return $this->options[$name]['value'];
+    	return (string) $this->getOptionField($name, 'value');
     	
     }
     
@@ -314,17 +309,12 @@ abstract class WPBlogData extends WPObject {
      */
     public function getOptionDescription($name) {
     	
-    	if (empty($this->options)) $this->loadBlogOptions();
-    	
-    	if (!isset($this->options[$name]))
-    		throw new WPException("There isn't any option called '$name'");
-    	
-    	return $this->options[$name]['desc'];
+    	return (string) $this->getOptionField($name, 'desc');
     	
     }
     
     /**
-     * Get option description
+     * True if the option is read only
      *
      * @param   string  $name Option name
      *
@@ -334,12 +324,28 @@ abstract class WPBlogData extends WPObject {
      */
     public function isReadOnlyOption($name) {
     	
+    	return filter_var($this->getOptionField($name, 'readonly'), FILTER_VALIDATE_BOOLEAN);
+    	
+    }
+    
+    /**
+     * Get option field data
+     *
+     * @param   string $name Option name
+     * @param   string $field Option fieldname
+     *
+     * @return  mixed  $value
+     * 
+     * @throws \Comodojo\Exception\WPException
+     */
+    private function getOptionField($name, $field) {
+    	
     	if (empty($this->options)) $this->loadBlogOptions();
     	
     	if (!isset($this->options[$name]))
     		throw new WPException("There isn't any option called '$name'");
     	
-    	return $this->options[$name]['readonly'];
+    	return $this->options[$name][$field];
     	
     }
     

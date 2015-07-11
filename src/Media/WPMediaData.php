@@ -537,15 +537,7 @@ abstract class WPMediaData extends WPBlogObject {
      */
     public function getCreationDate($format = null) {
     	
-    	if (is_null($format)) {
-    		
-    		return $this->date;
-    		
-    	} else {
-    		
-    		return date($format, $this->date);
-    		
-    	}
+    	return $this->getFormattedDate($this->date, $format);
     	
     }
     
@@ -558,15 +550,7 @@ abstract class WPMediaData extends WPBlogObject {
      */
     public function getMetaDate($format = null) {
     	
-    	if (is_null($format)) {
-    		
-    		return $this->meta_timestamp;
-    		
-    	} else {
-    		
-    		return date($format, $this->meta_timestamp);
-    		
-    	}
+    	return $this->getFormattedDate($this->meta_timestamp, $format);
     	
     }
     
