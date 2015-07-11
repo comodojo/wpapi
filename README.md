@@ -10,7 +10,7 @@ This lib is intended to be used as a remote Wordpress handler.
 
 Install [composer](https://getcomposer.org/), then:
 
-`` composer require comodojo/wpapi dev-master ``
+`` composer require comodojo/wpapi 1.0.* ``
 
 ## Basic usage
 
