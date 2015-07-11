@@ -59,17 +59,28 @@ class WPPostIterator extends WPIteratorObject {
     /**
      * Load post list
      *
-     * @param   array   $ids  List of Post IDs
+     * @param  array   $ids  List of Post IDs
      *
-     * @return  Object  $this
+     * @return WPPostIteratori $this
      */
-    public function loadIDs($ids) {
+    public function loadData($ids) {
         
     	$this->posts = $ids;
     	
     	$this->count = count($ids);
     	
     	return $this;
+    	
+    }
+    
+    /**
+     * Get post list
+     *
+     * @return   array   $ids  List of Post IDs
+     */
+    public function getData() {
+    	
+    	return $this->posts;
     	
     }
     

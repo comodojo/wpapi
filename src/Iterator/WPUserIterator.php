@@ -66,17 +66,28 @@ class WPUserIterator extends WPIteratorObject {
     /**
      * Load post list
      *
-     * @param   array   $ids  List of User IDs
+     * @param  array $ids  List of User IDs
      *
-     * @return  Object  $this
+     * @return WPUserIterator  $this
      */
-    public function loadIDs($ids) {
+    public function loadData($ids) {
         
     	$this->users = $ids;
     	
     	$this->count = count($ids);
     	
     	return $this;
+    	
+    }
+    
+    /**
+     * Get user list
+     *
+     * @return array $ids  List of Post IDs
+     */
+    public function getData() {
+    	
+    	return $this->users;
     	
     }
 	

@@ -60,6 +60,30 @@ class WPMediaIterator extends WPIteratorObject {
         $this->post = intval($post);
         
     }
+    
+    /**
+     * Nothing to load here
+     *
+     * @param  array $data
+     *
+     * @return WPMediaIterator $this
+     */
+    public function loadData($ids) {
+    	
+    	return $this;
+    	
+    }
+    
+    /**
+     * Nothing to get here
+     *
+     * @return array $array
+     */
+    public function getData() {
+    	
+    	return array();
+    	
+    }
 	
     /**
      * Check if there is another element in the media library

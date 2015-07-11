@@ -110,7 +110,6 @@ abstract class WPPostDataSetter extends WPPostData {
         if (empty($this->supportedFormats)) 
         	$this->supportedFormats = $this->getBlog()->getSupportedFormats();
     	
-    	
     	return $this->setCheckedValue($this->supportedFormats, $value, $this->format);
     	
     }
@@ -305,17 +304,7 @@ abstract class WPPostDataSetter extends WPPostData {
      */
     public function setCommentStatus($value) {
     	
-    	if (in_array($value, $this->supportedCommentStatus)) {
-    		
-    		$this->comment = $value;
-    	
-    		return $this;
-    		
-    	} else {
-    		
-    		throw new WPException("Unsupported comment status");
-    		
-    	}
+    	return $this->setCheckedValue($this->supportedCommentStatus, $value, $this->comment);
     	
     }
     
@@ -328,17 +317,7 @@ abstract class WPPostDataSetter extends WPPostData {
      */
     public function setPingStatus($value) {
     	
-    	if (in_array($value, $this->supportedPingStatus)) {
-    		
-    		$this->ping = $value;
-    	
-    		return $this;
-    		
-    	} else {
-    		
-    		throw new WPException("Unsupported ping status");
-    		
-    	}
+    	return $this->setCheckedValue($this->supportedPingStatus, $value, $this->ping);
     	
     }
     
