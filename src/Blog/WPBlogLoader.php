@@ -99,28 +99,20 @@ abstract class WPBlogLoader extends WPBlogData {
      */
     protected function loadTaxonomies() {
     	
-    	try {
-    		
-            $tax_list = $this->getWordpress()->sendMessage("wp.getTaxonomies", array(), $this);
+    	$this->supportedFormats = $this->loadAllowedData("wp.getTaxonomies");
             
-            foreach ($tax_list as $taxonomy) {
-            	
-            	$tax = new WPTaxonomy($this);
-            	
-            	$tax->loadData($taxonomy);
-            	
-            	array_push(
-            		$this->taxonomies,
-            		$tax
-            	);
-            	
-            }
-            
-    	} catch (WPException $wpe) {
-    		
-    		throw new WPException("Unable to retrieve taxonomy informations (".$wpe->getMessage().")");
-    		
-    	}
+        foreach ($tax_list as $taxonomy) {
+        	
+        	$tax = new WPTaxonomy($this);
+        	
+        	$tax->loadData($taxonomy);
+        	
+        	array_push(
+        		$this->taxonomies,
+        		$tax
+        	);
+        	
+        }
     	
     	return $this;
     	
@@ -135,15 +127,7 @@ abstract class WPBlogLoader extends WPBlogData {
      */
     protected function loadPostFormats() {
     	
-    	try {
-            
-            $this->supportedFormats = (array) $this->getWordpress()->sendMessage("wp.getPostFormats", array(), $this);
-            
-    	} catch (WPException $wpe) {
-    		
-    		throw new WPException("Unable to retrieve post formats (".$wpe->getMessage().")");
-    		
-    	}
+    	$this->supportedFormats = $this->loadAllowedData("wp.getPostFormats");
     	
     	return $this;
         
@@ -157,22 +141,14 @@ abstract class WPBlogLoader extends WPBlogData {
      * @throws \Comodojo\Exception\WPException
      */
     protected function loadPostTypes() {
-    	
-    	try {
     		
-            $types = $this->getWordpress()->sendMessage("wp.getPostTypes", array(), $this);
-            
-            foreach ($types as $name => $type) {
-            
-            	$this->supportedTypes[$name] = $type['label'];
-            	
-            }
-            
-    	} catch (WPException $wpe) {
-    		
-    		throw new WPException("Unable to retrieve post types (".$wpe->getMessage().")");
-    		
-    	}
+        $types = $this->loadAllowedData("wp.getPostTypes");
+        
+        foreach ($types as $name => $type) {
+        
+        	$this->supportedTypes[$name] = $type['label'];
+        	
+        }
     	
     	return $this;
         
@@ -187,15 +163,7 @@ abstract class WPBlogLoader extends WPBlogData {
      */
     protected function loadPostStatus() {
     	
-    	try {
-            
-            $this->supportedPostStatus = (array) $this->getWordpress()->sendMessage("wp.getPostStatusList", array(), $this);
-            
-    	} catch (WPException $wpe) {
-    		
-    		throw new WPException("Unable to retrieve post status (".$wpe->getMessage().")");
-    		
-    	}
+    	$this->supportedPostStatus = $this->loadAllowedData("wp.getPostStatusList");
     	
     	return $this;
         
@@ -210,21 +178,7 @@ abstract class WPBlogLoader extends WPBlogData {
      */
     protected function loadCommentStatus() {
     	
-    	try {
-            
-            $status = $this->getWordpress()->sendMessage("wp.getCommentStatusList", array(), $this);
-            
-            foreach ($status as $s) {
-            
-            	array_push($this->supportedCommentStatus, $s);
-            	
-            }
-            
-    	} catch (WPException $wpe) {
-    		
-    		throw new WPException("Unable to retrieve comment status (".$wpe->getMessage().")");
-    		
-    	}
+    	$this->supportedCommentStatus = array_values($this->loadAllowedData("wp.getCommentStatusList"));
     	
     	return $this;
         
@@ -238,26 +192,8 @@ abstract class WPBlogLoader extends WPBlogData {
      * @throws \Comodojo\Exception\WPException
      */
     protected function loadBlogOptions() {
-    	
-    	try {
             
-            $options = $this->getWordpress()->sendMessage("wp.getOptions", array(), $this);
-            
-            foreach ($options as $name => $option) {
-            	
-            	$this->options[$name] = array(
-            		"desc"     => $option['desc'],
-            		"value"    => $option['value'],
-            		"readonly" => filter_var($option['readonly'], FILTER_VALIDATE_BOOLEAN)
-            	);
-            	
-            }
-            
-    	} catch (WPException $wpe) {
-    		
-    		throw new WPException("Unable to retrieve blog options (".$wpe->getMessage().")");
-    		
-    	}
+        $this->options = $this->loadAllowedData("wp.getOptions");
     	
     	return $this;
         
@@ -287,6 +223,29 @@ abstract class WPBlogLoader extends WPBlogData {
     	
     	return $this;
         
+    }
+    
+    /**
+     * Load allowed data
+     *
+     * @param  string $method The method to call in order to get infos
+     *
+     * @return array  $info
+     * 
+     * @throws \Comodojo\Exception\WPException
+     */
+    private function loadAllowedData($method) {
+    	
+    	try {
+    	
+	    	return (array) $this->getWordpress()->sendMessage($method, array(), $this);
+            
+    	} catch (WPException $wpe) {
+    		
+    		throw $wpe;
+    		
+    	}
+    	
     }
     
 }

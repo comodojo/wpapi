@@ -275,7 +275,7 @@ abstract class WPCommentData extends WPPostObject {
         if (empty($this->supportedCommentStatus)) 
         	$this->supportedCommentStatus = $this->getBlog()->getSupportedCommentStatus();
     	
-    	return $this->setCheckedValue($this->supportedCommentStatus, $value, $this->status);
+    	return $this->setCheckedValue($this->supportedCommentStatus, $status, $this->status);
     	
     }
     
