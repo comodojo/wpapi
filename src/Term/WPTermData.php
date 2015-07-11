@@ -73,17 +73,6 @@ abstract class WPTermData extends WPTaxonomyObject {
 	protected $count = 0;
     
     /**
-     * Get ID
-     *
-     * @return  int  $this->id
-     */
-    public function getID() {
-    	
-    	return $this->id;
-    	
-    }
-    
-    /**
      * Get name
      *
      * @return  string  $this->name
@@ -183,7 +172,7 @@ abstract class WPTermData extends WPTaxonomyObject {
     	
     	$parent = null;
     	
-    	if (!is_null($this->parent) && $this->parent > -1) {
+    	if (!is_null($this->parent) && $this->parent > 0) {
     		
     		try {
     		

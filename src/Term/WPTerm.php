@@ -34,8 +34,6 @@ class WPTerm extends WPTermLoader {
      */
     public function loadFromID($id) {
     	
-    	$this->resetData();
-    	
     	try {
     		
             $term = $this->getWordpress()->sendMessage("wp.getTerm", array(
