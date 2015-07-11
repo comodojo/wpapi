@@ -21,35 +21,7 @@ use \Comodojo\Exception\WPException;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-class WPMediaIterator implements \Iterator {
-	
-	/**
-     * Blog reference
-     *
-     * @var Object
-     */
-	private $blog = null;
-	
-	/**
-     * Actual count ID
-     *
-     * @var int
-     */
-	private $current = 0;
-	
-	/**
-     * Reference to the next object
-     *
-     * @var Object
-     */
-	private $next = null;
-	
-	/**
-     * Whether the iterator has at least one more object
-     *
-     * @var boolean
-     */
-	private $has_next = false;
+class WPMediaIterator extends WPIteratorObject {
 	
 	/**
      * Post ID
@@ -88,37 +60,14 @@ class WPMediaIterator implements \Iterator {
         $this->post = intval($post);
         
     }
-    
-    /**
-     * Get wordpress reference
-     *
-     * @return  Object  $wordpress
-     */
-    public function getWordpress() {
-    	
-    	return $this->getBlog()->getWordpress();
-    	
-    }
-    
-    /**
-     * Get user's blog
-     *
-     * @return  Object  $blog
-     */
-    public function getBlog() {
-    	
-    	return $this->blog;
-    	
-    }
 	
     /**
      * Check if there is another element in the media library
      *
-     * @return  boolean $this->hasNext
+     * @return  boolean $hasNext
      * 
      * @throws \Comodojo\Exception\WPException
      */
-    
     public function hasNext() {
     	
     	try {
@@ -127,9 +76,9 @@ class WPMediaIterator implements \Iterator {
             
             $image->setPostID($this->post);
             
-            $this->next = $image->loadFromLibrary($this->current, $this->mime);
+            $this->object = $image->loadFromLibrary($this->current, $this->mime);
             
-            if (!is_null($this->next)) {
+            if (!is_null($this->object)) {
             	
             	$this->has_next = true;
             	
@@ -148,7 +97,7 @@ class WPMediaIterator implements \Iterator {
     /**
      * Get next element in the media library
      *
-     * @return  Object $this->next
+     * @return WPMedia $object
      * 
      * @throws \Comodojo\Exception\WPException
      */
@@ -162,7 +111,7 @@ class WPMediaIterator implements \Iterator {
             	
             	$this->has_next = false;
 	    		
-	    		return $this->next;
+	    		return $this->object;
 	    		
 	    	}
     		
@@ -174,84 +123,6 @@ class WPMediaIterator implements \Iterator {
     	
     	return null;
     	
-    }
-    
-    /**
-     * Get fetched media items
-     *
-     * @return  int  $this->current
-     */
-    public function getFetchedItems() {
-    	
-    	return $this->current + 1;
-    	
-    }
-	
-    /**
-     * The following methods implement the Iterator interface
-     */
-	
-    /**
-     * Reset the iterator
-     *
-     * @return  Object  $this
-     */
-    public function rewind() {
-			
-		$this->current  = 0;
-		
-		$this->next     = null;
-		
-		$this->has_next = false;
-    	
-    	return $this;
-        
-    }
-	
-    /**
-     * Return the current object
-     *
-     * @return  Object  $media
-     */
-    public function current() {
-    	
-    	return $this->next;
-        
-    }
-	
-    /**
-     * Return the current index
-     *
-     * @return  int  $id
-     */
-    public function key() {
-    	
-    	return $this->next->getID();
-        
-    }
-	
-    /**
-     * Return the current index
-     *
-     * @return  Object  $this
-     */
-    public function next() {
-    	
-    	$this->current++;
-    	
-    	return $this;
-        
-    }
-	
-    /**
-     * Check if there's a next value
-     *
-     * @return  boolean  $hasNext
-     */
-    public function valid() {
-    	
-    	return $this->hasNext();
-        
     }
     
 }

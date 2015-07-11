@@ -21,21 +21,7 @@ use \Comodojo\Exception\WPException;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-class WPUserIterator implements \Iterator {
-	
-	/**
-     * Blog reference
-     *
-     * @var Object
-     */
-	private $blog = null;
-	
-	/**
-     * Actual count ID
-     *
-     * @var int
-     */
-	private $current = 0;
+class WPUserIterator extends WPIteratorObject {
 	
 	/**
      * Post IDs
@@ -54,8 +40,8 @@ class WPUserIterator implements \Iterator {
     /**
      * Class constructor
      *
-     * @param   Object  $blog Reference to a blog object
-     * @param   array   $ids  List of User IDs (optional)
+     * @param  WPBlog  $blog Reference to a blog object
+     * @param  array   $ids  List of User IDs (optional)
      * 
      * @throws \Comodojo\Exception\WPException
      */
@@ -93,77 +79,34 @@ class WPUserIterator implements \Iterator {
     	return $this;
     	
     }
-    
-    /**
-     * Get wordpress reference
-     *
-     * @return  Object  $wordpress
-     */
-    public function getWordpress() {
-    	
-    	return $this->getBlog()->getWordpress();
-    	
-    }
-    
-    /**
-     * Get user's blog
-     *
-     * @return  Object  $blog
-     */
-    public function getBlog() {
-    	
-    	return $this->blog;
-    	
-    }
 	
     /**
      * Check if there is another element in the user list
      *
-     * @return  boolean $hasNext
+     * @return boolean $hasNext
      * 
      * @throws \Comodojo\Exception\WPException
      */
-    
     public function hasNext() {
     	
     	if ($this->current < $this->count) {
     	
-    		return true;
+    		$this->has_next = true;
     		
     	} else {
     		
-    		return false;
+    		$this->has_next = false;
     		
     	}
     	
-    }
-	
-    /**
-     * Check if there is another element before the current one in the user list
-     *
-     * @return  boolean $hasPrevious
-     * 
-     * @throws \Comodojo\Exception\WPException
-     */
-    
-    public function hasPrevious() {
-    	
-    	if ($this->current > 0) {
-    	
-    		return true;
-    		
-    	} else {
-    		
-    		return false;
-    		
-    	}
+    	return $this->has_next;
     	
     }
     
     /**
      * Get next element in the user list
      *
-     * @return  Object $next
+     * @return WPUser $next
      * 
      * @throws \Comodojo\Exception\WPException
      */
@@ -173,11 +116,11 @@ class WPUserIterator implements \Iterator {
     		
 	    	if ($this->hasNext()) {
 	    		
-	    		$post = new WPUser($this->getBlog(), $this->getCurrentID());
+	    		$this->object = new WPUser($this->getBlog(), $this->getCurrentID());
             	
             	$this->current++;
 	    		
-	    		return $post;
+	    		return $this->object;
 	    		
 	    	}
     		
@@ -189,156 +132,6 @@ class WPUserIterator implements \Iterator {
     	
     	return null;
     	
-    }
-    
-    /**
-     * Get previous element in the user list
-     *
-     * @return  Object $previous
-     * 
-     * @throws \Comodojo\Exception\WPException
-     */
-    public function getPrevious() {
-    	
-    	try {
-    		
-	    	if ($this->hasPrevious()) {
-            	
-            	$this->current--;
-	    		
-	    		$post = new WPUser($this->getBlog(), $this->getCurrentID());
-	    		
-	    		return $post;
-	    		
-	    	}
-    		
-    	} catch (WPException $wpe) {
-    		
-    		throw $wpe;
-    		
-    	}
-    	
-    	return null;
-    	
-    }
-    
-    /**
-     * Get current id in the user list
-     *
-     * @return  int $id
-     * 
-     * @throws \Comodojo\Exception\WPException
-     */
-    public function getCurrentID() {
-    	
-    	if (isset($this->users[$this->current])) {
-    		
-    		return $this->users[$this->current];
-    		
-    	} else {
-    		
-    		throw new WPException("User ID not available");
-    		
-    	}
-    	
-    }
-    
-    /**
-     * Get fetched items
-     *
-     * @return  int  $this->current
-     */
-    public function getFetchedItems() {
-    	
-    	return $this->current;
-    	
-    }
-    
-    /**
-     * Get total items
-     *
-     * @return  int  $this->count
-     */
-    public function getLength() {
-    	
-    	return $this->count;
-    	
-    }
-	
-    /**
-     * Reverse the iterator
-     *
-     * @return  Object  $this
-     */
-    public function reverse() {
-			
-		$this->current = $this->count;
-    	
-    	return $this;
-        
-    }
-	
-    /**
-     * The following methods implement the Iterator interface
-     */
-	
-    /**
-     * Reset the iterator
-     *
-     * @return  Object  $this
-     */
-    public function rewind() {
-			
-		$this->current  = 0;
-    	
-    	return $this;
-        
-    }
-	
-    /**
-     * Return the current object
-     *
-     * @return  Object  $user
-     */
-    public function current() {
-    	
-    	return new WPUser($this->getBlog(), $this->getCurrentID());
-        
-    }
-	
-    /**
-     * Return the current index
-     *
-     * @return  int  $id
-     */
-    public function key() {
-    	
-    	return $this->getCurrentID();
-        
-    }
-	
-    /**
-     * Return the current index
-     *
-     * @return  Object  $this
-     */
-    public function next() {
-    	
-    	$this->current++;
-    	
-    	return $this;
-        
-    }
-	
-    /**
-     * Check if there's a next value
-     *
-     * @return  boolean  $hasNext
-     */
-    public function valid() {
-    	
-    	return $this->hasNext();
-        
     }
     
 }

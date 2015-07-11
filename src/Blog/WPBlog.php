@@ -446,4 +446,32 @@ class WPBlog extends WPBlogTerms {
     	
     }
     
+    /**
+     * Load taxonomy list
+     *
+     * @return WPBlog $this
+     * 
+     * @throws \Comodojo\Exception\WPException
+     */
+    protected function loadTaxonomies() {
+    	
+    	$tax_list = $this->loadAllowedData("wp.getTaxonomies");
+            
+        foreach ($tax_list as $taxonomy) {
+        	
+        	$tax = new WPTaxonomy($this);
+        	
+        	$tax->loadData($taxonomy);
+        	
+        	array_push(
+        		$this->taxonomies,
+        		$tax
+        	);
+        	
+        }
+    	
+    	return $this;
+    	
+    }
+    
 }

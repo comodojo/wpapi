@@ -32,7 +32,7 @@ abstract class WPBlogObject extends WPObject {
      * Class constructor
      *
      * @param   WPBlog $blog Reference to the wordpress blog
-     * @param   mixed    $id   Object ID (optional)
+     * @param   mixed  $id   Object ID (optional)
      * 
      * @throws \Comodojo\Exception\WPException
      */

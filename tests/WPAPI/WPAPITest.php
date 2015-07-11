@@ -147,25 +147,6 @@ class WPAPITest extends \PHPUnit_Framework_TestCase {
     			
     		}
     		
-    		
-    		foreach ($this->wp->getBlogs() as $blog) {
-    			
-    			$posts = $blog->getPosts()->reverse();
-    			
-    			while ($posts->hasPrevious()) {
-    				
-    				$post  = $posts->getPrevious();
-    				
-    				$check = $blog->getPostByID($posts->getCurrentID());
-    				
-    				$this->assertSame($post->getTitle(), $check->getTitle());
-    				
-    			}
-    			
-    			break;
-    			
-    		}
-    		
     		foreach ($this->wp->getBlogs() as $blog) {
     			
     			foreach ($blog->getPosts("post", "draft", 10) as $id => $post) {
@@ -390,22 +371,6 @@ class WPAPITest extends \PHPUnit_Framework_TestCase {
 		    		$this->assertSame($user->getBiography(), $u->getBiography());
 			    
 		    		$this->assertSame($user->getRegistration("Y/m/d"), $u->getRegistration("Y/m/d"));
-		    		
-		    	}
-		    	
-		    	$admins = $blog->getUsersByRole("administrator")->reverse();
-		    	
-		    	while ($admins->hasPrevious()) {
-		    		
-		    		$user = $admins->getPrevious();
-		    		
-		    		if ($admins->getCurrentID() == $profile->getID()) {
-		    			
-		    			$this->assertTrue($blog->isAdmin());
-		    			
-		    		}
-			    
-		    		$this->assertTrue(in_array("administrator", $user->getRoles()));
 		    		
 		    	}
     			

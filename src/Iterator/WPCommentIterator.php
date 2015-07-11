@@ -21,12 +21,12 @@ use \Comodojo\Exception\WPException;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-class WPCommentIterator implements \Iterator {
+class WPCommentIterator extends WPIteratorObject {
 	
 	/**
      * Post reference
      *
-     * @var Object
+     * @var WPPost
      */
 	private $post = null;
 	
@@ -44,19 +44,6 @@ class WPCommentIterator implements \Iterator {
      */
 	private $status = "";
 	
-	/**
-     * Current comment
-     *
-     * @var Object
-     */
-	private $comment = null;
-	
-	/**
-     * Whether the iterator has at least one more object
-     *
-     * @var boolean
-     */
-	private $has_next = false;
 	
 	/**
      * Comments count
@@ -86,36 +73,16 @@ class WPCommentIterator implements \Iterator {
         
         $this->post   = $post;
         
+        $this->blog   = $post->getBlog();
+        
         $this->status = $status;
         
     }
     
     /**
-     * Get wordpress reference
-     *
-     * @return  Object  $wordpress
-     */
-    public function getWordpress() {
-    	
-    	return $this->getBlog()->getWordpress();
-    	
-    }
-    
-    /**
-     * Get user's blog
-     *
-     * @return  Object  $blog
-     */
-    public function getBlog() {
-    	
-    	return $this->getPost()->getBlog();
-    	
-    }
-    
-    /**
      * Post reference
      *
-     * @return  Object  $this->post
+     * @return WPPost $this->post
      */
     public function getPost() {
     	
@@ -126,16 +93,15 @@ class WPCommentIterator implements \Iterator {
     /**
      * Check if there is another element in the comment list
      *
-     * @return  boolean $hasNext
+     * @return boolean $hasNext
      * 
      * @throws \Comodojo\Exception\WPException
      */
-    
     public function hasNext() {
     	
     	try {
 	    		
-    		$this->comment = new WPComment($this->getPost());
+    		$this->object = new WPComment($this->getPost());
             
             if (!is_null($this->comment->loadFromList($this->current, $this->status))) {
             	
@@ -156,7 +122,7 @@ class WPCommentIterator implements \Iterator {
     /**
      * Get next element in the comment list
      *
-     * @return  Object $next
+     * @return WPComment $next
      * 
      * @throws \Comodojo\Exception\WPException
      */
@@ -170,7 +136,7 @@ class WPCommentIterator implements \Iterator {
             	
             	$this->has_next = false;
 	    		
-	    		return $this->comment;
+	    		return $this->object;
 	    		
 	    	}
     		
@@ -185,59 +151,15 @@ class WPCommentIterator implements \Iterator {
     }
     
     /**
-     * Get current id in the comment list
-     *
-     * @return  int $id
-     * 
-     * @throws \Comodojo\Exception\WPException
-     */
-    public function getCurrentID() {
-    	
-    	if (!is_null($this->comment)) {
-    		
-    		return $this->comment->getID();
-    		
-    	} else {
-    		
-    		throw new WPException("Comment ID not available");
-    		
-    	}
-    	
-    }
-    
-    /**
-     * Get fetched items
-     *
-     * @return  int  $this->current
-     */
-    public function getFetchedItems() {
-    	
-    	return $this->current;
-    	
-    }
-    
-    /**
      * Get total items
      *
-     * @return  int  $this->comment_total
+     * @return  int  $comment_total
      * 
      * @throws \Comodojo\Exception\WPException
      */
     public function getTotal() {
     	
-    	if ($this->comment_total == -1) {
-        
-	        try {
-	        
-	        	$this->loadCommentCount();
-	        	
-	        } catch (WPException $wpe) {
-	        	
-	        	throw $wpe;
-	        	
-	        }
-	        
-    	}
+    	if ($this->comment_total == -1) $this->loadCommentCount();
     	
     	return $this->comment_total;
     	
@@ -246,25 +168,13 @@ class WPCommentIterator implements \Iterator {
     /**
      * Get approved
      *
-     * @return  int  $this->comment_approved
+     * @return  int  $comment_approved
      * 
      * @throws \Comodojo\Exception\WPException
      */
     public function getApproved() {
     	
-    	if ($this->comment_approved == -1) {
-        
-	        try {
-	        
-	        	$this->loadCommentCount();
-	        	
-	        } catch (WPException $wpe) {
-	        	
-	        	throw $wpe;
-	        	
-	        }
-	        
-    	}
+    	if ($this->comment_approved == -1) $this->loadCommentCount();
     	
     	return $this->comment_approved;
     	
@@ -273,25 +183,13 @@ class WPCommentIterator implements \Iterator {
     /**
      * Get spam
      *
-     * @return  int  $this->comment_spam
+     * @return int $comment_spam
      * 
      * @throws \Comodojo\Exception\WPException
      */
     public function getSpam() {
     	
-    	if ($this->comment_spam == -1) {
-        
-	        try {
-	        
-	        	$this->loadCommentCount();
-	        	
-	        } catch (WPException $wpe) {
-	        	
-	        	throw $wpe;
-	        	
-	        }
-	        
-    	}
+    	if ($this->comment_spam == -1) $this->loadCommentCount();
     	
     	return $this->comment_spam;
     	
@@ -300,97 +198,33 @@ class WPCommentIterator implements \Iterator {
     /**
      * Get awaiting
      *
-     * @return  int  $this->comment_awaiting
+     * @return  int  $comment_awaiting
      * 
      * @throws \Comodojo\Exception\WPException
      */
     public function getAwaiting() {
     	
-    	if ($this->comment_awaiting == -1) {
-        
-	        try {
-	        
-	        	$this->loadCommentCount();
-	        	
-	        } catch (WPException $wpe) {
-	        	
-	        	throw $wpe;
-	        	
-	        }
-	        
-    	}
+    	if ($this->comment_awaiting == -1) $this->loadCommentCount();
     	
     	return $this->comment_awaiting;
     	
     }
-	
+    
     /**
-     * The following methods implement the Iterator interface
-     */
-	
-    /**
-     * Reset the iterator
+     * Get total items
      *
-     * @return  Object  $this
+     * @return  int  $count
      */
-    public function rewind() {
-			
-		$this->current  = 0;
+    public function getLength() {
     	
-    	return $this;
-        
-    }
-	
-    /**
-     * Return the current object
-     *
-     * @return  Object  $comment
-     */
-    public function current() {
+    	return $this->getTotal();
     	
-    	return $this->comment;
-        
-    }
-	
-    /**
-     * Return the current index
-     *
-     * @return  int  $id
-     */
-    public function key() {
-    	
-    	return $this->getCurrentID();
-        
-    }
-	
-    /**
-     * Return the current index
-     *
-     * @return  Object  $this
-     */
-    public function next() {
-    	
-    	$this->getNext();
-    	
-    	return $this;
-        
-    }
-	
-    /**
-     * Check if there's a next value
-     *
-     * @return  boolean  $hasNext
-     */
-    public function valid() {
-    	
-    	return $this->hasNext();
-        
     }
     
     /**
      * Get comment count for current post
      *
-     * @return  Object  $this
+     * @return WPCommentIterator $this
      * 
      * @throws \Comodojo\Exception\WPException
      */
@@ -410,7 +244,9 @@ class WPCommentIterator implements \Iterator {
 	            
 	            $this->comment_spam     = intval($count['spam']);
 	            
-	            $this->comment_total    = intval($count['approved']);
+	            $this->comment_total    = intval($count['total_comments']);
+	            
+	            $this->count            = intval($count['total_comments']);
             
 	    	} catch (WPException $wpe) {
 	    		
