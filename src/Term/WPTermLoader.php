@@ -34,8 +34,8 @@ abstract class WPTermLoader extends WPTermData {
     	  	
     	$data = array(
     		'taxonomy'    => $this->getTaxonomy()->getName(),
-    		'name'        => $this->name,
-    		'description' => $this->description
+    		'name'        => $this->getName(),
+    		'description' => $this->getDescription()
     	);
     	
     	if (!is_null($this->getParent())) {
@@ -62,6 +62,8 @@ abstract class WPTermLoader extends WPTermData {
      * @return  Object  $this
      */
     public function loadData($term) {
+    	
+    	$this->resetData();
 		
         $this->id               = intval($term['term_id']);
     
@@ -90,7 +92,7 @@ abstract class WPTermLoader extends WPTermData {
      */
     protected function resetData() {
 			
-		$this->id               = -1;
+		$this->id               = 0;
 		
 		$this->name             = "";
 		
@@ -98,11 +100,11 @@ abstract class WPTermLoader extends WPTermData {
 		
 		$this->group            = "";
 		
-		$this->term_taxonomy_id = -1;
+		$this->term_taxonomy_id = 0;
 		
 		$this->description      = "";
 		
-		$this->parent           = -1;
+		$this->parent           = 0;
 		
 		$this->count            = 0;
     	
