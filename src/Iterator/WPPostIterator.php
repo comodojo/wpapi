@@ -50,7 +50,7 @@ class WPPostIterator extends WPIteratorObject {
         
         if (!is_null($ids)) {
         
-        	$this->loadIDs($ids);
+        	$this->loadData($ids);
         	
         }
         

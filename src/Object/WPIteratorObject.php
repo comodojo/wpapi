@@ -79,6 +79,30 @@ abstract class WPIteratorObject extends WPObject implements \Iterator {
     	return $this->blog;
     	
     }
+    
+    /**
+     * Nothing to load here
+     *
+     * @param  array $data
+     *
+     * @return WPIteratorObject $this
+     */
+    public function loadData($ids) {
+    	
+    	return $this;
+    	
+    }
+    
+    /**
+     * Nothing to get here
+     *
+     * @return array $array
+     */
+    public function getData() {
+    	
+    	return array();
+    	
+    }
 	
     /**
      * Check if there is another element in the post list
