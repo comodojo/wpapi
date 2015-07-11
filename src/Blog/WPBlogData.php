@@ -354,7 +354,7 @@ abstract class WPBlogData extends WPObject {
      * 
      * @throws \Comodojo\Exception\WPException
      */
-    public function setOption($name, $value, $desc = null) {
+    public function setOption($name, $value) {
     	
     	if (is_null($this->options)) $this->loadBlogOptions();
     	

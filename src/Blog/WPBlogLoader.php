@@ -137,7 +137,7 @@ abstract class WPBlogLoader extends WPBlogData {
     	
     	try {
             
-            $this->supportedFormats = $this->getWordpress()->sendMessage("wp.getPostFormats", array(), $this);
+            $this->supportedFormats = (array) $this->getWordpress()->sendMessage("wp.getPostFormats", array(), $this);
             
     	} catch (WPException $wpe) {
     		
@@ -189,7 +189,7 @@ abstract class WPBlogLoader extends WPBlogData {
     	
     	try {
             
-            $this->supportedPostStatus = $this->getWordpress()->sendMessage("wp.getPostStatusList", array(), $this);
+            $this->supportedPostStatus = (array) $this->getWordpress()->sendMessage("wp.getPostStatusList", array(), $this);
             
     	} catch (WPException $wpe) {
     		
