@@ -31,7 +31,7 @@ abstract class WPPostObject extends WPBlogObject {
     /**
      * Class constructor
      *
-     * @param   WPBlog $blog Reference to the wordpress blog
+     * @param   WPPost $post Reference to the wordpress blog post
      * @param   int    $id   Object ID (optional)
      * 
      * @throws \Comodojo\Exception\WPException

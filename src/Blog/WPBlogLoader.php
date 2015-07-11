@@ -55,7 +55,7 @@ abstract class WPBlogLoader extends WPBlogData {
     /**
      * Get info about blog
      *
-     * @param  array $data Info about blog
+     * @return array $data Info about blog
      */
     public function getData() {
     	

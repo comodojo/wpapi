@@ -1021,7 +1021,7 @@ abstract class WPPostData extends WPBlogObject {
     /**
      * Remove category
      *
-     * @param  string     $tag Tag name
+     * @param  string     $category Category name
      *
      * @return WPPostData $this
      */

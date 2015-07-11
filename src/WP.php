@@ -264,7 +264,7 @@ class WP {
      * @param   array  $msg    List of data to send to wordpress
      * @param   Object $blog   Blog reference to use as destination of the message
      *
-     * @return  array  $response
+     * @return  mixed  $response
      * 
      * @throws \Comodojo\Exception\WPException
      */

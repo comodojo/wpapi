@@ -363,12 +363,6 @@ abstract class WPBlogData extends WPObject {
     	
     	if ($this->options[$name]['readonly'])
     		throw new WPException("The option '$name' is read-only");
-    		
-    	$opt_info = array(
-    		"value"    => $value,
-    		"desc"     => (is_null($desc))?$this->options[$name]['desc']:$desc,
-    		"readonly" => $this->options[$name]['readonly']
-    	);
     	
     	try {
             

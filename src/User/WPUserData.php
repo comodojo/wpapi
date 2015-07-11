@@ -96,7 +96,7 @@ abstract class WPUserData extends WPBlogObject {
 	/**
      * Array of roles
      *
-     * @var string
+     * @var array
      */
 	protected $roles = array();
     
