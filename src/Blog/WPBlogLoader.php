@@ -89,15 +89,6 @@ abstract class WPBlogLoader extends WPBlogDataSetter {
     	return true;
     	
     }
-    
-    /**
-     * Load taxonomy list
-     *
-     * @return WPBlogLoader $this
-     * 
-     * @throws \Comodojo\Exception\WPException
-     */
-    abstract protected function loadTaxonomies();
 	
     /**
      * Load supported formats
