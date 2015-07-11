@@ -99,7 +99,7 @@ abstract class WPBlogLoader extends WPBlogData {
      */
     protected function loadTaxonomies() {
     	
-    	$this->supportedFormats = $this->loadAllowedData("wp.getTaxonomies");
+    	$tax_list = $this->loadAllowedData("wp.getTaxonomies");
             
         foreach ($tax_list as $taxonomy) {
         	
