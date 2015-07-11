@@ -5,7 +5,7 @@ use \Comodojo\Exception\WPException;
 /** 
  * Comodojo Wordpress API Wrapper. This class maps a Wordpress post data object
  *
- * It allows to get and set data of a post from a wordpress blog.
+ * It allows to get data of a post from a wordpress blog.
  * 
  * @package     Comodojo Spare Parts
  * @author      Marco Castiello <marco.castiello@gmail.com>
@@ -201,21 +201,6 @@ abstract class WPPostData extends WPBlogObject {
     }
     
     /**
-     * Set post title
-     *
-     * @param  string     $value
-     *
-     * @return WPPostData $this
-     */
-    public function setTitle($value) {
-    	
-    	$this->title = $value;
-    	
-    	return $this;
-    	
-    }
-    
-    /**
      * Get creation date
      *
      * @param  string $format Date format (optional)
@@ -225,21 +210,6 @@ abstract class WPPostData extends WPBlogObject {
     public function getCreationDate($format = null) {
     	
     	return $this->getFormattedDate($this->created, $format);
-    	
-    }
-    
-    /**
-     * Set creation date
-     *
-     * @param  string     $value
-     *
-     * @return WPPostData $this
-     */
-    public function setCreationDate($value) {
-    	
-    	$this->created = $this->parseTimestamp($value);
-    	
-    	return $this;
     	
     }
     
@@ -257,21 +227,6 @@ abstract class WPPostData extends WPBlogObject {
     }
     
     /**
-     * Set modified date
-     *
-     * @param  string     $value
-     *
-     * @return WPPostData $this
-     */
-    protected function setLastModifiedDate($value) {
-    	
-    	$this->modified = $this->parseTimestamp($value);
-    	
-    	return $this;
-    	
-    }
-    
-    /**
      * Get post status
      *
      * @return string $status
@@ -279,22 +234,6 @@ abstract class WPPostData extends WPBlogObject {
     public function getStatus() {
     	
     	return $this->status;
-    	
-    }
-    
-    /**
-     * Set post status
-     *
-     * @param  string     $value
-     *
-     * @return WPPostData $this
-     */
-    public function setStatus($value) {
-            
-        if (empty($this->supportedStatus)) 
-        	$this->supportedStatus  = $this->getBlog()->getSupportedPostStatus();
-    	
-    	return $this->setCheckedValue($this->supportedStatus, $value, $this->status);
     	
     }
     
@@ -310,22 +249,6 @@ abstract class WPPostData extends WPBlogObject {
     }
     
     /**
-     * Set ping post type
-     *
-     * @param  string     $value
-     *
-     * @return WPPostData $this
-     */
-    public function setType($value) {
-            
-        if (empty($this->supportedTypes)) 
-        	$this->supportedTypes = $this->getBlog()->getSupportedTypes();
-    	
-    	return $this->setCheckedValue($this->supportedTypes, $value, $this->type);
-    	
-    }
-    
-    /**
      * Get post format
      *
      * @return string $format
@@ -333,23 +256,6 @@ abstract class WPPostData extends WPBlogObject {
     public function getFormat() {
     	
     	return $this->format;
-    	
-    }
-    
-    /**
-     * Set post format
-     *
-     * @param  string     $value
-     *
-     * @return WPPostData $this
-     */
-    public function setFormat($value) {
-            
-        if (empty($this->supportedFormats)) 
-        	$this->supportedFormats = $this->getBlog()->getSupportedFormats();
-    	
-    	
-    	return $this->setCheckedValue($this->supportedFormats, $value, $this->format);
     	
     }
     
@@ -365,21 +271,6 @@ abstract class WPPostData extends WPBlogObject {
     }
     
     /**
-     * Set post name
-     *
-     * @param  string     $value
-     *
-     * @return WPPostData $this
-     */
-    protected function setName($value) {
-    	
-    	$this->name = $value;
-    	
-    	return $this;
-    	
-    }
-    
-    /**
      * Get post author
      *
      * @return WPPostData $author
@@ -387,40 +278,6 @@ abstract class WPPostData extends WPBlogObject {
     public function getAuthor() {
     	
     	return $this->author;
-    	
-    }
-    
-    /**
-     * Set author
-     *
-     * @param  mixed      $value Author ID or WPUser reference
-     *
-     * @return WPPostData $this
-     * 
-     * @throws \Comodojo\Exception\WPException
-     */
-    public function setAuthor($value) {
-    	
-    	if (is_numeric($value)) {
-    		
-	    	try {
-	    		
-	    		$this->author = new WPUser($this->getBlog(), $value);
-	    		
-	    	} catch (WPException $wpe) {
-	    		
-	    		throw $wpe;
-	    		
-	    	}
-	    	
-    		
-    	} else {
-    		
-    		$this->author = $value;
-    		
-    	}
-    	
-    	return $this;
     	
     }
     
@@ -436,21 +293,6 @@ abstract class WPPostData extends WPBlogObject {
     }
     
     /**
-     * Set post password
-     *
-     * @param  string     $value
-     *
-     * @return WPPostData $this
-     */
-    public function setPassword($value) {
-    	
-    	$this->password = $value;
-    	
-    	return $this;
-    	
-    }
-    
-    /**
      * Get post excerpt
      *
      * @return  string $excerpt
@@ -462,21 +304,6 @@ abstract class WPPostData extends WPBlogObject {
     }
     
     /**
-     * Set post excerpt
-     *
-     * @param  string     $value
-     *
-     * @return WPPostData $this
-     */
-    public function setExcerpt($value) {
-    	
-    	$this->excerpt = $value;
-    	
-    	return $this;
-    	
-    }
-    
-    /**
      * Get post content
      *
      * @return string $content
@@ -484,21 +311,6 @@ abstract class WPPostData extends WPBlogObject {
     public function getContent() {
     	
     	return $this->content;
-    	
-    }
-    
-    /**
-     * Set post content
-     *
-     * @param  string     $value
-     *
-     * @return WPPostData $this
-     */
-    public function setContent($value) {
-    	
-    	$this->content = $value;
-    	
-    	return $this;
     	
     }
     
@@ -526,33 +338,6 @@ abstract class WPPostData extends WPBlogObject {
     }
     
     /**
-     * Set post parent
-     *
-     * @param  mixed      $value Parent post ID or WPPost reference
-     *
-     * @return WPPostData $this
-     */
-    public function setParent($value = null) {
-    	
-    	if (is_null($value)) {
-    		
-    		$this->parent = null;
-    		
-    	} elseif (is_numeric($value)) {
-    		
-    		$this->parent = intval($value);
-    		
-    	} else {
-    		
-    		$this->parent = $value->getID();
-    		
-    	}
-    	
-    	return $this;
-    	
-    }
-    
-    /**
      * Get post mime type
      *
      * @return string $mime_type
@@ -560,21 +345,6 @@ abstract class WPPostData extends WPBlogObject {
     public function getMimeType() {
     	
     	return $this->mime_type;
-    	
-    }
-    
-    /**
-     * Get post mime type
-     *
-     * @return string     $value
-     *
-     * @return WPPostData $this
-     */
-    protected function setMimeType($value) {
-    	
-    	$this->mime_type = $value;
-    	
-    	return $this;
     	
     }
     
@@ -590,21 +360,6 @@ abstract class WPPostData extends WPBlogObject {
     }
     
     /**
-     * Set post link
-     *
-     * @return string     $value
-     *
-     * @return WPPostData $this
-     */
-    protected function setLink($value) {
-    	
-    	$this->link = $value;
-    	
-    	return $this;
-    	
-    }
-    
-    /**
      * Get post guid
      *
      * @return string $guid
@@ -612,21 +367,6 @@ abstract class WPPostData extends WPBlogObject {
     public function getGUID() {
     	
     	return $this->guid;
-    	
-    }
-    
-    /**
-     * Set post guid
-     *
-     * @return string     $value
-     *
-     * @return WPPostData $this
-     */
-    protected function setGUID($value) {
-    	
-    	$this->guid = $value;
-    	
-    	return $this;
     	
     }
     
@@ -642,21 +382,6 @@ abstract class WPPostData extends WPBlogObject {
     }
     
     /**
-     * Set post menu order
-     *
-     * @param  int        $value
-     *
-     * @return WPPostData $this
-     */
-    public function setMenuOrder($value) {
-    	
-    	$this->menu_order = intval($value);
-    	
-    	return $this;
-    	
-    }
-    
-    /**
      * Get comment status
      *
      * @return string $commentStatus
@@ -664,29 +389,6 @@ abstract class WPPostData extends WPBlogObject {
     public function getCommentStatus() {
     	
     	return $this->comment;
-    	
-    }
-    
-    /**
-     * Set comment status
-     *
-     * @param  string     $value
-     *
-     * @return WPPostData $this
-     */
-    public function setCommentStatus($value) {
-    	
-    	if (in_array($value, $this->supportedCommentStatus)) {
-    		
-    		$this->comment = $value;
-    	
-    		return $this;
-    		
-    	} else {
-    		
-    		throw new WPException("Unsupported comment status");
-    		
-    	}
     	
     }
     
@@ -702,29 +404,6 @@ abstract class WPPostData extends WPBlogObject {
     }
     
     /**
-     * Set ping status
-     *
-     * @param  string     $value
-     *
-     * @return WPPostData $this
-     */
-    public function setPingStatus($value) {
-    	
-    	if (in_array($value, $this->supportedPingStatus)) {
-    		
-    		$this->ping = $value;
-    	
-    		return $this;
-    		
-    	} else {
-    		
-    		throw new WPException("Unsupported ping status");
-    		
-    	}
-    	
-    }
-    
-    /**
      * Sticky
      *
      * @return boolean $sticky
@@ -736,21 +415,6 @@ abstract class WPPostData extends WPBlogObject {
     }
     
     /**
-     * Set sticky
-     *
-     * @param  boolean    $value
-     *
-     * @return WPPostData $this
-     */
-    public function setSticky($value) {
-    	
-    	$this->sticky = $value;
-    	
-    	return $this;
-    	
-    }
-    
-    /**
      * Get custom fields
      *
      * @return array $customFields
@@ -758,19 +422,6 @@ abstract class WPPostData extends WPBlogObject {
     public function getCustomFields() {
     	
     	return $this->custom;
-    	
-    }
-    
-    /**
-     * Clean custom fields
-     *
-     * @return WPPostData $this
-     */
-    public function cleanCustomFields() {
-    	
-    	$this->custom = array();
-    	
-    	return $this;
     	
     }
     
@@ -794,38 +445,6 @@ abstract class WPPostData extends WPBlogObject {
     	}
     		
     	return null;
-    	
-    }
-    
-    /**
-     * Set custom field
-     *
-     * @param  string     $field
-     * @param  string     $value
-     *
-     * @return WPPostData $this
-     */
-    public function setCustomField($field, $value) {
-    	
-    	foreach ($this->custom as $id => $custom) {
-    		
-    		if ($custom['key'] == $field) {
-    			
-    			$this->custom[$id]['value'] = $value;
-    			
-    			return $this;
-    			
-    		}
-    		
-    	}
-    	
-    	// If the custom field requested does not exists, a new one will be created
-    	array_push($this->custom, array(
-    		'key'   => $field,
-    		'value' => $value
-    	));
-    	
-    	return $this;
     	
     }
     
@@ -855,21 +474,6 @@ abstract class WPPostData extends WPBlogObject {
     }
     
     /**
-     * Set enclosure url
-     *
-     * @param  string     $value
-     *
-     * @return WPPostData $this
-     */
-    public function setEnclosureURL($value) {
-    	
-    	$this->enclosure['url'] = $value;
-    	
-    	return $this;
-    	
-    }
-    
-    /**
      * Get enclosure length
      *
      * @return  string  $enclosure_length
@@ -880,21 +484,6 @@ abstract class WPPostData extends WPBlogObject {
     		return $this->enclosure['length'];
     	else
     		return null;
-    	
-    }
-    
-    /**
-     * Set enclosure length
-     *
-     * @param  int        $value
-     *
-     * @return WPPostData $this
-     */
-    public function setEnclosureLength($value) {
-    	
-    	$this->enclosure['length'] = $value;
-    	
-    	return $this;
     	
     }
     
@@ -913,116 +502,6 @@ abstract class WPPostData extends WPBlogObject {
     }
     
     /**
-     * Set enclosure type
-     *
-     * @param  string     $value
-     *
-     * @return WPPostData $this
-     */
-    public function setEnclosureType($value) {
-    	
-    	$this->enclosure['type'] = $value;
-    	
-    	return $this;
-    	
-    }
-    
-    /**
-     * Get terms
-     *
-     * @return array $terms
-     */
-    public function getTerms() {
-    	
-    	return $this->terms;
-    	
-    }
-    
-    /**
-     * Add term
-     *
-     * @param  WPTerm     $term Term reference
-     *
-     * @return WPPostData $this
-     */
-    public function addTerm($term) {
-    	
-    	if (!$this->hasTerm($term)) {
-    		
-    		array_push($this->terms, $term);
-    		
-    	}
-    	
-    	return $this;
-    	
-    }
-    
-    /**
-     * Remove term
-     *
-     * @param  WPTerm     $term Term reference
-     *
-     * @return WPPostData $this
-     */
-    public function removeTerm($term) {
-    	
-    	foreach ($this->terms as $id => $t) {
-    		
-    		if ($t->getID() == $term) unset($this->terms[$id]);
-    		
-    	}
-    	
-    	return $this;
-    	
-    }
-    
-    /**
-     * Has term
-     *
-     * @param  mixed   $term Term ID or WPTerm object
-     *
-     * @return boolean $hasTerm
-     */
-    public function hasTerm($term) {
-    	
-    	if (is_numeric($term)) {
-    		
-    		$term = intval($term);
-    		
-    	} else {
-    		
-    		$term = $term->getID();
-    		
-    	}
-    	
-    	foreach ($this->terms as $t) {
-    		
-    		if ($t->getID() == $term) {
-    			
-    			return true;
-    			
-    		}
-    		
-    	}
-    	
-    	return false;
-    	
-    }
-    
-    /**
-     * Clean all terms
-     *
-     * @return WPPostData $this
-     */
-    public function cleanTerms() {
-    	
-    	$this->terms = array();
-    	
-    	return false;
-    	
-    }
-    
-    /**
      * Get post thumbnail
      *
      * @return WPPostData $thumbnail
@@ -1030,43 +509,6 @@ abstract class WPPostData extends WPBlogObject {
     public function getThumbnail() {
     	
     	return $this->thumbnail;
-    	
-    }
-    
-    /**
-     * Set post thumbnail
-     *
-     * @param  mixed      $thumb Media ID or WPMedia object
-     *
-     * @return WPPostData $this
-     * 
-     * @throws \Comodojo\Exception\WPException
-     */
-    public function setThumbnail($thumb = null) {
-    	
-    	if (is_null($thumb)) {
-    		
-    		$this->thumbnail = null;
-    	
-    	} elseif (is_numeric($thumb)) {
-    	
-	    	try {
-	    		
-	    		$this->thumbnail = new WPMedia($this->getBlog(), $thumb);
-	            
-	    	} catch (WPException $wpe) {
-	    		
-	    		throw $wpe;
-	    		
-	    	}
-    		
-    	} else {
-    		
-    		$this->thumbnail = $thumb;
-    		
-    	}
-    	
-    	return $this;
     	
     }
     
