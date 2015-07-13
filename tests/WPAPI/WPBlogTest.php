@@ -248,7 +248,7 @@ class WPBlogTest extends \PHPUnit_Framework_TestCase {
     	for ($i=0; $i<3; $i++) {
     		
     		$posts = self::$blog->getPostsByTag("Test Tag " . $i);
-	    	var_dump($posts);
+	    	
 	    	$this->assertGreaterThan(0, $posts->getLength());
     		
     		foreach ($posts as $post) {

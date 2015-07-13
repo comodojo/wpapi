@@ -97,7 +97,7 @@ class WPTest extends \PHPUnit_Framework_TestCase {
     		foreach (self::$wp->getBlogs() as $blog) {
     			
     			$options = $blog->getAvailableOptions();
-    			var_dump($options);
+    			
     			$this->assertGreaterThan(0, count($options));
     			
     			foreach ($options as $opt) {

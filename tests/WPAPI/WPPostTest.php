@@ -46,7 +46,7 @@ class WPPostTest extends \PHPUnit_Framework_TestCase {
     
     public function testWPPostCreate() {
     	
-    	$timestamp = time();
+    	$timestamp = time() - 7200;
     	
     	if (self::$wp->isLogged()) {
 			
@@ -177,7 +177,7 @@ class WPPostTest extends \PHPUnit_Framework_TestCase {
 					->removeCategory("wptest")
 					->removeTag("wpapi")
 					->save();
-				var_dump($post);
+				
 				$parent = $post->getParent();
 				
 				if (!is_null($parent)) {
@@ -208,7 +208,7 @@ class WPPostTest extends \PHPUnit_Framework_TestCase {
     	if (self::$wp->isLogged()) {
     		
     		$posts = self::$blog->getLatestPosts(3);
-			var_dump($posts);
+			
 			$this->assertSame($posts->getLength(), 3);
     		
 			while ($posts->hasNext()) {
