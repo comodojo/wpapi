@@ -131,18 +131,16 @@ class WPCommentTest extends \PHPUnit_Framework_TestCase {
     public function testWPCommentModify() {
     	
     	if (self::$wp->isLogged()) {
-    		
-    		$comments = self::$post->getComments();
 				
-			foreach ($comments as $id => $comment) {
+			for ($i=0; $i<3; $i++) {
 				
-				$i = array_search($comment->getID(), self::$ids);
+				$comment = new \Comodojo\WPAPI\WPComment(self::$post, self::$ids[$i]);
 				
 				$text = "Test modified comment n." . $i . 
 						" - Created: " . $comment->getDate("Y-m-d H:i:s") . 
 						" - Type: "    . $comment->getType() . 
 						" - Link: "    . $comment->getLink();
-				var_dump($text);
+				
 				$comment->setContent($text)
     				->setStatus("approve")
 					->save();
