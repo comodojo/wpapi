@@ -142,7 +142,7 @@ class WPCommentTest extends \PHPUnit_Framework_TestCase {
 						" - Created: " . $comment->getDate("Y-m-d H:i:s") . 
 						" - Type: "    . $comment->getType() . 
 						" - Link: "    . $comment->getLink();
-				
+				var_dump($text);
 				$comment->setContent($text)
     				->setStatus("approve")
 					->save();
