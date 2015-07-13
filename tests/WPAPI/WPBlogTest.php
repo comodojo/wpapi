@@ -54,7 +54,10 @@ class WPBlogTest extends \PHPUnit_Framework_TestCase {
     	
     	
     }
-    
+
+   /**
+    * @depends testWPBlogData 
+    */     
     public function testWPBlogEndPoint() {
     	
     	$endpoint = self::$blog->getEndPoint();
@@ -65,7 +68,10 @@ class WPBlogTest extends \PHPUnit_Framework_TestCase {
     	
     	
     }
-    
+
+   /**
+    * @depends testWPBlogEndPoint 
+    */     
     public function testWPBlogDataSupported() {
     	
     	$this->assertGreaterThan(0, count(self::$blog->getSupportedFormats()));
@@ -78,7 +84,10 @@ class WPBlogTest extends \PHPUnit_Framework_TestCase {
     	
     	
     }
-    
+
+   /**
+    * @depends testWPBlogDataSupported 
+    */     
     public function testWPBlogDataLoader() {
     	
     	$data = self::$blog->getData();
@@ -94,7 +103,10 @@ class WPBlogTest extends \PHPUnit_Framework_TestCase {
     	$this->assertSame("TEST BLOG", $blog->getName());
     	
     }
-    
+
+   /**
+    * @depends testWPBlogDataLoader 
+    */     
     public function testWPBlogTaxonomies() {
     	
     	$taxonomies = self::$blog->getTaxonomies();
@@ -112,7 +124,10 @@ class WPBlogTest extends \PHPUnit_Framework_TestCase {
     	}
     	
     }
-    
+
+   /**
+    * @depends testWPBlogTaxonomies 
+    */     
     public function testWPBlogTags() {
     	
     	// Add at least one tag
@@ -140,7 +155,10 @@ class WPBlogTest extends \PHPUnit_Framework_TestCase {
     	}
     	
     }
-    
+
+   /**
+    * @depends testWPBlogTags 
+    */     
     public function testWPBlogCategories() {
     	
     	// Add at least one category
@@ -168,7 +186,10 @@ class WPBlogTest extends \PHPUnit_Framework_TestCase {
     	}
     	
     }
-    
+
+   /**
+    * @depends testWPBlogCategories 
+    */     
     public function testWPBlogUsers() {
     	
     	$profile = self::$blog->getProfile();
@@ -204,7 +225,10 @@ class WPBlogTest extends \PHPUnit_Framework_TestCase {
     	}
     	
     }
-    
+
+   /**
+    * @depends testWPBlogUsers 
+    */     
     public function testWPBlogPosts() {
     	
     	for ($i=0; $i<3; $i++) {

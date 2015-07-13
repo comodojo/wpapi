@@ -67,7 +67,10 @@ class WPUserTest extends \PHPUnit_Framework_TestCase {
     	}
     	
     }
-    
+
+   /**
+    * @depends testWPProfile 
+    */    
     public function testWPUser() {
     	
     	if (self::$wp->isLogged()) {
@@ -96,7 +99,9 @@ class WPUserTest extends \PHPUnit_Framework_TestCase {
     	
     }
     
-    
+   /**
+    * @depends testWPUser 
+    */    
     public function testWPUserIterator() {
     	
     	if (self::$wp->isLogged()) {

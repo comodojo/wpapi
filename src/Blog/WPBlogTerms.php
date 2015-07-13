@@ -160,7 +160,7 @@ abstract class WPBlogTerms extends WPBlogLoader {
      *
      * @param   string $category Tag name
      *
-     * @return  WPBlogTerms $category
+     * @return  WPTerm $category
      */
     public function getCategory($category) {
     	

@@ -63,7 +63,10 @@ class WPTest extends \PHPUnit_Framework_TestCase {
     	}
     	
     }
-    
+
+   /**
+    * @depends testWPData 
+    */    
     public function testWPBlogs() {
     	
     	if (self::$wp->isLogged()) {
@@ -83,7 +86,10 @@ class WPTest extends \PHPUnit_Framework_TestCase {
     	}
     	
     }
-    
+
+   /**
+    * @depends testWPBlogs 
+    */    
     public function testWPOptions() {
     	
     	if (self::$wp->isLogged()) {

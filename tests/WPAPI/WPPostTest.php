@@ -85,7 +85,10 @@ class WPPostTest extends \PHPUnit_Framework_TestCase {
     	}
     	
     }
-    
+
+   /**
+    * @depends testWPPostCreate 
+    */    
     public function testWPPostData() {
 		
     	if (self::$wp->isLogged()) {
@@ -139,7 +142,10 @@ class WPPostTest extends \PHPUnit_Framework_TestCase {
     	}
     	
     }
-    
+
+   /**
+    * @depends testWPPostData 
+    */    
     public function testWPPostModify() {
 		
     	if (self::$wp->isLogged()) {
@@ -193,7 +199,10 @@ class WPPostTest extends \PHPUnit_Framework_TestCase {
     	}
     	
     }
-    
+
+   /**
+    * @depends testWPPostModify 
+    */    
     public function testWPPostDelete() {
 		
     	if (self::$wp->isLogged()) {

@@ -86,7 +86,10 @@ class WPMediaTest extends \PHPUnit_Framework_TestCase {
     	}
     	
     }
-    
+
+   /**
+    * @depends testWPMediaUpload 
+    */    
     public function testWPMediaThumbnail() {
     	
     	if (self::$wp->isLogged()) {
@@ -102,7 +105,10 @@ class WPMediaTest extends \PHPUnit_Framework_TestCase {
     	}
     	
     }
-    
+
+   /**
+    * @depends testWPMediaThumbnail 
+    */    
     public function testWPMediaData() {
     	
     	if (self::$wp->isLogged()) {
@@ -150,7 +156,10 @@ class WPMediaTest extends \PHPUnit_Framework_TestCase {
     	}
     	
     }
-    
+
+   /**
+    * @depends testWPMediaData 
+    */    
     public function testWPMediaIterator() {
     	
     	if (self::$wp->isLogged()) {

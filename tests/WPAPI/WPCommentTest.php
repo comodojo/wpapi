@@ -80,7 +80,10 @@ class WPCommentTest extends \PHPUnit_Framework_TestCase {
     	}
     	
     }
-    
+
+   /**
+    * @depends testWPCommentCreate 
+    */    
     public function testWPCommentData() {
     	
     	if (self::$wp->isLogged()) {
@@ -120,7 +123,10 @@ class WPCommentTest extends \PHPUnit_Framework_TestCase {
     	}
     	
     }
-    
+
+   /**
+    * @depends testWPCommentData 
+    */    
     public function testWPCommentModify() {
     	
     	if (self::$wp->isLogged()) {
@@ -153,7 +159,10 @@ class WPCommentTest extends \PHPUnit_Framework_TestCase {
     	}
     	
     }
-    
+
+   /**
+    * @depends testWPCommentModify 
+    */    
     public function testWPCommentReply() {
     	
     	if (self::$wp->isLogged()) {
@@ -189,7 +198,10 @@ class WPCommentTest extends \PHPUnit_Framework_TestCase {
     	}
     	
     }
-    
+
+   /**
+    * @depends testWPCommentReply 
+    */    
     public function testWPCommentDelete() {
     	
     	if (self::$wp->isLogged()) {

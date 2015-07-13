@@ -94,7 +94,10 @@ class WPTaxonomyTest extends \PHPUnit_Framework_TestCase {
     	}
     	
     }
-    
+
+   /**
+    * @depends testWPTaxonomy 
+    */    
     public function testWPTermCreate() {
     	
     	if (self::$wp->isLogged()) {
@@ -113,7 +116,10 @@ class WPTaxonomyTest extends \PHPUnit_Framework_TestCase {
     	}
     	
     }
-    
+
+   /**
+    * @depends testWPTermCreate 
+    */    
     public function testWPTermData() {
     	
     	if (self::$wp->isLogged()) {
@@ -153,7 +159,10 @@ class WPTaxonomyTest extends \PHPUnit_Framework_TestCase {
     	}
     	
     }
-    
+
+   /**
+    * @depends testWPTermData 
+    */    
     public function testWPTermModify() {
     	
     	if (self::$wp->isLogged()) {
@@ -177,7 +186,10 @@ class WPTaxonomyTest extends \PHPUnit_Framework_TestCase {
     	}
     	
     }
-    
+
+   /**
+    * @depends testWPTermModify 
+    */    
     public function testWPTermParent() {
     	
     	if (self::$wp->isLogged()) {
@@ -203,7 +215,10 @@ class WPTaxonomyTest extends \PHPUnit_Framework_TestCase {
     	}
     	
     }
-    
+
+   /**
+    * @depends testWPTermParent 
+    */    
     public function testWPTermDelete() {
     	
     	if (self::$wp->isLogged()) {
