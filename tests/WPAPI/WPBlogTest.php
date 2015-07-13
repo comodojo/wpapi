@@ -231,12 +231,15 @@ class WPBlogTest extends \PHPUnit_Framework_TestCase {
     */     
     public function testWPBlogPosts() {
     	
+    	$timestamp = time() - 7200;
+
     	for ($i=0; $i<3; $i++) {
     		
     		$new_post = new \Comodojo\WPAPI\WPPost(self::$blog);
     		
     		$new_post->setTitle("Test post n." . $i)
-    			->setContent("TEST")
+    			->setCreationDate($timestamp - ($i * 60))
+					->setContent("TEST")
     			->addTag("Test Tag " . $i)
     			->addCategory("Test Category " . $i)
     			->setStatus("publish")

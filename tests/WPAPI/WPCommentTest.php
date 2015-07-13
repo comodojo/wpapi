@@ -41,6 +41,7 @@ class WPCommentTest extends \PHPUnit_Framework_TestCase {
 				self::$post = new \Comodojo\WPAPI\WPPost(self::$blog);
 				
 				self::$post->setTitle("Test COMMENT")
+					->setCreationDate(time() - 14400)
 					->setStatus("publish")
 					->setType("post")
 					->setFormat("standard")

@@ -42,6 +42,7 @@ class WPMediaTest extends \PHPUnit_Framework_TestCase {
 				
 				self::$post->setTitle("Test MEDIA")
 					->setStatus("publish")
+					->setCreationDate(time() - 14400)
 					->setType("post")
 					->setFormat("standard")
 					->setContent("Post with images")
