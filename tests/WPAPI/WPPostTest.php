@@ -177,7 +177,7 @@ class WPPostTest extends \PHPUnit_Framework_TestCase {
 					->removeCategory("wptest")
 					->removeTag("wpapi")
 					->save();
-				
+				var_dump($post);
 				$parent = $post->getParent();
 				
 				if (!is_null($parent)) {
