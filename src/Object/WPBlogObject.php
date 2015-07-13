@@ -50,19 +50,7 @@ abstract class WPBlogObject extends WPObject {
         
         $this->id   = $id;
         
-        if ($id > 0) {
-        	
-        	try {
-        		
-        		$this->loadFromID($id);
-        		
-        	} catch (WPException $wpe) {
-        		
-        		throw $wpe;
-        		
-        	}
-        	
-        }
+        if (!empty($id)) $this->loadFromID($id);
         
     }
     

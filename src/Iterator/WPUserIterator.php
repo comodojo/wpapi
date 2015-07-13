@@ -67,7 +67,7 @@ class WPUserIterator extends WPIteratorObject {
         
     	$this->users = $ids;
     	
-    	$this->count = count($ids);
+    	$this->setLength(count($ids));
     	
     	return $this;
     	
@@ -115,26 +115,20 @@ class WPUserIterator extends WPIteratorObject {
      * @throws \Comodojo\Exception\WPException
      */
     public function getNext() {
-    	
-    	try {
     		
-	    	if ($this->hasNext()) {
-	    		
-	    		$this->object = new WPUser($this->getBlog(), $this->users[$this->current]);
-            	
-            	$this->current++;
-	    		
-	    		return $this->object;
-	    		
-	    	}
+    	if ($this->hasNext()) {
     		
-    	} catch (WPException $wpe) {
+    		$this->object = new WPUser($this->getBlog(), $this->users[$this->current]);
+        	
+        	$this->current++;
+			
+    	} else {
     		
-    		throw $wpe;
+    		$this->object = null;
     		
     	}
-    	
-    	return null;
+		
+		return $this->object;
     	
     }
     

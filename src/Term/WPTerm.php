@@ -62,21 +62,13 @@ class WPTerm extends WPTermLoader {
      */
     public function save() {
     	
-    	try {
-    	
-	    	if ($this->getID() == 0) {
-	    		
-	    		$this->createTerm();
-	    		
-	    	} else {
-	    		
-	    		$this->editTerm();
-	    		
-	    	}
-	    	
-    	} catch (WPException $wpe) {
+    	if ($this->getID() == 0) {
     		
-    		throw $wpe;
+    		$this->createTerm();
+    		
+    	} else {
+    		
+    		$this->editTerm();
     		
     	}
     	

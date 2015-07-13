@@ -33,6 +33,8 @@ abstract class WPUserLoader extends WPUserData {
     public function loadData($data) {
     	
     	$this->resetData();
+    	
+    	if (!isset($data['user_id'])) return null;
         
     	$this->setID(intval($data['user_id']));
     

@@ -31,6 +31,8 @@ abstract class WPBlogLoader extends WPBlogDataSetter {
      * @return WPBlogLoader $this
      */
     public function loadData($data) {
+    	
+    	if (!isset($data['blogid'])) return null;
         
         $this->setID(intval($data['blogid']));
         
@@ -63,7 +65,7 @@ abstract class WPBlogLoader extends WPBlogDataSetter {
     		'blogid'   => $this->getID(),
     		'blogName' => $this->getName(),
     		'url'      => $this->getURL(),
-    		'url'      => $this->getEndPoint(),
+    		'xmlrpc'   => $this->getEndPoint(),
     		'isAdmin'  => $this->isAdmin()
     	);
         
@@ -150,7 +152,7 @@ abstract class WPBlogLoader extends WPBlogDataSetter {
      */
     protected function loadCommentStatus() {
     	
-    	$this->supportedCommentStatus = array_values($this->loadAllowedData("wp.getCommentStatusList"));
+    	$this->supportedCommentStatus = array_keys($this->loadAllowedData("wp.getCommentStatusList"));
     	
     	return $this;
         

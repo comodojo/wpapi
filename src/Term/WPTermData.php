@@ -174,15 +174,7 @@ abstract class WPTermData extends WPTaxonomyObject {
     	
     	if (!is_null($this->parent) && $this->parent > 0) {
     		
-    		try {
-    		
-    			$parent = new WPTerm($this->getTaxonomy(), $this->parent);
-    			
-    		} catch (WPException $wpe) {
-    			
-    			throw $wpe;
-    			
-    		}
+    		$parent = new WPTerm($this->getTaxonomy(), $this->parent);
     		
     	}
     	

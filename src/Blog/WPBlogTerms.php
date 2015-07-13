@@ -39,7 +39,7 @@ abstract class WPBlogTerms extends WPBlogLoader {
      *
      * @param   string $taxonomy taxonomy name
      *
-     * @return  Object $taxonomy
+     * @return  WPTaxonomy $taxonomy
      */
     public function getTaxonomy($taxonomy) {
     	
@@ -90,7 +90,7 @@ abstract class WPBlogTerms extends WPBlogLoader {
      *
      * @param   string $tag Tag name
      *
-     * @return  Object $tag
+     * @return  WPTerm $tag
      */
     public function getTag($tag) {
     	
@@ -128,7 +128,7 @@ abstract class WPBlogTerms extends WPBlogLoader {
      *
      * @param   Object $tag WPTerm object
      *
-     * @return  Object $this
+     * @return  WPBlogTerms $this
      */
     public function addTag($tag) {
     	
@@ -160,7 +160,7 @@ abstract class WPBlogTerms extends WPBlogLoader {
      *
      * @param   string $category Tag name
      *
-     * @return  Object $category
+     * @return  WPBlogTerms $category
      */
     public function getCategory($category) {
     	
@@ -198,7 +198,7 @@ abstract class WPBlogTerms extends WPBlogLoader {
      *
      * @param   Object $category WPTerm object
      *
-     * @return  Object $this
+     * @return  WPBlogTerms $this
      */
     public function addCategory($category) {
     	

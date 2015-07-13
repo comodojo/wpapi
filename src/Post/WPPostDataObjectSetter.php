@@ -82,16 +82,7 @@ abstract class WPPostDataObjectSetter extends WPPostDataSetter {
     	
     	if (is_numeric($value)) {
     		
-	    	try {
-	    		
-	    		$this->author = new WPUser($this->getBlog(), $value);
-	    		
-	    	} catch (WPException $wpe) {
-	    		
-	    		throw $wpe;
-	    		
-	    	}
-	    	
+	    	$this->author = new WPUser($this->getBlog(), $value);
     		
     	} else {
     		
@@ -191,15 +182,7 @@ abstract class WPPostDataObjectSetter extends WPPostDataSetter {
     	
     	} elseif (is_numeric($thumb)) {
     	
-	    	try {
-	    		
-	    		$this->thumbnail = new WPMedia($this->getBlog(), $thumb);
-	            
-	    	} catch (WPException $wpe) {
-	    		
-	    		throw $wpe;
-	    		
-	    	}
+	    	$this->thumbnail = new WPMedia($this->getBlog(), $thumb);
     		
     	} else {
     		

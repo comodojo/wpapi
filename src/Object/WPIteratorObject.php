@@ -142,7 +142,7 @@ abstract class WPIteratorObject extends WPObject implements \Iterator {
      */
     public function getFetchedItems() {
     	
-    	return $this->current + 1;
+    	return $this->current;
     	
     }
     
@@ -154,6 +154,19 @@ abstract class WPIteratorObject extends WPObject implements \Iterator {
     public function getLength() {
     	
     	return $this->count;
+    	
+    }
+    
+    /**
+     * Set total items
+     *
+     * @param  int  $count
+     *
+     * @return WPIteratorObject $this
+     */
+    protected function setLength($count) {
+    	
+    	$this->count = $count;
     	
     }
 	
@@ -220,7 +233,7 @@ abstract class WPIteratorObject extends WPObject implements \Iterator {
      */
     public function valid() {
     	
-    	return $this->hasNext();
+    	return !is_null($this->object);
         
     }
     

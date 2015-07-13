@@ -52,19 +52,7 @@ abstract class WPTaxonomyObject extends WPBlogObject {
         
         $this->id   = intval($id);
         
-        if ($id > 0) {
-        	
-        	try {
-        		
-        		$this->loadFromID($id);
-        		
-        	} catch (WPException $wpe) {
-        		
-        		throw $wpe;
-        		
-        	}
-        	
-        }
+        if ($id > 0) $this->loadFromID($id);
         
     }
     

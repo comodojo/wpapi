@@ -577,15 +577,7 @@ abstract class WPMediaData extends WPBlogObject {
     		
     	}
     	
-    	try {
-    	
-    		return $this->uploadData($name, $buffer);
-    		
-    	} catch (WPException $wpe) {
-    		
-    		throw $wpe;
-    		
-    	}
+    	return $this->uploadData($name, $buffer);
     	
     }
     

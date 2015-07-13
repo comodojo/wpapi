@@ -99,21 +99,13 @@ class WPComment extends WPCommentLoader {
      */
     public function save() {
     	
-    	try {
-    	
-	    	if ($this->getID() == 0) {
-	    		
-	    		$this->createComment();
-	    		
-	    	} else {
-	    		
-	    		$this->editComment();
-	    		
-	    	}
-	    	
-    	} catch (WPException $wpe) {
+    	if ($this->getID() == 0) {
     		
-    		throw $wpe;
+    		$this->createComment();
+    		
+    	} else {
+    		
+    		$this->editComment();
     		
     	}
     	
@@ -139,6 +131,10 @@ class WPComment extends WPCommentLoader {
                 $this->getPost()->getID(),
                 $content
             ), $this->getBlog());
+            
+            $this->setID($id);
+            
+            if (isset($content['status'])) $this->editComment();
             
             $this->loadFromID($id);
     		

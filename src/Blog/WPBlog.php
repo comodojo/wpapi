@@ -68,15 +68,7 @@ class WPBlog extends WPBlogTerms {
      */
     public function getUserByID($id) {
     	
-    	try {
-    		
-            return new WPUser($this, $id);
-    		
-    	} catch (WPException $wpe) {
-    		
-    		throw $wpe;
-    		
-    	}
+    	return new WPUser($this, $id);
     	
     }
     
@@ -91,15 +83,7 @@ class WPBlog extends WPBlogTerms {
      */
     public function getUsersByRole($role) {
     	
-    	try {
-    		
-    		return $this->getUsers($role);
-    		
-    	} catch (WPException $wpe) {
-    		
-    		throw $wpe;
-    		
-    	}
+    	return $this->getUsers($role);
     	
     }
     
@@ -112,15 +96,7 @@ class WPBlog extends WPBlogTerms {
      */
     public function getAuthors() {
     	
-    	try {
-    		
-    		return $this->getUsers(null, "authors");
-    		
-    	} catch (WPException $wpe) {
-    		
-    		throw $wpe;
-    		
-    	}
+    	return $this->getUsers(null, "authors");
     	
     }
     
@@ -197,15 +173,7 @@ class WPBlog extends WPBlogTerms {
      */
     public function getPostByID($id) {
     	
-    	try {
-    		
-            return new WPPost($this, $id);
-    		
-    	} catch (WPException $wpe) {
-    		
-    		throw $wpe;
-    		
-    	}
+    	return new WPPost($this, $id);
     	
     }
     
@@ -218,15 +186,7 @@ class WPBlog extends WPBlogTerms {
      */
     public function getPages() {
     	
-    	try {
-    		
-    		return $this->getPosts("page");
-    		
-    	} catch (WPException $wpe) {
-    		
-    		throw $wpe;
-    		
-    	}
+    	return $this->getPosts("page");
     	
     }
     
@@ -241,15 +201,7 @@ class WPBlog extends WPBlogTerms {
      */
     public function getLatestPosts($count = 10) {
     	
-    	try {
-    		
-    		return $this->getPosts("post", "publish", $count);
-    		
-    	} catch (WPException $wpe) {
-    		
-    		throw $wpe;
-    		
-    	}
+    	return $this->getPosts("post", "publish", $count);
     	
     }
     
@@ -327,15 +279,7 @@ class WPBlog extends WPBlogTerms {
      */
     public function getPostsByCategory($category, $number = null) {
     	
-    	try {
-    	
-    		return $this->getPostsByTerm("category", $category, $number);
-    	
-    	} catch (WPException $wpe) {
-    		
-    		throw $wpe;
-    		
-    	}
+    	return $this->getPostsByTerm("category", $category, $number);
     	
     }
     
@@ -351,15 +295,7 @@ class WPBlog extends WPBlogTerms {
      */
     public function getPostsByTag($tag, $number = null) {
     	
-    	try {
-    	
-    		return $this->getPostsByTerm("post_tag", $tag, $number);
-    	
-    	} catch (WPException $wpe) {
-    		
-    		throw $wpe;
-    		
-    	}
+    	return $this->getPostsByTerm("post_tag", $tag, $number);
     	
     }
     

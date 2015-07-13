@@ -88,7 +88,6 @@ abstract class WPBlogDataSetter extends WPBlogData {
      *
      * @param   string  $name  Option name
      * @param   string  $value Option value
-     * @param   string  $value Option description (optional)
      *
      * @return  Object  $this
      * 

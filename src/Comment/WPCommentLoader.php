@@ -64,6 +64,8 @@ abstract class WPCommentLoader extends WPCommentData {
     public function loadData($comment) {
     	
     	$this->resetData();
+    	
+    	if (!isset($comment['comment_id'])) return null;
         
 	    $this->id           = intval($comment['comment_id']);
 	    

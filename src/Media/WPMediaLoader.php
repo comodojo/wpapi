@@ -34,6 +34,8 @@ abstract class WPMediaLoader extends WPMediaData {
     public function loadData($data) {
     	
     	$this->resetData();
+    	
+    	if (!isset($data['attachment_id'])) return null;
 			
 		$this->id          = intval($data['attachment_id']);
 			

@@ -71,26 +71,18 @@ class WPMediaIterator extends WPIteratorObject {
     public function hasNext() {
     	
     	if (!$this->has_next) {
-    		
-	    	try {
 	    		
-	            $image = new WPMedia($this->getBlog());
-	            
-	            $image->setPostID($this->post);
-	            
-	            $this->object = $image->loadFromLibrary($this->current, $this->mime);
-	            
-	            if (!is_null($this->object)) {
-	            	
-	            	$this->has_next = true;
-	            	
-	            }
-	    		
-	    	} catch (WPException $wpe) {
-	    		
-	    		throw $wpe;
-	    		
-	    	}
+            $image = new WPMedia($this->getBlog());
+            
+            $image->setPostID($this->post);
+            
+            $this->object = $image->loadFromLibrary($this->current, $this->mime);
+            
+            if (!is_null($this->object)) {
+            	
+            	$this->has_next = true;
+            	
+            }
 	    	
     	}
     	
@@ -106,22 +98,14 @@ class WPMediaIterator extends WPIteratorObject {
      * @throws \Comodojo\Exception\WPException
      */
     public function getNext() {
-    	
-    	try {
     		
-	    	if ($this->has_next || $this->hasNext()) {
-            	
-            	$this->current++;
-            	
-            	$this->has_next = false;
-	    		
-	    		return $this->object;
-	    		
-	    	}
+    	if ($this->has_next || $this->hasNext()) {
+        	
+        	$this->current++;
+        	
+        	$this->has_next = false;
     		
-    	} catch (WPException $wpe) {
-    		
-    		throw $wpe;
+    		return $this->object;
     		
     	}
     	

@@ -31,6 +31,10 @@ abstract class WPTaxonomyLoader extends WPTaxonomyData {
      * @return  WPTaxonomyLoader $this
      */
     public function loadData($taxonomy) {
+    	
+    	$this->resetData();
+    	
+    	if (!isset($taxonomy['name'])) return null;
 		
         $this->id           = $taxonomy['name'];
 		

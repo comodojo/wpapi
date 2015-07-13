@@ -30,7 +30,7 @@ abstract class WPPostTerms extends WPPostLoader {
     	
     	$categories = array();
     	
-    	foreach ($this->terms as $term) {
+    	foreach ($this->getTerms() as $term) {
     		
     		if ($term->getTaxonomy()->getName() == "category") array_push($categories, $term);
     		
@@ -94,7 +94,13 @@ abstract class WPPostTerms extends WPPostLoader {
      */
     public function hasCategory($category) {
     	
-    	return $this->hasTerm($category);
+    	foreach ($this->getCategories() as $c) {
+    		
+    		if ($c->getName() == $category) return true;
+    		
+    	}
+    	
+    	return false;
     	
     }
     
@@ -107,7 +113,7 @@ abstract class WPPostTerms extends WPPostLoader {
     	
     	$tags = array();
     	
-    	foreach ($this->terms as $term) {
+    	foreach ($this->getTerms() as $term) {
     		
     		if ($term->getTaxonomy()->getName() == "post_tag") array_push($tags, $term);
     		
@@ -126,7 +132,13 @@ abstract class WPPostTerms extends WPPostLoader {
      */
     public function hasTag($tag) {
     	
-    	return $this->hasTerm($tag);
+    	foreach ($this->getTags() as $t) {
+    		
+    		if ($t->getName() == $tag) return true;
+    		
+    	}
+    	
+    	return false;
     	
     }
     
@@ -216,7 +228,7 @@ abstract class WPPostTerms extends WPPostLoader {
     	
     	foreach ($this->terms as $id => $t) {
     		
-    		if ($t->getID() == $term) unset($this->terms[$id]);
+    		if ($t->getID() == $term->getID()) unset($this->terms[$id]);
     		
     	}
     	

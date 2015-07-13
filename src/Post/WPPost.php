@@ -48,33 +48,25 @@ class WPPost extends WPPostTerms {
     
     public function save() {
     	
-    	try {
-    	
-	    	if ($this->getID() == 0) {
-	    		
-	    		if (is_null($this->getAuthor())) {
-	    			
-	    			$this->setAuthor($this->getBlog()->getProfile());
-	    			
-	    		}
-	    		
-	    		if ($this->getCreationDate() == 0) {
-	    			
-	    			$this->setCreationDate(time());
-	    			
-	    		}
-	    		
-	    		$this->createPost();
-	    		
-	    	} else {
-	    		
-	    		$this->editPost();
-	    		
-	    	}
-	    	
-    	} catch (WPException $wpe) {
+    	if ($this->getID() == 0) {
     		
-    		throw $wpe;
+    		if (is_null($this->getAuthor())) {
+    			
+    			$this->setAuthor($this->getBlog()->getProfile());
+    			
+    		}
+    		
+    		if ($this->getCreationDate() == 0) {
+    			
+    			$this->setCreationDate(time());
+    			
+    		}
+    		
+    		$this->createPost();
+    		
+    	} else {
+    		
+    		$this->editPost();
     		
     	}
     	
@@ -191,18 +183,7 @@ class WPPost extends WPPostTerms {
      */
     public function getCommentsByStatus($status = "") {
     	
-    	if ($this->getID() > 0) {
-	    	try {
-	            
-	            return new WPCommentIterator($this, $status);
-            
-	    	} catch (WPException $wpe) {
-	    		
-	    		throw $wpe;
-	    		
-	    	}
-	            
-    	}
+    	if ($this->getID() > 0) return new WPCommentIterator($this, $status);
     	
     	return null;
     	

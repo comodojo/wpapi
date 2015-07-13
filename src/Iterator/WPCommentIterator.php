@@ -93,22 +93,16 @@ class WPCommentIterator extends WPIteratorObject {
     public function hasNext() {
     	
     	if (!$this->has_next) {
-    	
-	    	try {
-		    		
-	    		$this->object = new WPComment($this->getPost());
-	            
-	            if (!is_null($this->object->loadFromList($this->current, $this->status))) {
-	            	
-	            	$this->has_next = true;
-	            	
-	            }
 	    		
-	    	} catch (WPException $wpe) {
+    		$comment = new WPComment($this->getPost());
 	    		
-	    		throw $wpe;
-	    		
-	    	}
+    		$this->object = $comment->loadFromList($this->current, $this->status);
+            
+            if (!is_null($this->object)) {
+            	
+            	$this->has_next = true;
+            	
+            }
     	
     	}
     	
@@ -124,22 +118,14 @@ class WPCommentIterator extends WPIteratorObject {
      * @throws \Comodojo\Exception\WPException
      */
     public function getNext() {
-    	
-    	try {
     		
-	    	if ($this->has_next || $this->hasNext()) {
-            	
-            	$this->current++;
-            	
-            	$this->has_next = false;
-	    		
-	    		return $this->object;
-	    		
-	    	}
+    	if ($this->has_next || $this->hasNext()) {
+        	
+        	$this->current++;
+        	
+        	$this->has_next = false;
     		
-    	} catch (WPException $wpe) {
-    		
-    		throw $wpe;
+    		return $this->object;
     		
     	}
     	

@@ -33,6 +33,8 @@ abstract class WPPostLoader extends WPPostDataObjectSetter {
     public function loadData($data) {
     	
     	$this->resetData();
+    	
+    	if (!isset($data['post_id'])) return null;
 			
 		$this->setID($data['post_id']);
 		
@@ -135,19 +137,15 @@ abstract class WPPostLoader extends WPPostDataObjectSetter {
     		'comment_status' => $this->getCommentStatus(),
     		'menu_order'     => $this->getMenuOrder(),
     		'ping_status'    => $this->getPingStatus(),
+    		'terms'          => array(),
+    		'custom_fields'  => $this->getCustomFields(),
     		'sticky'         => ($this->isSticky())?1:0
     	);
-    	
-    	if (count($this->custom) > 0) {
-    		
-    		$data['custom_fields'] = $this->getCustomFields();
-    		
-    	}
     	
     	$parent = $this->getParent();
     	if (!is_null($parent)) {
     		
-    		$data['post_parent'] = $parent;
+    		$data['post_parent'] = $parent->getID();
     		
     	}
     	
@@ -175,23 +173,16 @@ abstract class WPPostLoader extends WPPostDataObjectSetter {
     		$data['post_excerpt'] = $this->getExcerpt();
     		
     	}
-    	
-    	if (count($this->getTerms()) > 0) {
     		
-    		$data['terms'] = array();
-    		
-    		foreach ($this->getTerms() as $term) {
-    			
-    			$key = $term->getTaxonomy()->getName();
-    			
-    			if (!isset($data['terms'][$key])) $data['terms'][$key] = array();
-    			
-    			array_push($data['terms'][$key], $term->getID());
-    			
-    		}
-    		
-    		
-    	}
+		foreach ($this->getTerms() as $term) {
+			
+			$key = $term->getTaxonomy()->getName();
+			
+			if (!isset($data['terms'][$key])) $data['terms'][$key] = array();
+			
+			array_push($data['terms'][$key], $term->getID());
+			
+		}
     	
     	return $data;
     		

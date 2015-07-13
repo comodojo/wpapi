@@ -67,7 +67,7 @@ class WPPostIterator extends WPIteratorObject {
         
     	$this->posts = $ids;
     	
-    	$this->count = count($ids);
+    	$this->setLength(count($ids));
     	
     	return $this;
     	
@@ -115,26 +115,20 @@ class WPPostIterator extends WPIteratorObject {
      * @throws \Comodojo\Exception\WPException
      */
     public function getNext() {
-    	
-    	try {
     		
-	    	if ($this->hasNext()) {
-	    		
-	    		$this->object = new WPPost($this->getBlog(), $this->posts[$this->current]);
-            	
-            	$this->current++;
-	    		
-	    		return $this->object;
-	    		
-	    	}
+    	if ($this->hasNext()) {
     		
-    	} catch (WPException $wpe) {
+    		$this->object = new WPPost($this->getBlog(), $this->posts[$this->current]);
     		
-    		throw $wpe;
+			$this->current++;
+			
+    	} else {
+    		
+    		$this->object = null;
     		
     	}
-    	
-    	return null;
+		
+		return $this->object;
     	
     }
     

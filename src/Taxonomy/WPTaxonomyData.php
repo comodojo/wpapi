@@ -175,7 +175,7 @@ abstract class WPTaxonomyData extends WPBlogObject {
      *
      * @return  array  $this->cap
      */
-    public function getCap() {
+    public function getCapabilities() {
     	
     	return $this->cap;
     	

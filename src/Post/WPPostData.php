@@ -325,15 +325,7 @@ abstract class WPPostData extends WPBlogObject {
     	
     	if (empty($this->parent) || is_null($this->parent) || $this->parent == 0) return null;
     	
-    	try {
-    		
-    		return new WPPost($this->getBlog(), $this->parent);
-    		
-    	} catch (WPException $wpe) {
-    		
-    		throw $wpe;
-    		
-    	}
+    	return new WPPost($this->getBlog(), $this->parent);
     	
     }
     
@@ -445,6 +437,29 @@ abstract class WPPostData extends WPBlogObject {
     	}
     		
     	return null;
+    	
+    }
+    
+    /**
+     * Has custom field
+     *
+     * @param  string $field Field name
+     *
+     * @return boolean $hasCustomField
+     */
+    public function hasCustomField($field) {
+    	
+    	foreach ($this->custom as $custom) {
+    		
+    		if ($custom['key'] == $field) {
+    			
+    			return true;
+    			
+    		}
+    		
+    	}
+    		
+    	return false;
     	
     }
     

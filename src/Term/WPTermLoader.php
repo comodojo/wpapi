@@ -64,6 +64,8 @@ abstract class WPTermLoader extends WPTermData {
     public function loadData($term) {
     	
     	$this->resetData();
+    	
+    	if (!isset($term['term_id'])) return null;
 		
         $this->id               = intval($term['term_id']);
     

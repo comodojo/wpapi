@@ -375,6 +375,25 @@ abstract class WPUserData extends WPBlogObject {
     }
     
     /**
+     * User has a specified role
+     *
+     * @param  string  $role Role name
+     *
+     * @return  boolean  $hasRole
+     */
+    public function hasRole($role) {
+    	
+    	foreach ($this->getRoles() as $r) {
+    		
+    		if (strtoupper($r) == strtoupper($role)) return true;
+    		
+    	}
+    	
+    	return false;
+    	
+    }
+    
+    /**
      * Set user roles
      *
      * @param array      $roles

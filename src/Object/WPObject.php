@@ -149,15 +149,7 @@ abstract class WPObject {
      */
     protected function getMediaIterator($blog, $post, $mime) {
     	
-    	try {
-    		
-            return new WPMediaIterator($blog, $post, $mime);
-            
-    	} catch (WPException $wpe) {
-    		
-    		throw $wpe;
-    		
-    	}
+    	return new WPMediaIterator($blog, $post, $mime);
     	
     }
     

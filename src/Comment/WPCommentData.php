@@ -114,15 +114,7 @@ abstract class WPCommentData extends WPPostObject {
     	
     	if (!is_null($this->user) && $this->user > 0) {
     		
-    		try {
-    		
-    			$parent = new WPUser($this->getBlog(), $this->user);
-    			
-    		} catch (WPException $wpe) {
-    			
-    			throw $wpe;
-    			
-    		}
+    		$parent = new WPUser($this->getBlog(), $this->user);
     		
     	}
     	
@@ -143,15 +135,7 @@ abstract class WPCommentData extends WPPostObject {
     	
     	if (!is_null($this->parent) && $this->parent > 0) {
     		
-    		try {
-    		
-    			$parent = new WPComment($this->getPost(), $this->parent);
-    			
-    		} catch (WPException $wpe) {
-    			
-    			throw $wpe;
-    			
-    		}
+    		$parent = new WPComment($this->getPost(), $this->parent);
     		
     	}
     	
