@@ -144,7 +144,7 @@ class WPCommentTest extends \PHPUnit_Framework_TestCase {
 						" - Link: "    . $comment->getLink();
 				
 				$comment->setContent($text)
-    				//->setStatus("approve")
+    				->setStatus("approve")
 					->save();
 				
 				$this->assertSame($comment->getContent(), $text);
