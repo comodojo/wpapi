@@ -208,7 +208,7 @@ class WPPostTest extends \PHPUnit_Framework_TestCase {
     	if (self::$wp->isLogged()) {
     		
     		$posts = self::$blog->getLatestPosts(3);
-			
+			var_dump($posts);
 			$this->assertSame($posts->getLength(), 3);
     		
 			while ($posts->hasNext()) {
