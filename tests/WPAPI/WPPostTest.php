@@ -102,7 +102,7 @@ class WPPostTest extends \PHPUnit_Framework_TestCase {
 				
 				$timestamp = strtotime($post->getCustomField("test_custom_data"));
 				
-				$this->assertSame($post->getCreationDate(), $timestamp + 7200 - ($i * 60));
+				$this->assertSame($post->getCreationDate(), $timestamp - ($i * 60));
 				
 				$this->assertSame($post->getTitle(), "Test POST n." . $i);
 				
