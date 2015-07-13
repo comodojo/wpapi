@@ -217,7 +217,8 @@ class WPBlogTest extends \PHPUnit_Framework_TestCase {
     			->addCategory("Test Category " . $i)
     			->setStatus("publish")
     			->save();
-    		
+    			    	
+	    	$this->assertGreaterThan(0, $new_post->getID());
     	}
     	
     	for ($i=0; $i<3; $i++) {
