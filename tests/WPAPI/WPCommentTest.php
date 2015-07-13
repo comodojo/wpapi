@@ -150,6 +150,8 @@ class WPCommentTest extends \PHPUnit_Framework_TestCase {
 				$this->assertSame($comment->getContent(), $text);
 				
 			}
+    		
+    		$comments = self::$post->getComments();
 			
 			$this->assertSame($comments->getApproved(), 3);
 			
